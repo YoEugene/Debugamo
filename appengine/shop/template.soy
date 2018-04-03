@@ -1,0 +1,703 @@
+{namespace Shop.soy}
+
+
+/**
+ * Web page structure.
+ */
+{template .start}
+  {call .messages /}
+  {call .header /}
+  <div id="drink-shop-game-container">
+    <div id="drink-shop-shop-container">
+      {call .svgShop /}
+      <div id="show-code-editor-button" class="show-hide-code-editor-button">
+        <div><i class="fa fa-caret-left fa-2x" aria-hidden="true"></i></div>
+        <div>編輯</div>
+      </div>
+    </div>
+    {call .codeEditor /}
+  </div>
+  {call BlocklyGames.soy.dialog /}
+  {call BlocklyGames.soy.doneDialog /}
+  {call BlocklyGames.soy.abortDialog /}
+  {call BlocklyGames.soy.storageDialog /}
+{/template}
+
+/**
+ * Translated messages for use in JavaScript.
+ */
+{template .messages}
+  {call BlocklyGames.soy.messages /}
+  <div style="display: none">
+    <span id="DrinkShop_getNewCup">{msg meaning="DrinkShop_getNewCup" desc="block text - robot gets a cup"}get a new cup{/msg}</span>
+    <span id="DrinkShop_fillCupWith">{msg meaning="DrinkShop_fillCupWith" desc="block text - robot fills the cup with drink"}fill the cup with{/msg}</span>
+    <span id="DrinkShop_fillCupWithVolume">{msg meaning="DrinkShop_fillCupWithVolume" desc="block text - robot fills the cup with a volume of drink"}fill the cup with{/msg}</span>
+    <span id="DrinkShop_ml">{msg meaning="DrinkShop_ml" desc="block text - ml"}ml{/msg}</span>
+    <span id="DrinkShop_coverCup">{msg meaning="DrinkShop_coverCup" desc="block text - robot covers the cup"}cover the cup{/msg}</span>
+    <span id="DrinkShop_serve">{msg meaning="DrinkShop_serve" desc="block text - robot serves what it is holding"}serve the cup{/msg}</span>
+
+    <span id="DrinkShop_blackTea">{msg meaning="DrinkShop_blackTea" desc="block text - black tea"}black tea{/msg}</span>
+    <span id="DrinkShop_greenTea">{msg meaning="DrinkShop_greenTea" desc="block text - green tea"}green tea{/msg}</span>
+    <span id="DrinkShop_milkTea">{msg meaning="DrinkShop_milkTea" desc="block text - milk tea"}milk tea{/msg}</span>
+    <span id="DrinkShop_milkGreenTea">{msg meaning="DrinkShop_milkGreenTea" desc="block text - milk green tea"}milk green tea{/msg}</span>
+    <span id="DrinkShop_milk">{msg meaning="DrinkShop_milk" desc="block text - milk"}milk{/msg}</span>
+    <span id="DrinkShop_ice">{msg meaning="DrinkShop_ice" desc="block text - ice"}ice{/msg}</span>
+    <span id="DrinkShop_boba">{msg meaning="DrinkShop_boba" desc="block text - boba"}boba{/msg}</span>
+
+    <span id="DrinkShop_msg_noServedDrink">{msg meaning="DrinkShop_msg_noServedDrink" desc="game message"}The customer didn't get their tea.{/msg} &#x1F641;</span>
+    <span id="DrinkShop_msg_servedMultiple">{msg meaning="DrinkShop_msg_servedMultiple" desc="game message"}The customer received more than 1 cup of drink.{/msg} &#x1F641;</span>
+    <span id="DrinkShop_msg_cupEmpty">{msg meaning="DrinkShop_msg_cupEmpty" desc="game message"}The cup is empty.{/msg}</span>
+    <span id="DrinkShop_msg_cupNotFull">{msg meaning="DrinkShop_msg_cupNotFull" desc="game message"}The cup is not full.{/msg}</span>
+    <span id="DrinkShop_msg_notBlackTea">{msg meaning="DrinkShop_msg_notBlackTea" desc="game message"}It's not black tea.{/msg}</span>
+    <span id="DrinkShop_msg_notGreenTea">{msg meaning="DrinkShop_msg_notGreenTea" desc="game message"}It's not green tea.{/msg}</span>
+
+    <span id="DrinkShop_msg_noBlackTea">{msg meaning="DrinkShop_msg_noBlackTea" desc="game message"}There's no black tea in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_noGreenTea">{msg meaning="DrinkShop_msg_noGreenTea" desc="game message"}There's no green tea in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_noMilk">{msg meaning="DrinkShop_msg_noMilk" desc="game message"}There's no milk in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_noBoba">{msg meaning="DrinkShop_msg_noBoba" desc="game message"}There's no boba in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_notOnlyBlackTeaAndMilk">{msg meaning="DrinkShop_msg_notOnlyBlackTeaAndMilk" desc="game message"}There's not only black tea and milk in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_tooManyMaterials">{msg meaning="DrinkShop_msg_tooManyMaterials" desc="game message"}There are too many kinds of materials in the cup.{/msg}</span>
+    <span id="DrinkShop_msg_notCorrectProportion">{msg meaning="DrinkShop_msg_notCorrectProportion" desc="game message"}The proportion of materials is not correct.{/msg}</span>
+
+    <span id="DrinkShop_msg_cupNotCovered">{msg meaning="DrinkShop_msg_cupNotCovered" desc="game message"}The cup is not covered.{/msg}</span>
+
+    <span id="DrinkShop_msg_levelFailed">{msg meaning="DrinkShop_msg_levelFailed" desc="game message"}Level Failed.{/msg}</span>
+    <span id="DrinkShop_msg_errorIn">{msg meaning="DrinkShop_msg_errorIn" desc="game message"}An error occured in '%1'.{/msg}</span>
+    <span id="DrinkShop_msg_reason">{msg meaning="DrinkShop_msg_reason" desc="game message"}Reason{/msg}</span>
+    <span id="DrinkShop_msg_noCup">{msg meaning="DrinkShop_msg_noCup" desc="game message"}There is no cup in my hand.{/msg}</span>
+    <span id="DrinkShop_msg_cupCovered">{msg meaning="DrinkShop_msg_cupCovered" desc="game message"}The cup has been covered.{/msg}</span>
+    <span id="DrinkShop_msg_drinkOverflow">{msg meaning="DrinkShop_msg_drinkOverflow" desc="game message"}The cup is full. The drink will overflow.{/msg}</span>
+  </div>
+{/template}
+
+/**
+ * header
+ */
+{template .header}
+  <div class="header" style="display: none;">
+    <table width="100%">
+      <tr>
+        <td>
+          <h1>
+            {call BlocklyGames.soy.titleSpan}
+              {param appName}
+                {msg meaning="Games.shop" desc="Drink Shop"}Drink Shop{/msg}
+              {/param}
+            {/call}
+            {call BlocklyGames.soy.levelLinks}
+              {param level: $ij.level /}
+              {param maxLevel: $ij.maxLevel /}
+              {param lang: $ij.lang /}
+              {param suffix}{/param}
+            {/call}
+          </h1>
+        </td>
+        <td class="farSide">
+          <select id="languageMenu"></select>
+          &nbsp;
+          <button id="linkButton" title="{msg meaning="Games.linkTooltip" desc="IBID"}Save and link to blocks.{/msg}">
+            <img src="common/1x1.gif" class="link icon21">
+          </button>
+        </td>
+      </tr>
+    </table>
+  </div>
+{/template}
+
+/**
+ * shop game ui
+ */
+{template .svgShop}
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svgShop" width="100%" height="100%" viewBox="0 0 1280 1080">
+    <svg viewBox="0 0 1280 720">
+      <defs>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="10 10" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="glow" />
+            <feMergeNode in="glow" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g id="drink-shop-walls">
+        <rect fill="#d7d7d7" width="100%" height="100%"></rect>
+        <rect fill="#e7e7e7" width="160" height="100%"></rect>
+        <rect fill="#e7e7e7" x="1120" width="160" height="100%"></rect>
+        <polygon fill="#dedede" points="0,0 1280,0 1120,80 160,80"></polygon>
+      </g>
+      <g id="drink-shop-back-desk">
+        <rect fill="rgb(236,255,255)" x="120" y="360" width="1040" height="240"></rect>
+        <polygon fill="#f4f4f4" points="120,360 1160,360 1120,345 160,345"></polygon>
+      </g>
+      <svg id="material-group" x="160" y="150" width="1080" height="540" viewBox="0 0 1280 640">
+        <svg id="milk" x="0" y="0" width="160" height="320" viewBox="0 0 52.017 52.017">
+          <g>
+            <g>
+              <path style="fill:#DAE7EF;" d="M22.835,8.923c-0.01-0.009-0.021-0.018-0.031-0.027c-1.147-1.038-0.837-2.85,0.401-3.78
+                          c0.487-0.366,0.803-0.947,0.803-1.599v-1c0-1.1-0.9-2-2-2h-11c-1.1,0-2,0.9-2,2v1c0,0.665,0.33,1.254,0.835,1.616
+                          c1.157,0.83,1.624,2.426,0.702,3.511c-0.087,0.102-0.184,0.2-0.29,0.292c-2.108,1.815-5.247,3.823-5.247,8.581v30.219
+                          c0,2.079,1.701,3.781,3.781,3.781h15.438c2.079,0,3.781-1.701,3.781-3.781V17.517C28.008,12.744,24.909,10.743,22.835,8.923z" />
+              <rect fill="#FFFFFF" x="5" y="27" width="23" height="24"></rect>
+              <path style="fill:#BBD7EA;" d="M24.228,52.017H8.789c-2.36,0-4.281-1.92-4.281-4.28v-30.22c0-4.47,2.607-6.625,4.701-8.357
+                          c0.249-0.205,0.49-0.405,0.72-0.603c0.085-0.074,0.164-0.153,0.236-0.237c0.365-0.43,0.395-0.902,0.355-1.223
+                          c-0.073-0.593-0.435-1.175-0.969-1.558c-0.653-0.47-1.043-1.226-1.043-2.022v-1c0-1.379,1.122-2.5,2.5-2.5h11
+                          c1.378,0,2.5,1.121,2.5,2.5v1c0,0.78-0.375,1.527-1.002,1.998c-0.542,0.408-0.884,1.033-0.913,1.672
+                          c-0.024,0.522,0.17,0.997,0.547,1.338l-0.305,0.398l0.33-0.376c0.23,0.203,0.474,0.407,0.725,0.618
+                          c2.058,1.729,4.618,3.883,4.618,8.352v30.22C28.508,50.097,26.588,52.017,24.228,52.017z M11.008,1.017
+                          c-0.827,0-1.5,0.673-1.5,1.5v1c0,0.476,0.234,0.929,0.626,1.21c0.757,0.543,1.272,1.384,1.378,2.248
+                          c0.09,0.734-0.119,1.441-0.587,1.993c-0.104,0.121-0.218,0.237-0.343,0.346C10.348,9.516,10.101,9.72,9.847,9.93
+                          c-2.033,1.682-4.338,3.588-4.338,7.587v30.22c0,1.809,1.472,3.28,3.281,3.28h15.438c1.809,0,3.281-1.472,3.281-3.28v-30.22
+                          c0-4.003-2.264-5.906-4.262-7.586c-0.256-0.216-0.505-0.425-0.741-0.632l-0.014-0.014l0.338-0.368l-0.35,0.358
+                          c-0.612-0.554-0.923-1.309-0.885-2.135c0.042-0.934,0.533-1.84,1.311-2.425c0.383-0.288,0.603-0.726,0.603-1.199v-1
+                          c0-0.827-0.673-1.5-1.5-1.5H11.008z" />
+            </g>
+            <path style="fill:#FAF5E5;" d="M22.996,5.658H10.021c-1.1,0-2-0.9-2-2V2c0-1.1,0.9-2,2-2h12.975c1.1,0,2,0.9,2,2v1.658
+                        C24.996,4.758,24.096,5.658,22.996,5.658z" />
+          </g>
+          <svg x="0">
+            <rect x="14.878" y="20.517" style="fill:#BBD7EA;" width="13.621" height="21.917" />
+            <svg x="-19">
+              <path style="fill:#8CC9EA;" d="M43.5,25.517c-0.552,0-1,0.447-1,1s0.448,1,1,1h4v-2H43.5z" />
+              <path style="fill:#8CC9EA;" d="M47.5,31.517h-6c-0.552,0-1,0.447-1,1c0,0.553,0.448,1,1,1h6V31.517z" />
+              <path style="fill:#8CC9EA;" d="M43.5,35.517c-0.552,0-1,0.447-1,1s0.448,1,1,1h4v-2H43.5z" />
+            </svg>
+          </svg>
+        </svg>
+        <svg id="black-tea" x="100" y="95" width="160" height="149" viewBox="0 0 512 512">
+          <path style="fill:#c1c5bf;" d="M430.793,382.056h-74.221c-5.039,0-9.837-2.147-13.194-5.903s-4.954-8.765-4.391-13.771
+              l23.485-208.714c1.007-8.951,8.578-15.717,17.585-15.717h50.883c44.697,0,81.061,36.364,81.061,81.061v81.837
+              C512,345.627,475.57,382.056,430.793,382.056z M376.37,346.665h54.422c25.264,0,45.816-20.553,45.816-45.816v-81.837
+              c0-25.182-20.487-45.669-45.669-45.669h-35.066L376.37,346.665z" />
+          <defs>
+            <clipPath id="bottle">
+              <path d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+              c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+              s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+            </clipPath>
+            <mask id="bottle-top">
+              <rect fill="#fff" width="420" height="500"></rect>
+              <rect fill="#000" width="420" height="200"></rect>
+            </mask>
+          </defs>
+          <path style="fill:rgba(224,224,224,0.5);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+          <rect fill="rgba(224,240,48,0.5)" width="420" height="500" clip-path="url(#bottle)" mask="url(#bottle-top)"></rect>
+          <path style="fill:rgba(0,0,0,0.05);" d="M406.425,26.752c-3.356-3.756-8.157-5.903-13.194-5.903h-159.46v470.303h110.526
+                c9.007,0,16.577-6.766,17.585-15.717l48.935-434.911C411.38,35.516,409.783,30.508,406.425,26.752z" />
+          <path stroke="#dedede" stroke-width="12" style="fill:rgba(255,255,255,0);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+        </svg>
+        <svg id="green-tea" x="240" y="95" width="160" height="149" viewBox="0 0 512 512">
+          <path style="fill:#c5bfbf;" d="M430.793,382.056h-74.221c-5.039,0-9.837-2.147-13.194-5.903s-4.954-8.765-4.391-13.771
+              l23.485-208.714c1.007-8.951,8.578-15.717,17.585-15.717h50.883c44.697,0,81.061,36.364,81.061,81.061v81.837
+              C512,345.627,475.57,382.056,430.793,382.056z M376.37,346.665h54.422c25.264,0,45.816-20.553,45.816-45.816v-81.837
+              c0-25.182-20.487-45.669-45.669-45.669h-35.066L376.37,346.665z" />
+          <defs>
+            <clipPath id="bottle">
+              <path d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+              c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+              s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+            </clipPath>
+            <mask id="bottle-top">
+              <rect fill="#fff" width="420" height="500"></rect>
+              <rect fill="#000" width="420" height="200"></rect>
+            </mask>
+          </defs>
+          <path style="fill:rgba(224,224,224,0.5);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+          <rect fill="rgba(192,64,0,0.75)" width="420" height="500" clip-path="url(#bottle)" mask="url(#bottle-top)"></rect>
+          <path style="fill:rgba(0,0,0,0.05);" d="M406.425,26.752c-3.356-3.756-8.157-5.903-13.194-5.903h-159.46v470.303h110.526
+                c9.007,0,16.577-6.766,17.585-15.717l48.935-434.911C411.38,35.516,409.783,30.508,406.425,26.752z" />
+          <path stroke="#dedede" stroke-width="12" style="fill:rgba(255,255,255,0);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+        </svg>
+      </svg>
+      <svg id="drink-shop-robot" x="460" y="220" width="360" height="360" viewBox="0 0 360 360">
+        <image width="360" height="360" xlink:href="/shop/public/robot.png" />
+        // <g id="drink-shop-robot-text" class="hidden-text" text-anchor="middle" alignment-baseline="central" font-family="Arial" font-size="40">
+          // <text style="filter: url(#glow); fill: white" x="50%" y="50%">編輯程式</text>
+          // <text x="50%" y="50%" style="fill:black;">編輯程式</text>
+        // </g>
+      </svg>
+      <g id="drink-shop-front-desk">
+        <rect fill="#80DEEA" y="480" width="100%" height="240"></rect>
+        <rect fill="white" y="480" width="100%" height="60"></rect>
+        <polygon fill="#f4f4f4" points="0,480 1280,480 1240,465 40,465"></polygon>
+      </g>
+      {call .svgWorkspace /}
+      <svg id="drink-shop-price-list" class="clickable" x="1000" y="275" width="150" height="200" viewBox="0 0 150 200">
+        <rect fill="#f8f8f8" width="100%" height="100%">
+        </rect>
+        <line x1="30" y1="30" x2="120" y2="30" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="50" x2="120" y2="50" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="70" x2="120" y2="70" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="90" x2="120" y2="90" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="110" x2="120" y2="110" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="130" x2="120" y2="130" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="150" x2="120" y2="150" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="170" x2="120" y2="170" style="stroke:#f0f0f0; stroke-width:5"></line>
+
+        <line x1="140" y1="-20" x2="-20" y2="140" style="stroke: white; stroke-width:30"></line>
+        <line x1="20" y1="220" x2="220" y2="20" style="stroke: white; stroke-width:20"></line>
+        <rect fill="rgba(0, 0, 0, 0)" width="100%" height="100%" stroke="#e7e7e7" stroke-width="15" stroke-alignment="inner" />
+
+        <text id="drink-shop-price-list-text" class="" x="50%" y="50%" fill="black" text-anchor="middle" alignment-baseline="central"
+          font-family="Arial" font-size="30">價目表</text>
+      </svg>
+    </svg>
+
+    <svg id="drink-shop-status" x="0" y="0" width="1280" height="1080">
+      <rect x="0" y="0" width="1280" height="180" fill="#f5f5f5"></rect>
+      <svg id="status-time-container" x="200" y="15" width="640" height="160" viewbox="20 0 440 96">
+        <g fill="rgb(80,70,180)">
+          <text x="50" y="18" class="fa-3x fa" alignment-baseline="text-before-edge">&#xf017;</text>
+          <text id="status-time-text" class="status-text" x="108" y="15" class="fa-3x" alignment-baseline="text-before-edge">0</text>
+        </g>
+      </svg>
+      <svg id="status-money-container" x="640" y="15" width="640" height="160" viewbox="20 0 440 96">
+        <g fill="rgb(30,130,60)">
+          <text x="60" y="30" class="fa" alignment-baseline="text-before-edge" style="font-size: 1.5em;">&#xf155;</text>
+          <circle cx="67" cy="42.4" r="17.8" stroke="rgb(30,130,60)" stroke-width="5.9" fill="rgba(0,0,0,0)"></circle>
+          <text id="status-money-text" class="status-text" x="105" y="15" class="fa-3x" alignment-baseline="text-before-edge">0</text>
+        </g>
+      </svg>
+      <svg x="280" y="180">
+        <rect width="720" height="96" fill="white"></rect>
+        <rect x="12" y="12" width="696" height="72" fill="#f9f998"></rect>
+      </svg>
+    </svg>
+  </svg>
+{/template}
+
+
+/**
+ * code editor modal
+ */
+{template .codeEditor}
+  <div id="drink-shop-code-editor-container">
+    // left zone: click to hide code-editor
+    <div id="hide-code-editor-zone">
+      <div id="hide-code-editor-button" class="show-hide-code-editor-button">
+        <div><i class="fa fa-caret-right fa-2x" aria-hidden="true"></i></div>
+        <div>隱藏</div>
+      </div>
+    </div>
+
+    <div id="drink-shop-code-editor">
+      // left part
+      <div id="drink-shop-code-editor-left">
+        <div id="drink-shop-level-desc-container">
+          <div class="drink-shop-level-desc-title">關卡目標</div>
+          <div id="drink-shop-level-desc-goal" class="drink-shop-level-desc-text"></div>
+          <div class="drink-shop-level-desc-title">關卡敘述</div>
+          <div id="drink-shop-level-desc" class="drink-shop-level-desc-text"></div>
+        </div>
+        <div id="capacityBubble">
+          <div id="capacity"></div>
+        </div>
+      </div>
+
+      // code editor
+      {call .toolbox /}
+      <div id="blockly"></div>
+    </div>
+
+    // run button
+    <div id="runButtonWrapper">
+      <button id="runButton" class="primary" title="{msg meaning="DrinkShop_runTooltip" desc="tooltip - Pressing this button runs the computer program the user has written to move the robot."}Makes the robot do what the blocks say.{/msg}">
+        <span>&#9658; {msg meaning="Games.runProgram" desc="IBID"}Run Program{/msg}</span>
+      </button>
+      <button id="resetButton" class="primary" style="display: none" title="{msg meaning="DrinkShop_resetTooltip" desc="tooltip - Pressing this button to restart the game."}Undo what the robot has done.{/msg}">
+        <span>&#8634; {msg meaning="Games.resetProgram" desc="IBID"}Reset{/msg}</span>
+      </button>
+    </div>
+  </div>
+{/template}
+
+/**
+ * Shop workspace. Game UI
+ */
+{template .svgWorkspace}
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="565" y="350" id="svgWorkspace" width="150px" height="150px" viewBox="0 0 100 100">
+    // <rect width="100" height="100" fill="#eee" stroke-width="0.5" stroke="#ccc"></rect>
+    <g id="workspace-main"></g>
+    // TODO - Remove scoring-board
+    <g id="scoring-board" style="display: none;">
+      // time
+      <svg id="scoring-board-time" x="2" y="2">
+        <svg id="scoring-board-clock" viewBox="0 0 10 10" width="8"  height="8">
+          <circle cx="5" cy="5" r="4.5" class="svg-clock-circle" />
+          <line x1="5" y1="5" x2="5" y2="2" class="svg-clock-line" />
+          <line x1="5" y1="5" x2="7" y2="5" class="svg-clock-line" />
+        </svg>
+        <text x="10" y="4.5" id="scoring-board-time-text" class="svg-scoring-board-text">0</text>
+      </svg>
+      // money
+      <svg id="scoring-board-money" x="2" y="12">
+        <svg id="scoring-board-clock" viewBox="0 0 10 10" width="8"  height="8">
+          <circle cx="5" cy="5" r="4.5" style="stroke: #FFC107; stroke-width:1; fill: #FFECB3;" />
+          <text x="5" y="5.5" font-weight="bold" alignment-baseline="middle" text-anchor="middle" font-size="8" style="fill: #FFC107;">$</text>
+        </svg>
+        <text x="10" y="4.5" id="scoring-board-money-text" class="svg-scoring-board-text">0</text>
+      </svg>
+      <svg id="scoring-board-material-drink" x="2" y="22">
+        <svg width="8"  height="8" viewBox="0 0 512 512">
+          <path style="fill:#84DBFF;" d="M438.4,329.6C438.4,430.933,356.267,512,256,512S73.6,430.933,73.6,329.6S256,0,256,0
+            S438.4,229.333,438.4,329.6z"/>
+          <path style="fill:rgba(255,255,255,0.5);" d="M256,464c-73.6,0-134.4-59.733-134.4-134.4c0-8.533,7.467-16,16-16s16,7.467,16,16
+            c0,56.533,45.867,102.4,102.4,102.4c8.533,0,16,7.467,16,16S264.533,464,256,464z"/>
+        </svg>
+      </svg>
+
+      <g id="svg-scoring-board-top-left"></g>
+      <g id="svg-scoring-board-top-right"></g>
+    </g>
+  </svg>
+{/template}
+
+/**
+ * Toolboxes for each level.
+ */
+{template .toolbox}
+  <xml id="all-blocks" style="display: none;">
+    <block type="DrinkShop_getNewCup" id="block_DrinkShop_getNewCup"></block>
+    <block type="DrinkShop_fillCupWith" id="block_DrinkShop_fillCupWith"></block>
+    <block type="DrinkShop_coverCup" id="block_DrinkShop_coverCup"></block>
+    <block type="DrinkShop_serve" id="block_DrinkShop_serve"></block>
+    <block type="DrinkShop_fillCupWithVolume" id="block_DrinkShop_fillCupWithVolume">
+      <value name="VOLUME">
+        <shadow type="math_number">
+          <field name="NUM">500</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="math_arithmetic" id="block_math_arithmetic">
+      <value name="A">
+        <shadow type="math_number">
+          <field name="NUM">500</field>
+        </shadow>
+      </value>
+      <field name="OP">MULTIPLY</field>
+      <value name="B">
+        <shadow type="math_number">
+          <field name="NUM">0.1</field>
+        </shadow>
+      </value>
+    </block>
+  </xml>
+  <xml id="toolbox" style="display: none;">
+    // <category id="toolbox-others" colour="330" name="Others">
+    // <block type="DrinkShop_getNewCup"></block>
+    // <block type="DrinkShop_fillCupWith"></block>
+    // <block type="DrinkShop_coverCup"></block>
+    // <block type="DrinkShop_serve"></block>
+    // </category>
+
+    // <category id="catLogic" colour="210" name="Logic">
+    //   <block type="controls_if"></block>
+    //   <block type="logic_compare"></block>
+    //   <block type="logic_operation"></block>
+    //   <block type="logic_negate"></block>
+    //   <block type="logic_boolean"></block>
+    //   <block type="logic_null"></block>
+    //   <block type="logic_ternary"></block>
+    // </category>
+    // <category id="catLoops" colour="120" name="Loops">
+    //   <block type="controls_repeat_ext">
+    //     <value name="TIMES">
+    //       <shadow type="math_number">
+    //         <field name="NUM">10</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="controls_whileUntil"></block>
+    //   <block type="controls_for">
+    //     <value name="FROM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="TO">
+    //       <shadow type="math_number">
+    //         <field name="NUM">10</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="BY">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="controls_forEach"></block>
+    //   <block type="controls_flow_statements"></block>
+    // </category>
+    // <category id="catMath" colour="230" name="Math">
+    //   <block type="math_number"></block>
+    //   <block type="math_arithmetic">
+    //     <value name="A">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="B">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_single">
+    //     <value name="NUM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">9</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_trig">
+    //     <value name="NUM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">45</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_constant"></block>
+    //   <block type="math_number_property">
+    //     <value name="NUMBER_TO_CHECK">
+    //       <shadow type="math_number">
+    //         <field name="NUM">0</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_change">
+    //     <value name="DELTA">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_round">
+    //     <value name="NUM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">3.1</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_on_list"></block>
+    //   <block type="math_modulo">
+    //     <value name="DIVIDEND">
+    //       <shadow type="math_number">
+    //         <field name="NUM">64</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="DIVISOR">
+    //       <shadow type="math_number">
+    //         <field name="NUM">10</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_constrain">
+    //     <value name="VALUE">
+    //       <shadow type="math_number">
+    //         <field name="NUM">50</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="LOW">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="HIGH">
+    //       <shadow type="math_number">
+    //         <field name="NUM">100</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_random_int">
+    //     <value name="FROM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">1</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="TO">
+    //       <shadow type="math_number">
+    //         <field name="NUM">100</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="math_random_float"></block>
+    // </category>
+    // <category id="catText" colour="160" name="Text">
+    //   <block type="text"></block>
+    //   <block type="text_join"></block>
+    //   <block type="text_append">
+    //     <value name="TEXT">
+    //       <shadow type="text"></shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_length">
+    //     <value name="VALUE">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_isEmpty">
+    //     <value name="VALUE">
+    //       <shadow type="text">
+    //         <field name="TEXT"></field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_indexOf">
+    //     <value name="VALUE">
+    //       <block type="variables_get">
+    //         <field name="VAR">text</field>
+    //       </block>
+    //     </value>
+    //     <value name="FIND">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_charAt">
+    //     <value name="VALUE">
+    //       <block type="variables_get">
+    //         <field name="VAR">text</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="text_getSubstring">
+    //     <value name="STRING">
+    //       <block type="variables_get">
+    //         <field name="VAR">text</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="text_changeCase">
+    //     <value name="TEXT">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_trim">
+    //     <value name="TEXT">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_print">
+    //     <value name="TEXT">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="text_prompt_ext">
+    //     <value name="TEXT">
+    //       <shadow type="text">
+    //         <field name="TEXT">abc</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    // </category>
+    // <category id="catLists" colour="260" name="Lists">
+    //   <block type="lists_create_with">
+    //     <mutation items="0"></mutation>
+    //   </block>
+    //   <block type="lists_create_with"></block>
+    //   <block type="lists_repeat">
+    //     <value name="NUM">
+    //       <shadow type="math_number">
+    //         <field name="NUM">5</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="lists_length"></block>
+    //   <block type="lists_isEmpty"></block>
+    //   <block type="lists_indexOf">
+    //     <value name="VALUE">
+    //       <block type="variables_get">
+    //         <field name="VAR">list</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="lists_getIndex">
+    //     <value name="VALUE">
+    //       <block type="variables_get">
+    //         <field name="VAR">list</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="lists_setIndex">
+    //     <value name="LIST">
+    //       <block type="variables_get">
+    //         <field name="VAR">list</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="lists_getSublist">
+    //     <value name="LIST">
+    //       <block type="variables_get">
+    //         <field name="VAR">list</field>
+    //       </block>
+    //     </value>
+    //   </block>
+    //   <block type="lists_split">
+    //     <value name="DELIM">
+    //       <shadow type="text">
+    //         <field name="TEXT">,</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="lists_sort"></block>
+    // </category>
+    // <category id="catColour" colour="20" name="Color">
+    //   <block type="colour_picker"></block>
+    //   <block type="colour_random"></block>
+    //   <block type="colour_rgb">
+    //     <value name="RED">
+    //       <shadow type="math_number">
+    //         <field name="NUM">100</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="GREEN">
+    //       <shadow type="math_number">
+    //         <field name="NUM">50</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="BLUE">
+    //       <shadow type="math_number">
+    //         <field name="NUM">0</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    //   <block type="colour_blend">
+    //     <value name="COLOUR1">
+    //       <shadow type="colour_picker">
+    //         <field name="COLOUR">#ff0000</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="COLOUR2">
+    //       <shadow type="colour_picker">
+    //         <field name="COLOUR">#3333ff</field>
+    //       </shadow>
+    //     </value>
+    //     <value name="RATIO">
+    //       <shadow type="math_number">
+    //         <field name="NUM">0.5</field>
+    //       </shadow>
+    //     </value>
+    //   </block>
+    // </category>
+    // <sep></sep>
+    // <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
+    // <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
+  </xml>
+{/template}

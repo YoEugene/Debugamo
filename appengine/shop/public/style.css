@@ -1,0 +1,259 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+#blockly {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  /* to calc */
+  width: calc(35vw + 320px);
+}
+
+#visualization {
+  position: relative;
+  padding: 0 10px;
+  /* to calc */
+  width: 400px;
+}
+
+#capacityBubble {
+  position: absolute;
+  margin-top: -0.5em;
+  left: 10px;
+  top: 375px;
+  width: 380px;
+}
+
+html[dir="RTL"] #capacityBubble {
+  left: auto;
+  right: 10px;
+}
+
+#capacity {
+  display: none;
+  color: #fff;
+  padding: 5px 1em;
+  border-radius: 15px;
+  background-color: rgba(64, 64, 64, 0.7);
+  font-size: large;
+}
+
+.capacityNumber {
+  font-weight: bold;
+}
+
+#sampleOneTopBlock {
+  height: 80px;
+  width: 250px;
+}
+
+.helpMenuFake {
+  border-radius: 4px;
+  background-color: #bfcdde;
+  color: #000;
+  padding: 0 1ex;
+  cursor: default;
+}
+
+img[src$="help_up.png"] {
+  margin: -20px 10px 0;
+  height: 64px;
+  width: 23px;
+}
+
+img[src$="help_down.png"] {
+  margin: 0 10px -20px;
+  height: 64px;
+  width: 23px;
+}
+
+
+/* Buttons */
+
+button.primary {
+  /* Can't use "text-align: start" due to IE. */
+  text-align: center;
+}
+
+html[dir="RTL"] button.primary {
+  text-align: right;
+}
+
+
+/* Sprited icons. */
+
+.icon21 {
+  height: 21px;
+  width: 21px;
+  background-image: url(icons.png);
+}
+
+.link {
+  background-position: 0px 0px;
+}
+
+.header {
+  padding: 0 10px;
+  background-color: #eee;
+  height: 60px;
+}
+
+#runButtonWrapper {
+  width: 35vw;
+  text-align: center;
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+}
+
+#shop-wrapper {
+  width: 100vw;
+  height: 56.25vw;
+  /* 16/9 = 1.778 */
+  max-height: 100vh;
+  max-width: 177.78vh;
+  margin: auto;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.black-text-with-shadow {
+  text-shadow: 4px rgba(255, 255, 255, 0.75);
+}
+
+#drink-shop-game-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+#drink-shop-shop-container {
+  /* to calc */
+  width: 65vw;
+  height: 100vh;
+  background-color: #e7e7e7;
+  position: relative;
+  display: inline-block;
+  /* z-index: 100000; */
+}
+
+
+.show-hide-code-editor-button {
+  background-color: white;
+  color: #404040;
+  border-radius: 8px 0 0 8px;
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+#show-code-editor-button {
+  position: absolute;
+  right: 0;
+  top: 20px;
+}
+
+#drink-shop-code-editor-container {
+  z-index: 5;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.25)
+}
+
+#hide-code-editor-zone {
+  width: 50px;
+  position: relative;
+  display: inline-block;
+  height: 100%;
+}
+
+#hide-code-editor-button {
+  position: absolute;
+  top: 20px;
+  right: 0;
+}
+
+#drink-shop-code-editor {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50px;
+  right: 0;
+  background-color: white;
+}
+
+#drink-shop-code-editor-left {
+  position: relative;
+  /* to calc */
+  width: calc(65vw - 370px);
+  height: 100%;
+  padding: 15px;
+  overflow: scroll;
+  text-align: center;
+  min-width: 300px;
+}
+
+#drink-shop-code-editor .blocklyFlyout,
+#drink-shop-code-editor .blocklyFlyoutScrollbar {
+  z-index: 0;
+}
+
+.drink-shop-level-desc-title {
+  color: #00838F;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: #B2EBF2;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.drink-shop-level-desc-text {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.hint-img {
+  display: block;
+  margin: 15px auto;
+  border: 1px solid #eee;
+}
+
+.svg-clock-circle {
+  stroke: #9C27B0;
+  stroke-width: 1;
+  fill: #E1BEE7;
+}
+
+.svg-clock-line {
+  stroke: #9C27B0;
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+.svg-scoring-board-text {
+  alignment-baseline: middle;
+  font-size: 7px;
+}
+
+.svg-text-normal {
+  fill: #404040;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+svg text .fa {
+  font-family: FontAwesome;
+}
+
+.status-text {
+  font-family: monospace;
+  font-size: 3.5em;
+}

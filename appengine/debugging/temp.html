@@ -1,0 +1,232 @@
+<html>
+<header>
+  <style type="text/css">
+  body {
+    margin: 0;
+    background-color: #e7e7e7;
+  }
+
+  #shop-wrapper {
+    width: 100vw;
+    height: 56.25vw;
+    /* 100/56.25 = 1.778 */
+    max-height: 100vh;
+    max-width: 177.78vh;
+    /* 16/9 = 1.778 */
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    /* vertical center */
+    left: 0;
+    right: 0;
+    /* horizontal center */
+  }
+
+  .clickable {
+    cursor: pointer;
+  }
+
+  .hidden-text {
+    display: none;
+  }
+
+  #drink-shop-material-list:hover #drink-shop-material-list-text {
+    display: block;
+  }
+
+  #drink-shop-price-list:hover #drink-shop-price-list-text {
+    display: block;
+  }
+
+  #drink-shop-robot:hover #drink-shop-robot-text {
+    display: block;
+  }
+
+  .black-text-with-shadow {
+    text-shadow: 4px rgba(255, 255, 255, 0.75);
+  }
+
+  svg text .fa {
+    font-family: FontAwesome;
+  }
+
+  .status-text {
+    font-family: monospace;
+    font-size: 3.5em;
+  }
+  </style>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</header>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" version="1.1" id="svgShop" width="100%" height="100%" viewBox="0 0 1280 1080">
+    <svg viewBox="0 0 1280 720">
+      <defs>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="10 10" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="glow" />
+            <feMergeNode in="glow" />
+          </feMerge>
+        </filter>
+      </defs>
+      <g id="drink-shop-walls">
+        <rect fill="#d7d7d7" width="100%" height="100%"></rect>
+        <rect fill="#e7e7e7" width="160" height="100%"></rect>
+        <rect fill="#e7e7e7" x="1120" width="160" height="100%"></rect>
+        <polygon fill="#dedede" points="0,0 1280,0 1120,80 160,80"></polygon>
+      </g>
+      <g id="drink-shop-back-desk">
+        <rect fill="rgb(236,255,255)" x="120" y="360" width="1040" height="240"></rect>
+        <polygon fill="#f4f4f4" points="120,360 1160,360 1120,345 160,345"></polygon>
+      </g>
+      <svg id="material-group" x="160" y="150" width="1080" height="540" viewBox="0 0 1280 640">
+        <svg id="milk" x="0" y="0" width="160" height="320" viewBox="0 0 52.017 52.017">
+          <g>
+            <g>
+              <path style="fill:#DAE7EF;" d="M22.835,8.923c-0.01-0.009-0.021-0.018-0.031-0.027c-1.147-1.038-0.837-2.85,0.401-3.78
+                          c0.487-0.366,0.803-0.947,0.803-1.599v-1c0-1.1-0.9-2-2-2h-11c-1.1,0-2,0.9-2,2v1c0,0.665,0.33,1.254,0.835,1.616
+                          c1.157,0.83,1.624,2.426,0.702,3.511c-0.087,0.102-0.184,0.2-0.29,0.292c-2.108,1.815-5.247,3.823-5.247,8.581v30.219
+                          c0,2.079,1.701,3.781,3.781,3.781h15.438c2.079,0,3.781-1.701,3.781-3.781V17.517C28.008,12.744,24.909,10.743,22.835,8.923z" />
+              <rect fill="#FFFFFF" x="5" y="27" width="23" height="24"></rect>
+              <path style="fill:#BBD7EA;" d="M24.228,52.017H8.789c-2.36,0-4.281-1.92-4.281-4.28v-30.22c0-4.47,2.607-6.625,4.701-8.357
+                          c0.249-0.205,0.49-0.405,0.72-0.603c0.085-0.074,0.164-0.153,0.236-0.237c0.365-0.43,0.395-0.902,0.355-1.223
+                          c-0.073-0.593-0.435-1.175-0.969-1.558c-0.653-0.47-1.043-1.226-1.043-2.022v-1c0-1.379,1.122-2.5,2.5-2.5h11
+                          c1.378,0,2.5,1.121,2.5,2.5v1c0,0.78-0.375,1.527-1.002,1.998c-0.542,0.408-0.884,1.033-0.913,1.672
+                          c-0.024,0.522,0.17,0.997,0.547,1.338l-0.305,0.398l0.33-0.376c0.23,0.203,0.474,0.407,0.725,0.618
+                          c2.058,1.729,4.618,3.883,4.618,8.352v30.22C28.508,50.097,26.588,52.017,24.228,52.017z M11.008,1.017
+                          c-0.827,0-1.5,0.673-1.5,1.5v1c0,0.476,0.234,0.929,0.626,1.21c0.757,0.543,1.272,1.384,1.378,2.248
+                          c0.09,0.734-0.119,1.441-0.587,1.993c-0.104,0.121-0.218,0.237-0.343,0.346C10.348,9.516,10.101,9.72,9.847,9.93
+                          c-2.033,1.682-4.338,3.588-4.338,7.587v30.22c0,1.809,1.472,3.28,3.281,3.28h15.438c1.809,0,3.281-1.472,3.281-3.28v-30.22
+                          c0-4.003-2.264-5.906-4.262-7.586c-0.256-0.216-0.505-0.425-0.741-0.632l-0.014-0.014l0.338-0.368l-0.35,0.358
+                          c-0.612-0.554-0.923-1.309-0.885-2.135c0.042-0.934,0.533-1.84,1.311-2.425c0.383-0.288,0.603-0.726,0.603-1.199v-1
+                          c0-0.827-0.673-1.5-1.5-1.5H11.008z" />
+            </g>
+            <path style="fill:#FAF5E5;" d="M22.996,5.658H10.021c-1.1,0-2-0.9-2-2V2c0-1.1,0.9-2,2-2h12.975c1.1,0,2,0.9,2,2v1.658
+                        C24.996,4.758,24.096,5.658,22.996,5.658z" />
+          </g>
+          <svg x="0">
+            <rect x="14.878" y="20.517" style="fill:#BBD7EA;" width="13.621" height="21.917" />
+            <svg x="-19">
+              <path style="fill:#8CC9EA;" d="M43.5,25.517c-0.552,0-1,0.447-1,1s0.448,1,1,1h4v-2H43.5z" />
+              <path style="fill:#8CC9EA;" d="M47.5,31.517h-6c-0.552,0-1,0.447-1,1c0,0.553,0.448,1,1,1h6V31.517z" />
+              <path style="fill:#8CC9EA;" d="M43.5,35.517c-0.552,0-1,0.447-1,1s0.448,1,1,1h4v-2H43.5z" />
+            </svg>
+          </svg>
+        </svg>
+        <svg id="green-tea" x="100" y="95" width="160" height="149" viewBox="0 0 512 512">
+          <path style="fill:#c1c5bf;" d="M430.793,382.056h-74.221c-5.039,0-9.837-2.147-13.194-5.903s-4.954-8.765-4.391-13.771
+              l23.485-208.714c1.007-8.951,8.578-15.717,17.585-15.717h50.883c44.697,0,81.061,36.364,81.061,81.061v81.837
+              C512,345.627,475.57,382.056,430.793,382.056z M376.37,346.665h54.422c25.264,0,45.816-20.553,45.816-45.816v-81.837
+              c0-25.182-20.487-45.669-45.669-45.669h-35.066L376.37,346.665z" />
+          <defs>
+            <clipPath id="bottle">
+              <path d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+              c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+              s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+            </clipPath>
+            <mask id="bottle-top">
+              <rect fill="#fff" width="420" height="500"></rect>
+              <rect fill="#000" width="420" height="200"></rect>
+            </mask>
+          </defs>
+          <path style="fill:rgba(224,224,224,0.5);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+          <rect fill="rgba(224,240,48,0.5)" width="420" height="500" clip-path="url(#bottle)" mask="url(#bottle-top)"></rect>
+          <path style="fill:rgba(0,0,0,0.05);" d="M406.425,26.752c-3.356-3.756-8.157-5.903-13.194-5.903h-159.46v470.303h110.526
+                c9.007,0,16.577-6.766,17.585-15.717l48.935-434.911C411.38,35.516,409.783,30.508,406.425,26.752z" />
+          <path stroke="#dedede" stroke-width="12" style="fill:rgba(255,255,255,0);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+        </svg>
+        <svg id="black-tea" x="240" y="95" width="160" height="149" viewBox="0 0 512 512">
+          <path style="fill:#c5bfbf;" d="M430.793,382.056h-74.221c-5.039,0-9.837-2.147-13.194-5.903s-4.954-8.765-4.391-13.771
+              l23.485-208.714c1.007-8.951,8.578-15.717,17.585-15.717h50.883c44.697,0,81.061,36.364,81.061,81.061v81.837
+              C512,345.627,475.57,382.056,430.793,382.056z M376.37,346.665h54.422c25.264,0,45.816-20.553,45.816-45.816v-81.837
+              c0-25.182-20.487-45.669-45.669-45.669h-35.066L376.37,346.665z" />
+          <defs>
+            <clipPath id="bottle">
+              <path d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+              c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+              s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+            </clipPath>
+            <mask id="bottle-top">
+              <rect fill="#fff" width="420" height="500"></rect>
+              <rect fill="#000" width="420" height="200"></rect>
+            </mask>
+          </defs>
+          <path style="fill:rgba(224,224,224,0.5);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+          <rect fill="rgba(192,64,0,0.75)" width="420" height="500" clip-path="url(#bottle)" mask="url(#bottle-top)"></rect>
+          <path style="fill:rgba(0,0,0,0.05);" d="M406.425,26.752c-3.356-3.756-8.157-5.903-13.194-5.903h-159.46v470.303h110.526
+                c9.007,0,16.577-6.766,17.585-15.717l48.935-434.911C411.38,35.516,409.783,30.508,406.425,26.752z" />
+          <path stroke="#dedede" stroke-width="12" style="fill:rgba(255,255,255,0);" d="M344.296,491.15H132.241c-8.785,0-16.24-6.445-17.509-15.137L66.363,144.992L2.9,48.25
+                c-3.566-5.437-3.865-12.392-0.775-18.113c3.09-5.722,9.069-9.288,15.571-9.288h375.535c5.037,0,9.837,2.147,13.194,5.903
+                s4.955,8.765,4.391,13.771l-48.935,434.911C360.875,484.384,353.305,491.15,344.296,491.15z" />
+        </svg>
+      </svg>
+      <svg id="drink-shop-robot" class="clickable" x="460" y="220" width="360" height="360" viewBox="0 0 360 360">
+        <image width="360" height="360" xlink:href="public/robot.png" />
+        <g id="drink-shop-robot-text" class="hidden-text" text-anchor="middle" alignment-baseline="central" font-family="Arial" font-size="40">
+          <text style="filter: url(#glow); fill: white" x="50%" y="50%">編輯程式</text>
+          <text x="50%" y="50%" style="fill:black;">編輯程式</text>
+        </g>
+      </svg>
+      <g id="drink-shop-front-desk">
+        <rect fill="#80DEEA" y="480" width="100%" height="240"></rect>
+        <rect fill="white" y="480" width="100%" height="60"></rect>
+        <polygon fill="#f4f4f4" points="0,480 1280,480 1240,465 40,465"></polygon>
+      </g>
+      <svg id="drink-shop-price-list" class="clickable" x="1000" y="275" width="150" height="200" viewBox="0 0 150 200">
+        <rect fill="#f8f8f8" width="100%" height="100%">
+        </rect>
+        <line x1="30" y1="30" x2="120" y2="30" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="50" x2="120" y2="50" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="70" x2="120" y2="70" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="90" x2="120" y2="90" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="110" x2="120" y2="110" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="130" x2="120" y2="130" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="150" x2="120" y2="150" style="stroke:#f0f0f0; stroke-width:5"></line>
+        <line x1="30" y1="170" x2="120" y2="170" style="stroke:#f0f0f0; stroke-width:5"></line>
+
+        <line x1="140" y1="-20" x2="-20" y2="140" style="stroke: white; stroke-width:30"></line>
+        <line x1="20" y1="220" x2="220" y2="20" style="stroke: white; stroke-width:20"></line>
+        <rect fill="rgba(0, 0, 0, 0)" width="100%" height="100%" stroke="#e7e7e7" stroke-width="15" stroke-alignment="inner" />
+
+        <text id="drink-shop-price-list-text" class="" x="50%" y="50%" fill="black" text-anchor="middle" alignment-baseline="central"
+          font-family="Arial" font-size="30">價目表</text>
+      </svg>
+    </svg>
+
+    <svg id="drink-shop-status" x="0" y="0" width="1280" height="1080">
+      <g>
+        <rect x="0" y="0" width="1280" height="180" fill="#f5f5f5"></rect>
+      </g>
+      <svg id="status-time-container" x="200" y="15" width="640" height="160" viewbox="20 0 440 96">
+        <g fill="rgb(80,70,180)">
+          <text x="50" y="18" class="fa-3x fa" alignment-baseline="text-before-edge">&#xf017;</text>
+          <text id="status-time-text" class="status-text" x="108" y="15" class="fa-3x" alignment-baseline="text-before-edge">02:18</text>
+        </g>
+      </svg>
+      <svg id="status-money-container" x="640" y="15" width="640" height="160" viewbox="20 0 440 96">
+        <g fill="rgb(30,130,60)">
+          <text x="60" y="30" class="fa" alignment-baseline="text-before-edge" style="font-size: 1.5em;">&#xf155;</text>
+          <circle cx="67" cy="42.4" r="17.8" stroke="rgb(30,130,60)" stroke-width="5.9" fill="rgba(0,0,0,0)"></circle>
+          <text id="status-money-text" class="status-text" x="105" y="15" class="fa-3x" alignment-baseline="text-before-edge">$32,800</text>
+        </g>
+      </svg>
+      <svg x="300" y="165">
+        <rect width="680" height="84" fill="white"></rect>
+        <rect x="14" y="0" width="652" height="70" fill="#f9f998"></rect>
+      </svg>
+    </svg>
+    
+  </svg>
+</body>
+
+</html>
+<!-- <g><text x="0" y="0" class="fa-2x" alignment-baseline="text-before-edge">&#xf0c6;</text></g> -->

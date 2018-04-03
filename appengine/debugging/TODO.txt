@@ -1,0 +1,5 @@
+- Header 的 [Blockly Games: 除錯大師] 改成 [Debugamo: 幫幫迪摩]
+
+- debugging / template.soy 的 .messages 可拿掉?
+
+- 

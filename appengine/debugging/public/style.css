@@ -1,0 +1,385 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+    background-color: #f2f2f2;
+}
+
+#title {
+    color: #fff;
+}
+
+#title a {
+    color: #fff
+}
+
+#languageMenu {
+    /*display: none;*/
+    font-size: 12px;
+}
+
+#sampleOneTopBlock {
+    height: 80px;
+    width: 250px;
+}
+
+.helpMenuFake {
+    border-radius: 4px;
+    background-color: #bfcdde;
+    color: #000;
+    padding: 0 1ex;
+    cursor: default;
+}
+
+img[src$="help_up.png"] {
+    margin: -20px 10px 0;
+    height: 64px;
+    width: 23px;
+}
+
+img[src$="help_down.png"] {
+    margin: 0 10px -20px;
+    height: 64px;
+    width: 23px;
+}
+
+
+
+
+
+/* Buttons */
+
+button.primary {
+    /* Can't use "text-align: start" due to IE. */
+    text-align: center;
+}
+
+html[dir="RTL"] button.primary {
+    text-align: right;
+}
+
+
+
+
+
+/* Sprited icons. */
+
+.icon21 {
+    height: 21px;
+    width: 21px;
+    background-image: url(icons.png);
+}
+
+.link {
+    background-position: 0px 0px;
+}
+
+.header {
+    padding: 0 5px;
+    background-color: #00adbc;
+    height: 50px;
+}
+
+
+/*#runButtonWrapper {
+  width: 35vw;
+  text-align: center;
+  position: absolute;
+  bottom: 30px;
+  right: 0;
+}
+*/
+
+.clickable {
+    cursor: pointer;
+}
+
+.black-text-with-shadow {
+    text-shadow: 4px rgba(255, 255, 255, 0.75);
+}
+
+#drink-shop-game-container {
+    /*width: 100vw;*/
+    /*height: 100vh;*/
+    background-color: #f2f2f2;
+}
+
+#drink-shop-left-container {
+    /* to calc */
+    width: 35vw;
+    /*height: calc(100vh - 58px);*/
+    /*overflow: scroll;*/
+    background-color: #f2f2f2;
+    position: relative;
+    display: inline-block;
+}
+
+#canvas-container {
+    width: calc(34vw - 37px);
+    height: calc(34vw - 35px);
+    position: relative;
+    left: 25px;
+    top: 10px;
+}
+
+#playground {
+    /*width: 100%;*/
+    /*height: 100%;*/
+    border: 1px solid #DBDBDB;
+}
+
+#game-buttons {
+    padding: 14px 25px;
+}
+
+#game-buttons button {
+    padding: 10px 14px;
+    font-size: 18px;
+}
+
+#runButton {
+    margin-right: 16px;
+}
+
+#game-buttons #stepButton {
+    padding: 10px 20px;
+    display: none;
+}
+
+#resetButton {
+    float: right;
+    display: none;
+}
+
+#mission-goal-container {
+    padding: 10px;
+}
+
+#mission-goal-box {
+    /*height: 100%;*/
+    /*width: 100%;*/
+    /*border: 1px solid #000;*/
+}
+
+#drink-shop-right-container {
+    /* to calc */
+    width: 65vw;
+    height: calc(100vh - 50px);
+    position: absolute;
+    right: 0;
+    display: inline-block;
+    padding-right: 25px;
+}
+
+#mission-guide-container {
+    height: 110px;
+    padding-top: 10px;
+}
+
+#mission-guide-box {
+    height: 100%;
+    width: 100%;
+    background-color: rgb(221, 221, 221);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#robot-quide-icon {
+    display: inline-block;
+    position: relative;
+    top: 26px;
+    left: 13px;
+    vertical-align: top;
+}
+
+#robot-quide-icon img {
+    max-width: 64px;
+}
+
+#box-arrow {
+    position: absolute;
+    left: 84px;
+    top: 47px;
+}
+
+#inner-box {
+    background-color: white;
+    border-radius: 10px;
+    margin: 10px 0px;
+    padding: 10px 0px 23px 15px;
+    position: relative;
+    border-style: dashed;
+    border-width: 1px;
+    border-color: white;
+    display: inline-block;
+    left: 45px;
+    top: 2px;
+    width: calc(64vw - 135px);
+    max-height: 80px;
+    overflow: hidden;
+    line-height: 21px;
+}
+
+#codeModeHeaders {
+    height: 30px;
+    background-color: rgb(118, 101, 160);
+    color: #fff;
+}
+
+#codeModeHeaders div {
+    display: inline-block;
+    font-size: 14px;
+}
+
+#toolbox-header {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+    border-right: 1px solid gray;
+}
+
+#workspace-header {
+    text-align: center;
+    height: 30px;
+    line-height: 30px;
+}
+
+#drink-shop-code-editor-container {
+    position: relative;
+    height: calc(100vh - 200px);
+}
+
+#drink-shop-code-editor {
+    position: relative;
+    height: calc(100vh - 200px);
+}
+
+#blockly {
+    position: relative;
+    height: calc(100vh - 200px);
+}
+
+.blocklyMainBackground {
+    stroke: none;
+}
+
+.show-hide-code-editor-button {
+    background-color: white;
+    color: #404040;
+    border-radius: 8px 0 0 8px;
+    padding: 8px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#drink-shop-code-editor .blocklyFlyout,
+#drink-shop-code-editor .blocklyFlyoutScrollbar {
+    z-index: 0;
+}
+
+.level_dot {
+    border: solid 2px rgb(198, 202, 205);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    background-color: rgb(254, 254, 254);
+}
+
+button {
+    padding: 7px;
+}
+
+.levelWraper {
+    display: inline-block;
+    border: 1px solid rgb(198, 202, 205);
+    border-radius: 5px;
+    background-color: rgb(231, 232, 234);
+    padding: 8px 10px 8px 0;
+    margin-left: 15px;
+}
+
+.leftSide {
+    display: block;
+    width: calc(100vw - 50px);
+    padding: 5px 0;
+    text-align: center;
+}
+
+.leftSide a {
+    text-decoration: none;
+}
+
+.level_number {
+    border: solid 2px rgb(198, 202, 205);
+    padding: 3px 6px;
+    background-color: rgb(254, 254, 254);
+    color: rgb(91, 103, 112);
+    font-family: "Gotham 5r", sans-serif;
+    font-weight: 900;
+}
+
+.level_done {
+    border: solid 2px rgb(198, 202, 205);
+    padding: 2px 9px;
+    background-color: rgb(178, 255, 255);
+    color: rgb(91, 103, 112);
+    font-family: "Gotham 5r", sans-serif;
+    font-weight: 900;
+}
+
+.rightSide {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.rightSide button {
+    margin: 7px 7px 0 3px;
+}
+
+#linkButton {
+    display: none;
+}
+
+.hint-img {
+    display: block;
+    margin: 15px auto;
+    border: 1px solid #eee;
+}
+
+.svg-clock-circle {
+    stroke: #9C27B0;
+    stroke-width: 1;
+    fill: #E1BEE7;
+}
+
+.svg-clock-line {
+    stroke: #9C27B0;
+    stroke-width: 1;
+    stroke-linecap: round;
+}
+
+.svg-scoring-board-text {
+    alignment-baseline: middle;
+    font-size: 7px;
+}
+
+.svg-text-normal {
+    fill: #404040;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+svg text .fa {
+    font-family: FontAwesome;
+}
+
+.status-text {
+    font-family: monospace;
+    font-size: 3.5em;
+}
