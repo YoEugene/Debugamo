@@ -146,14 +146,14 @@ html[dir="RTL"] button.primary {
     margin-right: 16px;
 }
 
-#game-buttons #stepButton {
-    padding: 10px 20px;
+#resetButton {
     display: none;
 }
 
-#resetButton {
-    float: right;
+#stepButton {
+    padding: 10px 20px;
     display: none;
+    float: right;
 }
 
 #mission-goal-container {

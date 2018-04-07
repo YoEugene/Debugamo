@@ -213,16 +213,15 @@
     <button id="runButton" class="primary" title="{msg meaning="DrinkShop_runTooltip" desc="tooltip - Pressing this button runs the computer program the user has written to move the robot."}Makes the robot do what the blocks say.{/msg}">
       <span>&#9658; {msg meaning="Games.runProgram" desc="IBID"}Run Program{/msg}</span>
     </button>
-    <button id="stepButton" class="primary" title="{msg meaning="DrinkShop_stepTooltip" desc="tooltip - Pressing this button steps the computer program the user has written to move the robot."}Makes the robot do what one blocks say.{/msg}">
-      <span>{msg meaning="Games.stepProgram" desc="Step in program for one block"}Step{/msg}</span>
-    </button>
     <button id="resetButton" class="warning" title="{msg meaning="DrinkShop_resetTooltip" desc="tooltip - Pressing this button to restart the game."}Undo what the robot has done.{/msg}">
       <span>&#8634; {msg meaning="Games.resetProgram" desc="IBID"}Reset{/msg}</span>
+    </button>
+    <button id="stepButton" class="primary" title="{msg meaning="DrinkShop_stepTooltip" desc="tooltip - Pressing this button steps the computer program the user has written to move the robot."}Makes the robot do what one blocks say.{/msg}">
+      <span>{msg meaning="Games.stepProgram" desc="Step in program for one block"}Step{/msg}</span>
     </button>
   </div>
   <div class="uk-hidden">
     <button class="warning uk-margin-left" onclick="Debugging.UI.drawGrid()"><span>drawGrid</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.resetGrid()"><span>resetGrid</span></button>
     <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('r')"><span>Right</span></button>
     <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('l')"><span>Left</span></button>
     <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('u')"><span>Up</span></button>

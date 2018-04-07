@@ -27,6 +27,9 @@ All code is free and open source.
         * check "Use slow uncompressed code. (Hackers only.)"
 * Deploy to Google Cloud
     * $ cd appengine
+    * 第一次使用需:
+    * $ gcloud init
+    * 之後只需要:
     * $ gcloud app deploy
 
 ## 被修改的blockly-games的code，最好之後能改回來

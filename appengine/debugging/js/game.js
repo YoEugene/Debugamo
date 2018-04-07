@@ -48,7 +48,7 @@ Game.reset = function() {
  */
 
 Game.getRobotPos = function() {
-    return UI.robotPos;
+    return UI.robot.position;
 };
 
 Game.errorMessage = function(cmdKey, msgKey) {
