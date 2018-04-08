@@ -122,6 +122,8 @@ Scope.init = function() {
     BlocklyGames.bindClick('runButton', Scope.runButtonClick);
     BlocklyGames.bindClick('resetButton', Scope.resetButtonClick);
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
+    BlocklyGames.bindClick('guidePreviousButton', Scope.UI.showPreviousGuide);
+    BlocklyGames.bindClick('guideNextButton', Scope.UI.showNextGuide);
     // BlocklyGames.bindClick('drink-shop-price-list', Scope.showPrice);
     BlocklyGames.bindClick('saveButton', BlocklyInterface.saveToLocalStorage);
 
@@ -139,7 +141,7 @@ Scope.init = function() {
     var k = new Kibo();
 
     k.down(['right','left','up','down'], function(e){
-        Debugging.UI.animateRobot(e.key[5].toLowerCase());
+        Debugging.UI.moveRobot(e.key[5].toLowerCase());
     });
 
 };

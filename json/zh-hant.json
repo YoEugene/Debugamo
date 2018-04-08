@@ -1,14 +1,9 @@
 {
 	"@metadata": {
-		"authors": [
-			"Gasolin",
-			"Justincheng12345",
-			"Liuxinyu970226",
-			"LNDDYL",
-			"Kasimtan",
-			"Kly",
-			"Maskers"
-		]
+		"author": "Eugene Yu-Chun Hsu <yoeugene.hsu@gmail.com>"
+
+
+		
 	},
 	"Games.name": "Debugamo",
 	"Games.puzzle": "拼圖",
@@ -18,7 +13,6 @@
 	"Games.movie": "影片",
 	"Games.pondTutor": "池塘導師",
 	"Games.pond": "池塘",
-	"Games.debugging": "幫幫迪摩",
 	"Games.genetics": "遺傳",
 	"Games.linesOfCode1": "您僅使用一行JavaScript通過這關：",
 	"Games.linesOfCode2": "您使用%1行JavaScript通過這關：",
@@ -28,7 +22,7 @@
 	"Games.runTooltip": "執行您寫的程式。",
 	"Games.runProgram": "運行",
 	"Games.stepProgram": "步進",
-	"Games.resetProgram": "重新開始",
+	"Games.resetProgram": "重置",
 	"Games.resetTooltip": "停止程式並重新開始關卡。",
 	"Games.help": "說明",
 	"Games.dialogOk": "確定",
@@ -56,7 +50,6 @@
 	"Index.moreInfo": "更多資訊...",
 	"Index.startOver": "想重新開始嗎?",
 	"Index.clearData": "清空數據",
-
 	"DrinkShop_getNewCup": "拿取一個新杯子",
 	"DrinkShop_fillCupWith": "在杯中裝滿",
 	"DrinkShop_fillCupWithVolume": "在杯中裝入",
@@ -90,13 +83,18 @@
 	"DrinkShop_msg_noCup": "手中沒有杯子。",
 	"DrinkShop_msg_cupCovered": "杯子已經被蓋住。",
 	"DrinkShop_msg_drinkOverflow": "飲料已經裝滿了。",
-
-
 	"Debugging_msg_noGoal": "沒有抵達目標位置。",
-
+	"Games.debugging": "幫幫迪摩",
 	"Debugging.hint": "提示",
-	"Debugging.save": "存檔",
 	"Debugging.guide": "導覽",
+	"Debugging.save": "存檔",
+	"DrinkShop_runTooltip": "讓迪摩機器人執行積木的動作",
+	"DrinkShop_resetTooltip": "重置機器人做過的動作",
+	"DrinkShop_stepTooltip": "讓迪摩機器人執行「一個積木」的動作",
+	"Debugging_nextGuide": "顯示下一段任務訊息",
+	"Debugging.nextGuide": "更多",
+	"Debugging_previousGuide": "顯示前一段任務訊息",
+	"Debugging.previousGuide": "往前",
 	"Debugging.toolboxHeader": "程式積木",
 	"Debugging.workspaceHeader": "Debug 工作區",
 	"Debugging.helpText1": "注意在計算過程中，「杯數」這個變數怎麼被使用",

@@ -379,7 +379,7 @@ Blockly.JavaScript['Move_Robot'] = function(block) {
     var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
     var code = ""
     for (var i = 0; i < num; i++) {
-        code += 'animateRobot("' + direction +'");\n';
+        code += 'moveRobot("' + direction +'");\n';
     }
     return code;
 }

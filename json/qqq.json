@@ -92,6 +92,10 @@
 	"DrinkShop_resetTooltip": "tooltip - Pressing this button to restart the game.",
 	"DrinkShop_stepTooltip": "tooltip - Pressing this button steps the computer program the user has written to move the robot.",
 	"Games.stepProgram": "Step in program for one block",
+	"Debugging_previousGuide": "Pressing this button to show previous paragraph of mission guide text.",
+	"Debugging.previousGuide": "Show previous paragraph of guide text",
+	"Debugging_nextGuide": "Pressing this button to show next paragraph of mission guide text.",
+	"Debugging.nextGuide": "Show next paragraph of guide text",
 	"Debugging.toolboxHeader": "block toolbox header",
 	"Debugging.workspaceHeader": "workspace header"
 }

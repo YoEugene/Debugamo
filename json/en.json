@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2018-04-07 21:26:27.883320",
+		"lastupdated": "2018-04-08 15:08:37.423074",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -98,6 +98,10 @@
 	"DrinkShop_resetTooltip": "Undo what the robot has done.",
 	"DrinkShop_stepTooltip": "Makes the robot do what one blocks say.",
 	"Games.stepProgram": "Step",
+	"Debugging_previousGuide": "Show previous guide text",
+	"Debugging.previousGuide": "previous",
+	"Debugging_nextGuide": "Show next guide text",
+	"Debugging.nextGuide": "next",
 	"Debugging.toolboxHeader": "Blocks",
 	"Debugging.workspaceHeader": "Debug Workspace"
 }

@@ -245,14 +245,22 @@
 {template .missionGuide}
   <div id="mission-guide-container">
     <div id="mission-guide-box">
-      <div id="robot-quide-icon">
+      <div id="robot-guide-icon">
         <img src="debugging/public/img/robot2.png"></img>
       </div>
       <svg id="box-arrow" height="30" width="30">
         <polyline points="25,25 5,25 25,5" stroke-dasharray="3,3" style="stroke: white; stroke-width: 1; fill: white;"></polyline>
       </svg>
       <div id="inner-box">
-        <p>遠方傳來「喵～喵～喵～」的聲音...原來是一隻小貓！我應該可以透過我的積木邏輯，移動到牠的位置，拯救這隻小貓。</p>
+        <p></p>
+      </div>
+      <div id="mission-guide-button">
+        <button id="guidePreviousButton" title="{msg meaning="Debugging_previousGuide" desc="Pressing this button to show previous paragraph of mission guide text."}Show previous guide text{/msg}">
+          <span>{msg meaning="Debugging.previousGuide" desc="Show previous paragraph of guide text"}previous{/msg}</span>
+        </button>
+        <button id="guideNextButton" title="{msg meaning="Debugging_nextGuide" desc="Pressing this button to show next paragraph of mission guide text."}Show next guide text{/msg}">
+          <span>{msg meaning="Debugging.nextGuide" desc="Show next paragraph of guide text"}next{/msg}</span>
+        </button>
       </div>
     </div>
   </div>

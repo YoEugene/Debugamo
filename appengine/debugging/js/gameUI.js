@@ -19,7 +19,7 @@ var level = {};
 // window.requestAnimationFrame = requestAnimationFrame;
 
 UI.init = function(shopState) {
-    Levels = Debugging.Levels;
+    Levels = $.extend({}, Debugging.Levels);
     level = $.extend({}, Levels[BlocklyGames.LEVEL - 1]);
     UI.robot = $.extend({}, level.robot);
 
@@ -28,29 +28,32 @@ UI.init = function(shopState) {
     UI.dom = {};
 
     UI.animationInProgress = false;
+    UI.missionGuideInd = 0;
     UI.images = {};
     UI.drawGrid($('#playground')[0], false);
     // UI.getImage('unknown.default');
+    $('#guidePreviousButton').hide();
+    console.log(level.missionGuideDescription[0]);
+    $('#inner-box').find('p').html(level.missionGuideDescription[0]);
 };
 
 UI.reset = function() {
     UI.animationInProgress = false;
-    Levels = Debugging.Levels;
+    Levels = $.extend({}, Debugging.Levels);
     level = $.extend({}, Levels[BlocklyGames.LEVEL - 1]);
     UI.robot = $.extend({}, level.robot);
-    
-    UI.drawGrid($('#playground')[0], false);
+
+    UI.updateRuntimeUserInterface();
 };
 
 // JUSTTT FORRRRRR TESTTTTTTTT DELETE IT
 UI.drawGrid = function(cvs, isAnimation) {
-    // console.log('draw grid ========');
 
     ctx = cvs.getContext("2d");
     var robotPos = UI.robot.position;
     var specialGrndInd = level.specialGrndInd;
     var specialGrndName = level.specialGrndName;
-    
+
     var grndImg = UI.getImage(level.ground);
     if (!grndImg) grndImg = UI.getImage('unknown.default');
 
@@ -62,13 +65,12 @@ UI.drawGrid = function(cvs, isAnimation) {
         for (var i = 0; i < level.mapSize; i++) {
             for (var j = 0; j < level.mapSize; j++) {
                 // If animation is not in progress, draw anyway; if is in progress, draw only the grids beside robot
-                if (!isAnimation || (Math.floor(Math.abs(robotPos[0] - i)) <= 1 && Math.floor(Math.abs(robotPos[1] - j)) <= 1 )) {
+                if (!isAnimation || (Math.floor(Math.abs(robotPos[0] - i)) <= 1 && Math.floor(Math.abs(robotPos[1] - j)) <= 1)) {
                     var tmp = specialGrndInd.indexOfForArrays([i, j]);
                     if (tmp == -1) {
                         ctx.drawImage(grndImg, imgw * i, imgw * j, imgw, imgw);
                         ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                     } else {
-                        console.log(specialGrndName[tmp]);  
                         var specialImg = UI.getImage(specialGrndName[tmp]);
                         if (!specialImg) specialImg = UI.getImage('unknown.default');
                         ctx.drawImage(specialImg, imgw * i, imgw * j, imgw, imgw);
@@ -80,70 +82,72 @@ UI.drawGrid = function(cvs, isAnimation) {
             }
         }
     }
-    
-    UI.drawRobot();
+
+    UI.drawThings();
 }
 
-UI.drawRobot = function() {
-    // console.log('draw robot');
+UI.drawThings = function(thing_name) {
+
+    if (!isDef(thing_name)) {
+        var i;
+        for (i = 0; i < level.thingsInd.length; i++) {
+            var thingPos = level.thingsInd[i];
+            var thingName = level.thingsName[i];
+            level[thingName] = { position: thingPos, img: thingName };
+            UI.drawThings(thingName);
+        }
+
+        UI.drawThings('robot');
+
+        return;
+    }
+
+    if (thing_name == 'robot')
+        var thing = UI.robot;
+    else
+        var thing = level[thing_name];
+
     cvs = $('#playground')[0];
     ctx = cvs.getContext("2d");
     var size_of_map = level.mapSize;
     var imgw = cvs.width / size_of_map;
-    var img = UI.getImage('robot2');
-    if(!img) img = UI.getImage('unknown.default');
-    // var imgGoal = UI.getImage('kitten.default')
-    // img.src = "/debugging/public/img/robot2.png";
-    // imgGoal.src = "/debugging/public/img/kitten.default.png";
+    var img = UI.getImage(thing.img);
+    if (!img) img = UI.getImage('unknown.default');
 
     if (!!img) {
-        if (UI.animationInProgress) {
-            ctx.drawImage(img, imgw * UI.robot.position[0], imgw * UI.robot.position[1], imgw, imgw);
-        }
-        else {
-            ctx.drawImage(img, imgw * UI.robot.position[0], imgw * UI.robot.position[1], imgw, imgw);
-        }
+        ctx.drawImage(img, imgw * thing.position[0], imgw * thing.position[1], imgw, imgw);
     }
-    
+
 }
 
 UI.getImage = function(label) {
-
-    // console.log(label + ' =================');    
 
     // If this has already been checked, return what's there.
     if (this.images.hasOwnProperty(label)) {
         return this.images[label];
     }
-    
+
     // For now, mark it as false.
     this.images[label] = false;
 
-    $.ajax({ url: "debugging/public/img/" + label + ".png", context: this, 
-        success: function(){
+    $.ajax({
+        url: "debugging/public/img/" + label + ".png",
+        context: this,
+        success: function() {
             // An image has loaded! Create the image, cache it, and update the UI.
-            console.log(UI);
             var image = new Image();
-            // Only once the image has loaded do we store it and update the image in the database; this is because sometimes local AJAX requests lie.
-            // Moreover, we set the callback first, then the source, because sometimes the callback gets called asynchronously before the callback is set
-            // when we define the source first.
-            image.onload = function () {
+            // we update the interface after AJAX returns its result
+            image.onload = function() {
                 UI.images[label] = image;
                 UI.updateRuntimeUserInterface();
                 console.log('onload finished');
             };
             image.src = "debugging/public/img/" + label + ".png";
 
-            console.log('getImage ajax success.');
-
-            
-            // return image;
-
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-        
+
             // Mark this name as not existing
-            // this.images[label] = false;
             this.images[label] = false;
 
         }
@@ -177,7 +181,7 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
             return;
         } else if (direction == 'd' && UI.robot.position[1] == (size_of_map - 1)) {
             return;
-        }   
+        }
 
         if (direction == 'r' || direction == 'l')
             posIndex = 0;
@@ -208,13 +212,31 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
 
 // requestAnimationFrame(UI.animate);
 
-UI.animateRobot = function(direction) {
+UI.moveRobot = function(direction) {
     console.log('animate!');
     if (UI.animationInProgress)
         return;
     else {
         UI.animate($('#playground')[0], 0, direction, 5, 10);
     }
+}
+
+UI.showPreviousGuide = function() {
+    UI.missionGuideInd -= 1;
+    $('#inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
+    if (!isDef(level.missionGuideDescription[UI.missionGuideInd - 1])) {
+        $('#guidePreviousButton').hide();
+    }
+    $('#guideNextButton').show();
+}
+
+UI.showNextGuide = function() {
+    UI.missionGuideInd += 1;
+    $('#inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
+    if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
+        $('#guideNextButton').hide();
+    }
+    $('#guidePreviousButton').show();
 }
 
 Array.prototype.indexOfForArrays = function(search) {
