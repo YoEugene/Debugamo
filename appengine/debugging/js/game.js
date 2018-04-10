@@ -8,7 +8,7 @@ goog.provide('Debugging.Game');
 
 goog.require('Blockly.JavaScript');
 goog.require('Debugging.UI');
-goog.require('Debugging.Game.Levels');
+goog.require('Debugging.Levels');
 
 var Game = Debugging.Game;
 
@@ -20,9 +20,8 @@ Game.levels
 
 Game.init = function(level) {
     Game.things = {};
-    Game.levelConfig = Debugging.Game.Levels[level];
-    Game.things.robot = $.extend({}, Game.levelConfig.robot);
-    UI.init()
+    Game.things.robot = $.extend({}, Levels[level].robot);
+    UI.init();
 };
 
 Game.reset = function() {
@@ -62,5 +61,32 @@ Game.commands.moveRobot = function(direction, numOfMove) {
     var i;
     for (i = 0; i < numOfMove - 1; i++) {
         setTimeout(function() { Game.commands.moveRobot(direction, numOfMove-1); }, 150);
+    }
+}
+
+Game.commands.robotGrab = function(thing) {
+    if (Game.things[thing].position[0] == Game.things.robot.position[0] && Game.things[thing].position[1] == Game.things.robot.position[1]) {
+        Game.things.robot.grab.push(thing);
+        Game.things.robot.img = "robot1";
+        UI.drawGrid($('#playground')[0], false);
+        UI.drawThings(thing);
+    } else {
+        window.alert("DeMo can only grab a thing with same position :(");
+        return;
+    }
+}
+
+Game.commands.robotDrop = function(thing) {
+    if (Game.things.robot.grab.indexOf(thing) != -1) {
+        var ind = Game.things.robot.grab.indexOf(thing);
+        Game.things.robot.grab.splice(ind, 1);
+        if (Game.things.robot.grab.length == 0) {
+            Game.things.robot.img = "robot2";
+            UI.drawGrid($('#playground')[0], false);
+            UI.drawThings('robot');
+        }
+    } else {
+        window.alert("Robot haven't grab " + thing + " yet.")
+        return;
     }
 }

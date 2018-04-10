@@ -374,12 +374,66 @@ Blockly.Blocks['Move_Robot'] = {
     }
 };
 
+Blockly.Blocks['Robot_Grab'] = {
+    init: function() {
+        this.jsonInit({
+          "type": "robot_grab",
+          "message0": "拿起 %1",
+          "args0": [
+            {
+              "type": "field_input",
+              "name": "GRAB_NAME",
+              "text": "物品名稱"
+            }
+          ],
+          "previousStatement": null,
+          "nextStatement": null,
+          "colour": 230,
+          "tooltip": "",
+          "helpUrl": ""
+        })
+    }
+};
+
+Blockly.Blocks['Robot_Drop'] = {
+    init: function() {
+        this.jsonInit({
+          "type": "robot_drop",
+          "message0": "放下 %1",
+          "args0": [
+            {
+              "type": "field_input",
+              "name": "DROP_NAME",
+              "text": "物品名稱"
+            }
+          ],
+          "previousStatement": null,
+          "nextStatement": null,
+          "colour": 230,
+          "tooltip": "",
+          "helpUrl": ""
+        })
+    }
+};
+
 Blockly.JavaScript['Move_Robot'] = function(block) {
     var direction = block.getFieldValue('DIRECTION')[0].toLowerCase();
     var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
     var code = 'moveRobot("' + direction +'", ' + num + ');\n';
     return code;
 }
+
+Blockly.JavaScript['Robot_Grab'] = function(block) {
+    var thing_name = block.getFieldValue('GRAB_NAME');
+    var code = 'robotGrab("' + thing_name +'");\n';
+    return code;
+};
+
+Blockly.JavaScript['Robot_Drop'] = function(block) {
+    var thing_name = block.getFieldValue('DROP_NAME');
+    var code = 'robotDrop("' + thing_name +'");\n';
+    return code;
+};
 
 Blockly.JavaScript['DrinkShop_fillCupWith'] = function(block) {
     var drink_str = block.getFieldValue('drink_dropdown');
@@ -417,7 +471,6 @@ Blockly.JavaScript['DrinkShop_fillCupWithVolume'] = function(block) {
     var material = block.getFieldValue('MATERIAL');
     var volume = Blockly.JavaScript.valueToCode(block, 'VOLUME',
         Blockly.JavaScript.ORDER_COMMA) || 0;
-    console.log(volume);
     return 'fillCupWithVolume("' + material + '", ' + volume + ');\n';
 };
 

@@ -13,7 +13,7 @@ goog.require('BlocklyInterface');
 goog.require('Debugging.Blocks');
 goog.require('Debugging.Game');
 goog.require('Debugging.UI');
-goog.require('Debugging.Game.Levels');
+goog.require('Debugging.Levels');
 goog.require('Debugging.soy');
 
 BlocklyGames.NAME = 'debugging';
@@ -21,7 +21,7 @@ BlocklyGames.NAME = 'debugging';
 var Scope = Debugging;
 
 Scope.MAX_STEPS = 10000;
-Scope.STEP_SPEED = 100;
+Scope.STEP_SPEED = 90;
 
 BlocklyInterface.nextLevel = function() {
     if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
@@ -70,9 +70,9 @@ Scope.init = function() {
 
     /* Init Blockly */
     var toolbox = document.getElementById('toolbox');
-    var scale = Scope.Game.Levels[BlocklyGames.LEVEL].scale || 1;
+    var scale = Levels[BlocklyGames.LEVEL].scale || 1;
     // init blocks
-    var blockIds = Scope.Game.Levels[BlocklyGames.LEVEL].blockIds;
+    var blockIds = Levels[BlocklyGames.LEVEL].blockIds;
     blockIds.forEach(function(blockId) {
         var block = document.getElementById(blockId);
         toolbox.appendChild(block);
@@ -101,7 +101,7 @@ Scope.init = function() {
 
     var done = JSON.parse(window.localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
     if (!done) {
-        BlocklyInterface.saveToLocalStorage(Game.Levels[BlocklyGames.LEVEL].defaultBlocks);
+        BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
     }
 
     // load defualt blocks or load stored blocks from Local Storage / Session Storage / DB
@@ -257,7 +257,9 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // when the code is fully executed, check if the user passes the level
         else {
-            if (Game.Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+            if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+                Game.things.robot.img = 'robot4';
+                UI.drawGrid($('#playground')[0], false);
                 BlocklyInterface.saveToLocalStorage();
                 BlocklyDialogs.congratulations();
                 var done = JSON.parse(window.localStorage.done);

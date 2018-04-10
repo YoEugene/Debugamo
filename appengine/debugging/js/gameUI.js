@@ -6,28 +6,30 @@
 
 goog.provide('Debugging.UI');
 
-goog.require('Debugging.Game.Levels');
+goog.require('Debugging.Levels');
 goog.require('Blockly');
 goog.require('BlocklyGames');
 
 var UI = Debugging.UI;
+
 var level = {}, robot = {};
 // var robot.position = [0, 0];
 // var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 // window.requestAnimationFrame = requestAnimationFrame;
 
 UI.init = function() {
-    level = $.extend(true, {}, Debugging.Game.Levels[BlocklyGames.LEVEL]);
-    robot = Debugging.Game.things.robot;
+    level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
 
-    // ?
-    UI.drawn = {};
-    UI.dom = {};
+    // 
 
-    UI.animationInProgress = false;
+
     UI.missionGuideInd = 0;
     UI.images = {};
     UI.getImage('unknown.default');
+    UI.getImage('robot1');
+    UI.getImage('robot2');
+    UI.getImage('robot3');
+    UI.getImage('robot4');
     UI.drawGrid($('#playground')[0], false);
     // UI.getImage('unknown.default');
     if (window.localStorage.hasOwnProperty('avatar'))
@@ -38,16 +40,21 @@ UI.init = function() {
     if (window.localStorage.newPlayer == "1") {
         Debugging.showNewPlayerText()
     }
+
+    UI.reset();
+
+    Debugging.Game.things.robot = robot;
 };
 
 UI.reset = function() {
-    UI.animationInProgress = false;
     // deep copy of object
-    level = $.extend(true, {}, Debugging.Game.Levels[BlocklyGames.LEVEL]);
+    level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
     // deep copy of array
-    robot.position = Debugging.Game.Levels[BlocklyGames.LEVEL].robot.position.slice();
+    robot = $.extend(true, {}, level.robot);
     // deep copy of array
-    robot.grab = Debugging.Game.Levels[BlocklyGames.LEVEL].robot.grab.slice();
+    // robot.grab = Debugging.Levels[BlocklyGames.LEVEL].robot.grab.slice();
+
+    Debugging.Game.things.robot = robot;
 
     UI.updateRuntimeUserInterface();
 };
@@ -56,8 +63,6 @@ UI.setAvatar = function(avatar) {
     window.localStorage.setItem('avatar', avatar);
     window.localStorage.setItem('newPlayer', '0');
     $('#player-avatar').attr('src', 'debugging/public/img/' + avatar);
-
-    console.log($('#player-avatar')[0].src);
 }
 
 // JUSTTT FORRRRRR TESTTTTTTTT DELETE IT
@@ -95,16 +100,20 @@ UI.drawGrid = function(cvs, isAnimation) {
                         ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                     }
 
-                    var tmp2 = indexOfForArrays([i, j], level.thingsInd);
-                    if (tmp2 != -1) {
-                        var thingImg = UI.getImage(level.thingsName[tmp2]);
-                        if (!thingImg) thingImg = UI.getImage('unknown.default');
-                        try {
-                            ctx.drawImage(thingImg, imgw * i, imgw * j, imgw, imgw);
-                        } catch(e) { console.log('unknown.default image not loaded yet');}
-                        ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
-                        // console.log('draw ' + level.thingsName[tmp2]);
+                    var k;
+                    for (k = 0; k < level.thingsInd.length; k++) {
+                        // there is level.thingsName[k] at position [i, j]
+                        if (i == level.thingsInd[k][0] && j == level.thingsInd[k][1]) {
+                            var thingImg = UI.getImage(level.thingsName[k]);
+                            if (!thingImg) thingImg = UI.getImage('unknown.default');
+                            try {
+                                ctx.drawImage(thingImg, imgw * i, imgw * j, imgw, imgw);
+                            } catch(e) { console.log('unknown.default image not loaded yet');}
+                            ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
+                            // console.log('draw ' + level.thingsName[tmp2]);
+                        }
                     }
+                    
 
                     // console.log('draw grid ' + i + ', ' + j);
                 }
@@ -121,7 +130,6 @@ UI.drawGrid = function(cvs, isAnimation) {
 }
 
 UI.drawThings = function(thing_name) {
-
     if (!isDef(thing_name)) {
         var i;
         for (i = 0; i < level.thingsInd.length; i++) {
@@ -139,7 +147,7 @@ UI.drawThings = function(thing_name) {
     // console.log('draw ' + thing_name);
 
     if (thing_name == 'robot')
-        var thing = robot;
+        var thing = Game.things.robot;
     else
         var thing = Game.things[thing_name];
 
@@ -202,7 +210,6 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
     var ctx = cvs.getContext('2d');
 
     if (percentFinished >= 100) {
-        UI.animationInProgress = false;
         return;
     }
 
@@ -243,8 +250,6 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
         }
     }
 
-    UI.animationInProgress = true;
-
     setTimeout(function() {
         percentFinished += 100 / animateFrameNum;
         UI.drawGrid(cvs, true);
@@ -260,11 +265,7 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
 // requestAnimationFrame(UI.animate);
 
 UI.moveRobot = function(direction) {
-    if (UI.animationInProgress)
-        return;
-    else {
-        UI.animate($('#playground')[0], 0, direction, 5, 10);
-    }
+    UI.animate($('#playground')[0], 0, direction, 5, 10);
 }
 
 UI.showPreviousGuide = function() {
