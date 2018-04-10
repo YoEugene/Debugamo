@@ -101,9 +101,9 @@
   {for $i in range(1, $maxLevel + 1)}
     {sp}
     {if $i == $level}
-      <span class="level_number level_done" id="level{$i}">{$i}</span>
+      <div class="level_number level_in_progress" id="level{$i}"><span>{$i}</span></div>
     {elseif $i == $maxLevel}
-      <a class="level_number" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}">{$i}</a>
+      <div class="level_number" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}"><span>{$i}</span></div>
     {else}
       <a class="level_dot" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}"></a>
     {/if}

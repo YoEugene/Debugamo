@@ -33,14 +33,6 @@ button {
     width: 250px;
 }
 
-.helpMenuFake {
-    border-radius: 4px;
-    background-color: #bfcdde;
-    color: #000;
-    padding: 0 1ex;
-    cursor: default;
-}
-
 img[src$="help_up.png"] {
     margin: -20px 10px 0;
     height: 64px;
@@ -55,7 +47,9 @@ img[src$="help_down.png"] {
 
 
 
-
+#begin img {
+    cursor: pointer;
+}
 
 
 /* Buttons */
@@ -79,7 +73,7 @@ html[dir="RTL"] button.primary {
 .icon21 {
     height: 21px;
     width: 21px;
-    background-image: url(icons.png);
+    background-image: url(img/icons.png);
 }
 
 .link {
@@ -87,21 +81,90 @@ html[dir="RTL"] button.primary {
 }
 
 .header {
-    padding: 0 5px;
+    padding: 0 25px;
     background-color: #00adbc;
     height: 50px;
 }
 
-
-
-/*#runButtonWrapper {
-  width: 35vw;
-  text-align: center;
-  position: absolute;
-  bottom: 30px;
-  right: 0;
+.header .leftSide {
+    display: inline-block;
+    width: calc(100vw - 310px);
+    padding: 4px 0;
+    text-align: center;
 }
-*/
+
+.header .leftSide a {
+    text-decoration: none;
+}
+
+.header .levelWraper {
+    display: inline-block;
+    border: 1px solid rgb(198, 202, 205);
+    border-radius: 5px;
+    background-color: rgb(231, 232, 234);
+    padding: 4px 10px 4px 0;
+    margin-left: 15px;
+}
+
+.header .level_dot {
+    border: solid 2px rgb(198, 202, 205);
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    background-color: rgb(254, 254, 254);
+}
+
+.header .level_number {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    border-radius: 32px;
+    border: solid 2px rgb(198, 202, 205);
+    background-color: rgb(254, 254, 254);
+    color: rgb(91, 103, 112);
+    font-family: "Gotham 5r", sans-serif;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+}
+
+.header .level_number span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 17px;
+}
+
+.header .levelWraper .level_disable {
+    pointer-events: none;
+    cursor: default;
+    background-color: rgb(198, 202, 205);
+    color: #999;
+}
+
+.header .levelWraper .level_in_progress {
+    border: solid 2px rgb(198, 202, 205);
+    background-color: #ffefc3;
+    color: rgb(91, 103, 112);
+    font-family: "Gotham 5r", sans-serif;
+    font-weight: 900;
+}
+
+.header .levelWraper .level_done {
+    border: solid 2px rgb(198, 202, 205);
+    background-color: rgb(178, 255, 255);
+    color: rgb(91, 103, 112);
+    font-family: "Gotham 5r", sans-serif;
+    font-weight: 900;
+}
+
+.header .rightSide {
+    display: inline-block;
+    float: right;
+}
+
+.header .rightSide button {
+    margin: 7px 0 0 10px;
+}
 
 .clickable {
     cursor: pointer;
@@ -111,13 +174,13 @@ html[dir="RTL"] button.primary {
     text-shadow: 4px rgba(255, 255, 255, 0.75);
 }
 
-#drink-shop-game-container {
+#debugamo-game-container {
     /*width: 100vw;*/
     /*height: 100vh;*/
     background-color: #f2f2f2;
 }
 
-#drink-shop-left-container {
+#debugamo-left-container {
     /* to calc */
     width: 35vw;
     /*height: calc(100vh - 58px);*/
@@ -128,8 +191,8 @@ html[dir="RTL"] button.primary {
 }
 
 #canvas-container {
-    width: calc(34vw - 37px);
-    height: calc(34vw - 35px);
+    width: calc(35vw - 50px);
+    height: calc(35vw - 50px);
     position: relative;
     left: 25px;
     top: 10px;
@@ -142,7 +205,7 @@ html[dir="RTL"] button.primary {
 }
 
 #game-buttons {
-    padding: 15px 25px;
+    padding: 16px 26px;
 }
 
 #game-buttons button {
@@ -169,16 +232,43 @@ html[dir="RTL"] button.primary {
 }
 
 #mission-goal-container {
-    padding: 10px;
+    padding: 25px 10px;
+}
+
+#player-avatar-box {
+    display: inline-block;
+    position: relative;
+    left: 18px;
+    bottom: calc(0.5 * ( 100vh - 35vw - 99px ) - 22px);
+}
+
+#player-avatar {
+    width: 45px;
 }
 
 #mission-goal-box {
-    /*height: 100%;*/
-    /*width: 100%;*/
-    /*border: 1px solid #000;*/
+    position: relative;
 }
 
-#drink-shop-right-container {
+#goal-arrow {
+    position: relative;
+    display: inline-block;
+    left: 20px;
+    bottom: calc(0.5 * ( 100vh - 35vw - 99px ) - 16px);
+}
+
+#goal-right-box {
+    width: calc(35vw - 125px);
+    height: calc(100vh - 35vw - 124px);
+    background-color: #fff;
+    border-radius: 10px;
+    display: inline-block;
+    position: relative;
+    top: -8px;
+    left: 15px;
+}
+
+#debugamo-right-container {
     /* to calc */
     width: 65vw;
     height: calc(100vh - 50px);
@@ -217,20 +307,27 @@ html[dir="RTL"] button.primary {
 
 #mission-guide-button button {
     display: block;
-    padding: 7px 18px;
-    width: 70px;
-    color: #444;
+    padding: 7px 6px 5px 0;
+    width: 74px;
+}
+
+#mission-guide-button button i {
+    margin-right: 2px;
 }
 
 #guidePreviousButton {
     position: absolute;
     right: 0;
+    color: #666;
 }
 
 #guideNextButton {
     position: absolute;
     right: 0;
     top: 43px;
+    background-color: #ffa400;
+    border: 1px solid #ffa400;
+    color: #fff;
 }
 
 #robot-guide-icon {
@@ -242,17 +339,17 @@ html[dir="RTL"] button.primary {
     max-width: 64px;
 }
 
-#box-arrow {
+#guide-arrow {
     position: absolute;
     left: 84px;
     top: 47px;
 }
 
-#inner-box {
+#guide-inner-box {
     background-color: white;
     border-radius: 10px;
     margin: 9px 0px;
-    padding: 8px 14px;
+    padding: 7px 14px;
     position: relative;
     border-style: dashed;
     border-width: 1px;
@@ -260,8 +357,8 @@ html[dir="RTL"] button.primary {
     display: inline-block;
     left: 45px;
     top: 2px;
-    width: calc(64vw - 215px);
-    height: 80px;
+    width: calc(65vw - 231px);
+    height: 79px;
     overflow: hidden;
     line-height: 21px;
     overflow: scroll;
@@ -269,6 +366,14 @@ html[dir="RTL"] button.primary {
     -moz-user-select: text;     /* Firefox all */
     -ms-user-select: text;      /* IE 10+ */
     user-select: text;
+}
+
+#guide-inner-box p {
+    margin: 0;
+}
+
+#inner-box p {
+    margin: 0;
 }
 
 #codeModeHeaders {
@@ -295,12 +400,12 @@ html[dir="RTL"] button.primary {
     line-height: 30px;
 }
 
-#drink-shop-code-editor-container {
+#debugamo-code-editor-container {
     position: relative;
     height: calc(100vh - 200px);
 }
 
-#drink-shop-code-editor {
+#debugamo-code-editor {
     position: relative;
     height: calc(100vh - 200px);
 }
@@ -323,70 +428,13 @@ html[dir="RTL"] button.primary {
     text-align: center;
 }
 
-#drink-shop-code-editor .blocklyFlyout,
-#drink-shop-code-editor .blocklyFlyoutScrollbar {
+#debugamo-code-editor .blocklyFlyout,
+#debugamo-code-editor .blocklyFlyoutScrollbar {
     z-index: 0;
-}
-
-.level_dot {
-    border: solid 2px rgb(198, 202, 205);
-    border-radius: 50%;
-    width: 13px;
-    height: 13px;
-    background-color: rgb(254, 254, 254);
 }
 
 button {
     padding: 7px;
-}
-
-.levelWraper {
-    display: inline-block;
-    border: 1px solid rgb(198, 202, 205);
-    border-radius: 5px;
-    background-color: rgb(231, 232, 234);
-    padding: 8px 10px 8px 0;
-    margin-left: 15px;
-}
-
-.leftSide {
-    display: block;
-    width: calc(100vw - 50px);
-    padding: 5px 0;
-    text-align: center;
-}
-
-.leftSide a {
-    text-decoration: none;
-}
-
-.level_number {
-    border: solid 2px rgb(198, 202, 205);
-    padding: 3px 6px;
-    background-color: rgb(254, 254, 254);
-    color: rgb(91, 103, 112);
-    font-family: "Gotham 5r", sans-serif;
-    font-weight: 900;
-}
-
-.level_done {
-    border: solid 2px rgb(198, 202, 205);
-    padding: 2px 9px;
-    background-color: rgb(178, 255, 255);
-    color: rgb(91, 103, 112);
-    font-family: "Gotham 5r", sans-serif;
-    font-weight: 900;
-}
-
-.rightSide {
-    display: block;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-
-.rightSide button {
-    margin: 7px 7px 0 3px;
 }
 
 #linkButton {

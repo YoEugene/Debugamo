@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2018-04-08 15:08:37.423074",
+		"lastupdated": "2018-04-10 23:41:35.176345",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -56,6 +56,7 @@
 	"Debugging.helpText4": "This opponent is too far away to use the cannon (which has a limit of 70 meters). Instead, use the 'swim' command to start swimming towards the opponent and crash into it.",
 	"Debugging.helpText5": "This opponent is also too far away to use the cannon. But you are too weak to survive a collision. Swim towards the opponent while your horizontal location is less than than 50. Then 'stop' and use the cannon.",
 	"Debugging.helpText6": "This opponent will move away when it is hit. Swim towards it if it is out of range (70 meters).",
+	"Debugging.NewPlayerGuide": "Welcome to Debugamo! Please select your player avatar:",
 	"DrinkShop_getNewCup": "get a new cup",
 	"DrinkShop_fillCupWith": "fill the cup with",
 	"DrinkShop_fillCupWithVolume": "fill the cup with",
@@ -91,9 +92,9 @@
 	"DrinkShop_msg_drinkOverflow": "The cup is full. The drink will overflow.",
 	"Debugging_msg_noGoal": "You didn't reach the position of goal.",
 	"Games.debugging": "Debugging Mission",
+	"Debugging.clear": "Clear",
 	"Debugging.hint": "Hint",
 	"Debugging.guide": "Guide",
-	"Debugging.save": "Save",
 	"DrinkShop_runTooltip": "Makes the robot do what the blocks say.",
 	"DrinkShop_resetTooltip": "Undo what the robot has done.",
 	"DrinkShop_stepTooltip": "Makes the robot do what one blocks say.",

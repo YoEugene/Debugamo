@@ -85,9 +85,9 @@
 	"DrinkShop_msg_drinkOverflow": "飲料已經裝滿了。",
 	"Debugging_msg_noGoal": "沒有抵達目標位置。",
 	"Games.debugging": "幫幫迪摩",
+	"Debugging.clear": "清除",
 	"Debugging.hint": "提示",
 	"Debugging.guide": "導覽",
-	"Debugging.save": "存檔",
 	"DrinkShop_runTooltip": "讓迪摩機器人執行積木的動作",
 	"DrinkShop_resetTooltip": "重置機器人做過的動作",
 	"DrinkShop_stepTooltip": "讓迪摩機器人執行「一個積木」的動作",
@@ -103,5 +103,6 @@
 	"Debugging.helpText3b": "此範圍是 'cannon' 指令能準確地發射攻擊。",
 	"Debugging.helpText4": "此對手距離超出大炮所能射到的範圍 (限70公尺)。然而，使用 'swim' 指令可游向對手並且撞擊它。",
 	"Debugging.helpText5": "此對手距離超出大炮所能射到的範圍。而且以您虛弱的狀況無法撞擊對手而生存。當您的水平位置小於 50 您可游往對手的方向。然後 'stop' 並使用大炮。",
-	"Debugging.helpText6": "此對手會逃跑當被攻擊。游往它的方向若距離超過範圍 (70公尺)。"
+	"Debugging.helpText6": "此對手會逃跑當被攻擊。游往它的方向若距離超過範圍 (70公尺)。",
+	"Debugging.NewPlayerGuide": "歡迎來到：救救迪摩，請選擇您的玩家頭像："
 }

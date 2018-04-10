@@ -377,10 +377,7 @@ Blockly.Blocks['Move_Robot'] = {
 Blockly.JavaScript['Move_Robot'] = function(block) {
     var direction = block.getFieldValue('DIRECTION')[0].toLowerCase();
     var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
-    var code = ""
-    for (var i = 0; i < num; i++) {
-        code += 'moveRobot("' + direction +'");\n';
-    }
+    var code = 'moveRobot("' + direction +'", ' + num + ');\n';
     return code;
 }
 

@@ -179,18 +179,25 @@ BlocklyGames.NAME;
 /**
  * Maximum number of levels.  Common to all apps.
  */
-BlocklyGames.MAX_LEVEL = 20;
+BlocklyGames.MAX_LEVEL = 19;
 
 /**
  * User's level (e.g. 5).
  */
 BlocklyGames.LEVEL =
-    BlocklyGames.getNumberParamFromUrl('level', 1, BlocklyGames.MAX_LEVEL);
+    Math.min((parseInt(window.localStorage.maxDoneLevel) + 1), BlocklyGames.getNumberParamFromUrl('level', 1, BlocklyGames.MAX_LEVEL));
 
 /**
  * Common startup tasks for all apps.
  */
 BlocklyGames.init = function() {
+  // change url if level param is changed
+  var search = window.location.search;
+  search = search.replace(/([?&]level=)[^&]*/, '$1' + BlocklyGames.LEVEL);
+  if (search == "")
+    search = "?level=" + BlocklyGames.LEVEL
+  history.replaceState({}, "", "debugging" + search);
+
   // Set the page title with the content of the H1 title.
   document.title = document.getElementById('title').textContent;
 
@@ -234,9 +241,15 @@ BlocklyGames.init = function() {
   // Highlight levels that have been completed.
   for (var i = 1; i <= BlocklyGames.MAX_LEVEL; i++) {
     var link = document.getElementById('level' + i);
-    var done = !!BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME, i);
+    var in_progress = !!BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME, i);
+    var done = JSON.parse(window.localStorage.done).indexOf(i) != -1;
     if (link && done) {
       goog.dom.classes.add(link, 'level_done');
+    } else if (link && in_progress) {
+      goog.dom.classes.add(link, 'level_in_progress');
+    } 
+    if (i > parseInt(window.localStorage.maxDoneLevel) + 1) {
+      goog.dom.classes.add(link, 'level_disable');
     }
   }
 
@@ -357,6 +370,6 @@ BlocklyGames.importAnalytics = function() {
   script.src = '//www.google-analytics.com/analytics.js';
   document.head.appendChild(script);
 
-  gaObject('create', 'UA-101090572-1', 'auto'); // gsetcrw
-  gaObject('send', 'pageview');
+  // gaObject('create', 'UA-101090572-1', 'auto'); // gsetcrw
+  // gaObject('send', 'pageview');
 };

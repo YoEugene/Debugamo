@@ -81,7 +81,7 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
   }
   if (modal) {
     shadow.style.visibility = 'visible';
-    shadow.style.opacity = 0.3;
+    shadow.style.opacity = 0.7;
     shadow.style.zIndex = 9;
     var header = document.createElement('div');
     header.id = 'dialogHeader';

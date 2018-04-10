@@ -54,15 +54,12 @@
       // Third choice: The browser's language.
       lang = navigator.language;
       if (window['BlocklyGamesLanguages'].indexOf(lang) == -1) {
-        // Fourth choice: English.
-        lang = 'en';
+        // Fourth choice: Zh-Hant.
+        lang = 'zh-hant';
       }
     }
   }
   window['BlocklyGamesLang'] = lang;
-
-  // Load the chosen language pack.
-  var script = document.createElement('script');
 
   var debug = false;
   try {
@@ -74,6 +71,22 @@
     // Don't even think of throwing an error.
   }
   // var debug = true;
+
+  // DebugamO: add done property into localStorage
+  if (!window.localStorage.hasOwnProperty('done')) {
+    window.localStorage.setItem('done', JSON.stringify([]));
+  }
+
+  var maxDoneLevel = JSON.parse(window.localStorage.done).length;
+
+  window.localStorage.setItem('maxDoneLevel', maxDoneLevel);
+
+  if (!window.localStorage.hasOwnProperty('newPlayer')) {
+    window.localStorage.setItem('newPlayer', 1);
+  }
+
+  // Load the chosen language pack.
+  var script = document.createElement('script');
 
   script.src = appName + '/generated/' + lang +
       (debug ? '/uncompressed.js' : '/compressed.js');

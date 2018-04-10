@@ -13,7 +13,7 @@ goog.require('BlocklyInterface');
 goog.require('Debugging.Blocks');
 goog.require('Debugging.Game');
 goog.require('Debugging.UI');
-goog.require('Debugging.Game.Config');
+goog.require('Debugging.Game.Levels');
 goog.require('Debugging.soy');
 
 BlocklyGames.NAME = 'debugging';
@@ -37,7 +37,7 @@ Scope.initBlocklyDivSize = function() {
     // resize blocklyDiv width
     // var blocklyFlyoutWidth = document.getElementsByClassName('blocklyFlyout')[0].clientWidth;
     // document.getElementById('blockly').style.width = "calc(35vw + " + blocklyFlyoutWidth + "px)";
-    // document.getElementById('drink-shop-code-editor-left').style.width = "calc(65vw - 50px - " + blocklyFlyoutWidth + "px)";
+    // document.getElementById('debugamo-code-editor-left').style.width = "calc(65vw - 50px - " + blocklyFlyoutWidth + "px)";
     // Blockly.svgResize(BlocklyGames.workspace);
 };
 
@@ -48,7 +48,7 @@ Scope.initHeaderWidth = function() {
     var width2 = document.getElementsByClassName('blocklyWorkspace')[0].getBoundingClientRect().width;
     toolboxHeader.style.width = width1 + 'px';
     workspaceHeader.style.width = (width2 - width1 - 30) + 'px';
-    console.log('initHeaderWidth done.');
+    // console.log('initHeaderWidth done.');
 }
 
 /**
@@ -70,9 +70,9 @@ Scope.init = function() {
 
     /* Init Blockly */
     var toolbox = document.getElementById('toolbox');
-    var scale = Scope.Game.Config.levels[BlocklyGames.LEVEL].scale || 1;
+    var scale = Scope.Game.Levels[BlocklyGames.LEVEL].scale || 1;
     // init blocks
-    var blockIds = Scope.Game.Config.levels[BlocklyGames.LEVEL].blockIds;
+    var blockIds = Scope.Game.Levels[BlocklyGames.LEVEL].blockIds;
     blockIds.forEach(function(blockId) {
         var block = document.getElementById(blockId);
         toolbox.appendChild(block);
@@ -99,11 +99,17 @@ Scope.init = function() {
     //   Blockly.JavaScript.addReservedWords('moveForward,moveBackward,' +
     //       'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
 
+    var done = JSON.parse(window.localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
+    if (!done) {
+        BlocklyInterface.saveToLocalStorage(Game.Levels[BlocklyGames.LEVEL].defaultBlocks);
+    }
+
     // load defualt blocks or load stored blocks from Local Storage / Session Storage / DB
     var defaultXml = window.localStorage.savedBlocks;
     BlocklyInterface.loadBlocks(defaultXml, false);
+    console.log('load blocks');
 
-    Scope.initBlocklyDivSize();
+    // Scope.initBlocklyDivSize();
     Scope.initHeaderWidth();
 
     // On Window resize init workspace header width
@@ -121,13 +127,10 @@ Scope.init = function() {
 
     BlocklyGames.bindClick('runButton', Scope.runButtonClick);
     BlocklyGames.bindClick('resetButton', Scope.resetButtonClick);
+    BlocklyGames.bindClick('clearLocalStorageButton', Scope.clearLocalStorageButton);
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
     BlocklyGames.bindClick('guidePreviousButton', Scope.UI.showPreviousGuide);
     BlocklyGames.bindClick('guideNextButton', Scope.UI.showNextGuide);
-    // BlocklyGames.bindClick('drink-shop-price-list', Scope.showPrice);
-    BlocklyGames.bindClick('saveButton', BlocklyInterface.saveToLocalStorage);
-
-    var shopContainer = document.getElementById('drink-shop-left-container');
 
     // Lazy-load the JavaScript interpreter.
     setTimeout(BlocklyInterface.importInterpreter, 1);
@@ -254,9 +257,13 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // when the code is fully executed, check if the user passes the level
         else {
-            if (Debugging.Game.Config.levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+            if (Game.Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
                 BlocklyInterface.saveToLocalStorage();
                 BlocklyDialogs.congratulations();
+                var done = JSON.parse(window.localStorage.done);
+                if (done.indexOf(BlocklyGames.LEVEL) == -1)
+                    done.push(BlocklyGames.LEVEL);
+                window.localStorage.done = JSON.stringify(done);
             }
             // else will throw error message
         }
@@ -265,9 +272,11 @@ Scope.interpretCode = function(interpreter, stepCount) {
             window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));
         } else if (typeof e === 'string') {
             window.alert(e);
+            console.log(e);
         } else {
             // Syntax error, can't happen.
             window.alert(e);
+            console.log(e);
         }
     }
 }
@@ -321,22 +330,19 @@ Scope.resetButtonClick = function(e) {
     // Maze.levelHelp();
 };
 
+
+/** 
+ * Clear LocalStorage
+ */
+Scope.clearLocalStorageButton = function () {
+    window.localStorage.clear();
+    window.localStorage.setItem('debug', "1");
+    window.localStorage.setItem('newPlayer', "1");
+}
+
 /**
  * Show the help pop-up.
  */
-
-Scope.showPrice = function() {
-    var price = document.getElementById('price_list');
-    var button = document.getElementById('priceButton');
-    var style = {
-        width: '50%',
-        left: '25%',
-        top: '5em'
-    };
-    BlocklyDialogs.showDialog(price, button, true, true, style,
-        BlocklyDialogs.stopDialogKeyDown);
-    BlocklyDialogs.startDialogKeyDown();
-}
 
 Scope.showHelp = function() {
     var help = document.getElementById('help');
@@ -350,6 +356,18 @@ Scope.showHelp = function() {
         BlocklyDialogs.stopDialogKeyDown);
     BlocklyDialogs.startDialogKeyDown();
 };
+
+Scope.showNewPlayerText = function() {
+    var begin = document.getElementById('begin');
+    var style = {
+        width: '50%',
+        left: '25%',
+        top: '5em'
+    };
+    BlocklyDialogs.showDialog(begin, null, true, true, style,
+        BlocklyDialogs.stopDialogKeyDown);
+    BlocklyDialogs.startDialogKeyDown();
+}
 
 /**
  * Save the blocks for a one-time reload.

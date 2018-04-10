@@ -8,8 +8,7 @@ goog.provide('Debugging.Game');
 
 goog.require('Blockly.JavaScript');
 goog.require('Debugging.UI');
-goog.require('Debugging.utils');
-goog.require('Debugging.Game.Config');
+goog.require('Debugging.Game.Levels');
 
 var Game = Debugging.Game;
 
@@ -20,22 +19,10 @@ Game.levels
 */
 
 Game.init = function(level) {
-    Game.constants = Debugging.Game.Config.constants;
-    Game.levelConfig = Debugging.Game.Config.levels[level];
-
-    Game.initState();
-    UI.init(Game.state.shop);
-};
-
-Game.initState = function() {
-    Game.state = {
-        shop: Game.levelConfig.getInitialCoffeeShopState(),
-        robot: {
-            holding: null,
-            served: [],
-        },
-        log: [],
-    };
+    Game.things = {};
+    Game.levelConfig = Debugging.Game.Levels[level];
+    Game.things.robot = $.extend({}, Game.levelConfig.robot);
+    UI.init()
 };
 
 Game.reset = function() {
@@ -47,8 +34,8 @@ Game.reset = function() {
  *
  */
 
-Game.getRobotPos = function() {
-    return UI.robot.position;
+Game.getThingPos = function(thing) {
+    return Game.things[thing].position;
 };
 
 Game.errorMessage = function(cmdKey, msgKey) {
@@ -69,21 +56,11 @@ Game.levelFailedMessage = function(msgKey) {
 
 Game.commands = {};
 
-Game.commands.getNewCup = function() {
-    // data
-    var robot = Game.getRobot();
-    robot.holding = {
-        class: "cup",
-        capacity: 500,
-        filled: {},
-        filledVolume: 0,
-    };
-    Game.state.shop.materials.cup -= 1;
-
-    // UI
-    UI.getNewCup(robot.holding);
-};
-
-Game.commands.animateRobot = function(direction) {
-    UI.animateRobot(direction);
+Game.commands.moveRobot = function(direction, numOfMove) {
+    UI.moveRobot(direction);
+    if (numOfMove == 1) return;
+    var i;
+    for (i = 0; i < numOfMove - 1; i++) {
+        setTimeout(function() { Game.commands.moveRobot(direction, numOfMove-1); }, 150);
+    }
 }

@@ -7,13 +7,13 @@
 {template .start}
   {call .messages /}
   {call .header /}
-  <div id="drink-shop-game-container">
-    <div id="drink-shop-left-container">
+  <div id="debugamo-container">
+    <div id="debugamo-left-container">
       {call .canvasArea /}
       {call .gameButtons /}
       {call .missionGoalArea /}
     </div>
-    <div id="drink-shop-right-container">
+    <div id="debugamo-right-container">
     {call .missionGuide /}
     {call .codeEditor /}
     </div>
@@ -46,8 +46,8 @@
           <br><br><img src="pond/docs/whiletrue.png" height=90 width=164>
         {elseif $ij.level == 4}
           <pre>while (true) {lb}{\n}
-{sp}{sp}...{\n}
-{rb}</pre>
+        {sp}{sp}...{\n}
+        {rb}</pre>
         {/if}
       {elseif $ij.level == 5 or $ij.level == 6}
         {msg meaning="Debugging.helpText3a"
@@ -100,6 +100,20 @@
           is out of range (70 meters).
         {/msg}
       {/if}
+    </div>
+    {call BlocklyGames.soy.ok /}
+  </div>
+  <div id="begin" class="dialogHiddenContent">
+    <div style="padding-bottom: 0.7ex">
+      {msg meaning="Debugging.NewPlayerGuide" desc="New Players Guide"}
+        Welcome to Debugamo! Please select your player avatar:
+      {/msg}
+      <br>
+      <div>
+        <img onclick="Debugging.UI.setAvatar('male.default.png')" src="debugging/public/img/male.default.png"></img>
+        <img onclick="Debugging.UI.setAvatar('female.default.png')" src="debugging/public/img/female.default.png"></img>
+        <img onclick="Debugging.UI.setAvatar('experimental.default.png')" src="debugging/public/img/experimental.default.png"></img>
+      </div>
     </div>
     {call BlocklyGames.soy.ok /}
   </div>
@@ -181,15 +195,14 @@
       <button id="linkButton" title="{msg meaning="Games.linkTooltip" desc="IBID"}Save and link to blocks.{/msg}">
         <img src="common/1x1.gif" class="link icon21">
       </button>
-      &nbsp;
+      <button id="clearLocalStorageButton">
+        {{msg meaning="Debugging.clear" desc="clear"}}Clear{{/msg}}
+      </button>
       <button id="helpButton" data-intro='Hello step one!' data-step='1'>
         {{msg meaning="Debugging.hint" desc="hint"}}Hint{{/msg}}
       </button>
       <button id="guideButton" onclick="javascript:introJs().start();">
         {{msg meaning="Debugging.guide" desc="guide"}}Guide{{/msg}}
-      </button>
-      <button id="saveButton" style="display: none;">
-        {{msg meaning="Debugging.save" desc="save"}}Save{{/msg}}
       </button>
     </div>
   </div>
@@ -222,10 +235,10 @@
   </div>
   <div class="uk-hidden">
     <button class="warning uk-margin-left" onclick="Debugging.UI.drawGrid()"><span>drawGrid</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('r')"><span>Right</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('l')"><span>Left</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('u')"><span>Up</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.animateRobot('d')"><span>Down</span></button>
+    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('r')"><span>Right</span></button>
+    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('l')"><span>Left</span></button>
+    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('u')"><span>Up</span></button>
+    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('d')"><span>Down</span></button>
   </div>
 {/template}
 
@@ -235,6 +248,14 @@
 {template .missionGoalArea}
   <div id="mission-goal-container">
     <div id="mission-goal-box">
+      <div id="player-avatar-box">
+        <img id="player-avatar"></img>
+      </div>
+      <svg id="goal-arrow" height="30" width="30">
+        <polyline points="25,25 5,25 25,5" stroke-dasharray="3,3" style="stroke: white; stroke-width: 1; fill: white;"></polyline>
+      </svg>
+      <div id="goal-right-box">
+      </div>
     </div>
   </div>
 {/template}
@@ -248,18 +269,18 @@
       <div id="robot-guide-icon">
         <img src="debugging/public/img/robot2.png"></img>
       </div>
-      <svg id="box-arrow" height="30" width="30">
+      <svg id="guide-arrow" height="30" width="30">
         <polyline points="25,25 5,25 25,5" stroke-dasharray="3,3" style="stroke: white; stroke-width: 1; fill: white;"></polyline>
       </svg>
-      <div id="inner-box">
+      <div id="guide-inner-box">
         <p></p>
       </div>
       <div id="mission-guide-button">
         <button id="guidePreviousButton" title="{msg meaning="Debugging_previousGuide" desc="Pressing this button to show previous paragraph of mission guide text."}Show previous guide text{/msg}">
-          <span>{msg meaning="Debugging.previousGuide" desc="Show previous paragraph of guide text"}previous{/msg}</span>
+          <i uk-icon="icon: chevron-up"></i><span>{msg meaning="Debugging.previousGuide" desc="Show previous paragraph of guide text"}previous{/msg}</span>
         </button>
         <button id="guideNextButton" title="{msg meaning="Debugging_nextGuide" desc="Pressing this button to show next paragraph of mission guide text."}Show next guide text{/msg}">
-          <span>{msg meaning="Debugging.nextGuide" desc="Show next paragraph of guide text"}next{/msg}</span>
+          <i uk-icon="icon: chevron-down"></i><span>{msg meaning="Debugging.nextGuide" desc="Show next paragraph of guide text"}next{/msg}</span>
         </button>
       </div>
     </div>
@@ -270,7 +291,7 @@
  * code editor modal
  */
 {template .codeEditor}
-  <div id="drink-shop-code-editor-container">
+  <div id="debugamo-code-editor-container">
     <div id="codeModeHeaders">
       <div id="toolbox-header">
         {msg meaning="Debugging.toolboxHeader" desc="block toolbox header"}Blocks{/msg}
@@ -279,7 +300,7 @@
         {msg meaning="Debugging.workspaceHeader" desc="workspace header"}Debug Workspace{/msg}
       </div>
     </div>
-    <div id="drink-shop-code-editor">
+    <div id="debugamo-code-editor">
       // code editor
       {call .toolbox /}
       <div id="blockly"></div>

@@ -145,13 +145,18 @@ BlocklyInterface.getCode = function() {
 /**
  * Save the blocks for this level to persistent client-side storage.
  */
-BlocklyInterface.saveToLocalStorage = function() {
+BlocklyInterface.saveToLocalStorage = function(xml) {
   // MSIE 11 does not support localStorage on file:// URLs.
   if (typeof Blockly == undefined || !window.localStorage) {
     return;
   }
+
   var name = BlocklyGames.NAME + BlocklyGames.LEVEL;
-  window.localStorage[name] = BlocklyInterface.getCode();
+
+  if (xml)
+    window.localStorage[name] = xml;
+  else
+    window.localStorage[name] = BlocklyInterface.getCode();
 };
 
 /**
