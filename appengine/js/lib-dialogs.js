@@ -63,7 +63,7 @@ BlocklyDialogs.dialogDispose_ = null;
  *     closes.  Normally used for unhooking events.
  */
 BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
-                                  disposeFunc) {
+                                  disposeFunc, strongModal) {
   if (BlocklyDialogs.isDialogVisible_) {
     BlocklyDialogs.hideDialog(false);
   }
@@ -79,10 +79,10 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
   for (var name in style) {
     dialog.style[name] = style[name];
   }
-  if (modal) {
+  if (modal && !strongModal) {
     shadow.style.visibility = 'visible';
-    shadow.style.opacity = 0.7;
-    shadow.style.zIndex = 9;
+    shadow.style.opacity = 0.6;
+    shadow.style.zIndex = 75;
     var header = document.createElement('div');
     header.id = 'dialogHeader';
     dialog.appendChild(header);
@@ -91,6 +91,18 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
                            BlocklyDialogs.dialogMouseDown_);
     shadow.addEventListener('click', BlocklyDialogs.hideDialog, true)
   }
+  else if (strongModal) {
+    shadow.style.visibility = 'visible';
+    shadow.style.opacity = 1;
+    shadow.style.zIndex = 75;
+    var header = document.createElement('div');
+    header.id = 'dialogHeader';
+    dialog.appendChild(header);
+    BlocklyDialogs.dialogMouseDownWrapper_ =
+        Blockly.bindEvent_(header, 'mousedown', null,
+                           BlocklyDialogs.dialogMouseDown_);
+    // shadow.addEventListener('click', BlocklyDialogs.hideDialog, true)
+  }
   dialog.appendChild(content);
   content.className = content.className.replace('dialogHiddenContent', '');
 
@@ -98,7 +110,7 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
     // Check that the dialog wasn't closed during opening.
     if (BlocklyDialogs.isDialogVisible_) {
       dialog.style.visibility = 'visible';
-      dialog.style.zIndex = 10;
+      dialog.style.zIndex = 75;
       border.style.visibility = 'hidden';
     }
   }
@@ -300,7 +312,7 @@ BlocklyDialogs.storageAlert = function(message) {
   var content = document.getElementById('dialogStorage');
   var origin = document.getElementById('linkButton');
   var style = {
-    width: '50%',
+    width: '45%',
     left: '25%',
     top: '5em'
   };

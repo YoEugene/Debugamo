@@ -104,18 +104,25 @@
     {call BlocklyGames.soy.ok /}
   </div>
   <div id="begin" class="dialogHiddenContent">
-    <div style="padding-bottom: 0.7ex">
-      {msg meaning="Debugging.NewPlayerGuide" desc="New Players Guide"}
-        Welcome to Debugamo! Please select your player avatar:
-      {/msg}
+    <div id="begin-box">
+      <p>
+      {msg meaning="Debugging.NewPlayerGuide1" desc="New Players Guide"}Welcome to the world of DebugaMo! Your mission is to help robot DeMo to save animals or people in the building{/msg}<br><br>
+      {msg meaning="Debugging.NewPlayerGuide2" desc="New Players Guide"}A earthquake happened recently, fortunately with the help of national disaster warning message, most people get out of the dangereous building. While in a collapsed building, there is still some animals and people inside of it. Your job, from the safety of mission control, is to {/msg}
+      <span style="font-weight: 600;">{msg meaning="Debugging.NewPlayerGuide3" desc="New Players Guide"}communicate with DeMo{/msg}</span>
+      {msg meaning="Debugging.NewPlayerGuide4" desc="New Players Guide"} to clean up the stones, and ultimately rescue any living being out from the building.{/msg}<br><br>
+      {msg meaning="Debugging.NewPlayerGuide5" desc="New Players Guide"}Unfortunately, there was an accident while transporting DeMo to the disaster site and his logic chip is malfunctioning. It is up to you to figure out how to help DeMo by{/msg}
+      <span style="font-weight: 600;">{msg meaning="Debugging.NewPlayerGuide6" desc="New Players Guide"} fixing its logic chip,{/msg}</span>
+      {msg meaning="Debugging.NewPlayerGuide7" desc="New Players Guide"} and complete the mission!{/msg}<br><br><br>
+      <p style="text-align: center; font-weight: 500; color: #0f1a94;">{msg meaning="Debugging.NewPlayerGuide8" desc="New Players Guide"}Choose your player avatar:{/msg}</p>
+      </p>
       <br>
-      <div>
+      <div id="avatar-choose-box">
         <img onclick="Debugging.UI.setAvatar('male.default.png')" src="debugging/public/img/male.default.png"></img>
         <img onclick="Debugging.UI.setAvatar('female.default.png')" src="debugging/public/img/female.default.png"></img>
         <img onclick="Debugging.UI.setAvatar('experimental.default.png')" src="debugging/public/img/experimental.default.png"></img>
       </div>
     </div>
-    {call BlocklyGames.soy.ok /}
+    {call BlocklyGames.soy.startGame /}
   </div>
 {/template}
 
@@ -190,6 +197,7 @@
       </div>
     </div>
     <div class="rightSide">
+      <input type="checkbox" id="debugMode" onclick="Debugging.modeChange()">Debug
       <select id="languageMenu"></select>
       &nbsp;
       <button id="linkButton" title="{msg meaning="Games.linkTooltip" desc="IBID"}Save and link to blocks.{/msg}">
@@ -223,13 +231,13 @@
  */
 {template .gameButtons}
   <div id="game-buttons">
-    <button id="runButton" class="primary" title="{msg meaning="DrinkShop_runTooltip" desc="tooltip - Pressing this button runs the computer program the user has written to move the robot."}Makes the robot do what the blocks say.{/msg}">
+    <button id="runButton" class="primary" title="{msg meaning="Debugging_runTooltip" desc="tooltip - Pressing this button runs the computer program the user has written to move the robot."}Makes the robot do what the blocks say.{/msg}">
       <span>&#9658; {msg meaning="Games.runProgram" desc="IBID"}Run Program{/msg}</span>
     </button>
-    <button id="resetButton" class="warning" title="{msg meaning="DrinkShop_resetTooltip" desc="tooltip - Pressing this button to restart the game."}Undo what the robot has done.{/msg}">
+    <button id="resetButton" class="warning" title="{msg meaning="Debugging_resetTooltip" desc="tooltip - Pressing this button to restart the game."}Undo what the robot has done.{/msg}">
       <span>&#8634; {msg meaning="Games.resetProgram" desc="IBID"}Reset{/msg}</span>
     </button>
-    <button id="stepButton" class="primary" title="{msg meaning="DrinkShop_stepTooltip" desc="tooltip - Pressing this button steps the computer program the user has written to move the robot."}Makes the robot do what one blocks say.{/msg}">
+    <button id="stepButton" class="primary" title="{msg meaning="Debugging_stepTooltip" desc="tooltip - Pressing this button steps the computer program the user has written to move the robot."}Makes the robot do what one blocks say.{/msg}">
       <span>{msg meaning="Games.stepProgram" desc="Step in program for one block"}Step{/msg}</span>
     </button>
   </div>
@@ -255,6 +263,7 @@
         <polyline points="25,25 5,25 25,5" stroke-dasharray="3,3" style="stroke: white; stroke-width: 1; fill: white;"></polyline>
       </svg>
       <div id="goal-right-box">
+        <p>{msg meaning="Debugging.GoalHeader" desc="Headline of DeMo goal area"}Got it, DeMo, our mission is:{/msg}</p>
       </div>
     </div>
   </div>
@@ -313,351 +322,322 @@
  */
 {template .toolbox}
   <xml id="all-blocks" style="display: none;">
-    <block type="robot_say" id="robot_say"></block>
-    <block type="str_io" id="str_io"></block>
-    <block type="number_io" id="number_io"></block>
-    <block type="variable_get" id="variable_get"></block>
-    <block type="variable_set" id="variable_set"></block>
-    <block type="counter_loop" id="counter_loop"></block>
-    <block type="arithmetic" id="arithmetic"></block>
-    <block type="check_order" id="check_order"></block>
-    <block type="check_menu_price" id="check_menu_price"></block>
-    <block type="Move_Robot" id="Move_Robot"></block>
-    <block type="Robot_Grab" id="Robot_Grab"></block>
-    <block type="Robot_Drop" id="Robot_Drop"></block>
-    <block type="DrinkShop_getNewCup" id="block_DrinkShop_getNewCup"></block>
-    <block type="DrinkShop_fillCupWith" id="block_DrinkShop_fillCupWith"></block>
-    <block type="DrinkShop_coverCup" id="block_DrinkShop_coverCup"></block>
-    <block type="DrinkShop_serve" id="block_DrinkShop_serve"></block>
-    <block type="DrinkShop_fillCupWithVolume" id="block_DrinkShop_fillCupWithVolume">
-      <value name="VOLUME">
-        <shadow type="math_number">
-          <field name="NUM">500</field>
-        </shadow>
-      </value>
-    </block>
-    <block type="math_arithmetic" id="block_math_arithmetic">
-      <value name="A">
-        <shadow type="math_number">
-          <field name="NUM">500</field>
-        </shadow>
-      </value>
-      <field name="OP">MULTIPLY</field>
-      <value name="B">
-        <shadow type="math_number">
-          <field name="NUM">0.1</field>
-        </shadow>
-      </value>
-    </block>
+    <category id="Debugamo" name="Debugamo" colour="90">
+      // <block type="robot_say" id="robot_say"></block>
+      // <block type="str_io" id="str_io"></block>
+      // <block type="number_io" id="number_io"></block>
+      // <block type="variable_get" id="variable_get"></block>
+      // <block type="variable_set" id="variable_set"></block>
+      // <block type="counter_loop" id="counter_loop"></block>
+      // <block type="arithmetic" id="arithmetic"></block>
+      // <block type="check_order" id="check_order"></block>
+      // <block type="check_menu_price" id="check_menu_price"></block>
+      <block type="Move_Robot" id="Move_Robot"></block>
+      <block type="Robot_Grab" id="Robot_Grab"></block>
+      <block type="Robot_Drop" id="Robot_Drop"></block>
+    </category>
   </xml>
   <xml id="toolbox" style="display: none;">
-    // <category id="toolbox-others" colour="330" name="Others">
-    // <block type="DrinkShop_getNewCup"></block>
-    // <block type="DrinkShop_fillCupWith"></block>
-    // <block type="DrinkShop_coverCup"></block>
-    // <block type="DrinkShop_serve"></block>
-    // </category>
-
-    // <category id="catLogic" colour="210" name="Logic">
-    //   <block type="controls_if"></block>
-    //   <block type="logic_compare"></block>
-    //   <block type="logic_operation"></block>
-    //   <block type="logic_negate"></block>
-    //   <block type="logic_boolean"></block>
-    //   <block type="logic_null"></block>
-    //   <block type="logic_ternary"></block>
-    // </category>
-    // <category id="catLoops" colour="120" name="Loops">
-    //   <block type="controls_repeat_ext">
-    //     <value name="TIMES">
-    //       <shadow type="math_number">
-    //         <field name="NUM">10</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="controls_whileUntil"></block>
-    //   <block type="controls_for">
-    //     <value name="FROM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="TO">
-    //       <shadow type="math_number">
-    //         <field name="NUM">10</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="BY">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="controls_forEach"></block>
-    //   <block type="controls_flow_statements"></block>
-    // </category>
-    // <category id="catMath" colour="230" name="Math">
-    //   <block type="math_number"></block>
-    //   <block type="math_arithmetic">
-    //     <value name="A">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="B">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_single">
-    //     <value name="NUM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">9</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_trig">
-    //     <value name="NUM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">45</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_constant"></block>
-    //   <block type="math_number_property">
-    //     <value name="NUMBER_TO_CHECK">
-    //       <shadow type="math_number">
-    //         <field name="NUM">0</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_change">
-    //     <value name="DELTA">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_round">
-    //     <value name="NUM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">3.1</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_on_list"></block>
-    //   <block type="math_modulo">
-    //     <value name="DIVIDEND">
-    //       <shadow type="math_number">
-    //         <field name="NUM">64</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="DIVISOR">
-    //       <shadow type="math_number">
-    //         <field name="NUM">10</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_constrain">
-    //     <value name="VALUE">
-    //       <shadow type="math_number">
-    //         <field name="NUM">50</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="LOW">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="HIGH">
-    //       <shadow type="math_number">
-    //         <field name="NUM">100</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_random_int">
-    //     <value name="FROM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">1</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="TO">
-    //       <shadow type="math_number">
-    //         <field name="NUM">100</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="math_random_float"></block>
-    // </category>
-    // <category id="catText" colour="160" name="Text">
-    //   <block type="text"></block>
-    //   <block type="text_join"></block>
-    //   <block type="text_append">
-    //     <value name="TEXT">
-    //       <shadow type="text"></shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_length">
-    //     <value name="VALUE">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_isEmpty">
-    //     <value name="VALUE">
-    //       <shadow type="text">
-    //         <field name="TEXT"></field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_indexOf">
-    //     <value name="VALUE">
-    //       <block type="variables_get">
-    //         <field name="VAR">text</field>
-    //       </block>
-    //     </value>
-    //     <value name="FIND">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_charAt">
-    //     <value name="VALUE">
-    //       <block type="variables_get">
-    //         <field name="VAR">text</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="text_getSubstring">
-    //     <value name="STRING">
-    //       <block type="variables_get">
-    //         <field name="VAR">text</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="text_changeCase">
-    //     <value name="TEXT">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_trim">
-    //     <value name="TEXT">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_print">
-    //     <value name="TEXT">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="text_prompt_ext">
-    //     <value name="TEXT">
-    //       <shadow type="text">
-    //         <field name="TEXT">abc</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    // </category>
-    // <category id="catLists" colour="260" name="Lists">
-    //   <block type="lists_create_with">
-    //     <mutation items="0"></mutation>
-    //   </block>
-    //   <block type="lists_create_with"></block>
-    //   <block type="lists_repeat">
-    //     <value name="NUM">
-    //       <shadow type="math_number">
-    //         <field name="NUM">5</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="lists_length"></block>
-    //   <block type="lists_isEmpty"></block>
-    //   <block type="lists_indexOf">
-    //     <value name="VALUE">
-    //       <block type="variables_get">
-    //         <field name="VAR">list</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="lists_getIndex">
-    //     <value name="VALUE">
-    //       <block type="variables_get">
-    //         <field name="VAR">list</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="lists_setIndex">
-    //     <value name="LIST">
-    //       <block type="variables_get">
-    //         <field name="VAR">list</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="lists_getSublist">
-    //     <value name="LIST">
-    //       <block type="variables_get">
-    //         <field name="VAR">list</field>
-    //       </block>
-    //     </value>
-    //   </block>
-    //   <block type="lists_split">
-    //     <value name="DELIM">
-    //       <shadow type="text">
-    //         <field name="TEXT">,</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="lists_sort"></block>
-    // </category>
-    // <category id="catColour" colour="20" name="Color">
-    //   <block type="colour_picker"></block>
-    //   <block type="colour_random"></block>
-    //   <block type="colour_rgb">
-    //     <value name="RED">
-    //       <shadow type="math_number">
-    //         <field name="NUM">100</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="GREEN">
-    //       <shadow type="math_number">
-    //         <field name="NUM">50</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="BLUE">
-    //       <shadow type="math_number">
-    //         <field name="NUM">0</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    //   <block type="colour_blend">
-    //     <value name="COLOUR1">
-    //       <shadow type="colour_picker">
-    //         <field name="COLOUR">#ff0000</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="COLOUR2">
-    //       <shadow type="colour_picker">
-    //         <field name="COLOUR">#3333ff</field>
-    //       </shadow>
-    //     </value>
-    //     <value name="RATIO">
-    //       <shadow type="math_number">
-    //         <field name="NUM">0.5</field>
-    //       </shadow>
-    //     </value>
-    //   </block>
-    // </category>
-    // <sep></sep>
-    // <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
-    // <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
+    <category id="catLogic" colour="210" name="Logic">
+      <block type="controls_if"></block>
+      <block type="logic_compare"></block>
+      <block type="logic_operation"></block>
+      <block type="logic_negate"></block>
+      <block type="logic_boolean"></block>
+      <block type="logic_null"></block>
+      <block type="logic_ternary"></block>
+    </category>
+    <category id="catLoops" colour="120" name="Loops">
+      <block type="controls_repeat_ext">
+        <value name="TIMES">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="controls_whileUntil"></block>
+      <block type="controls_for">
+        <value name="FROM">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="TO">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+        <value name="BY">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="controls_forEach"></block>
+      <block type="controls_flow_statements"></block>
+    </category>
+    <category id="catMath" colour="230" name="Math">
+      <block type="math_number"></block>
+      <block type="math_arithmetic">
+        <value name="A">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="B">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_single">
+        <value name="NUM">
+          <shadow type="math_number">
+            <field name="NUM">9</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_trig">
+        <value name="NUM">
+          <shadow type="math_number">
+            <field name="NUM">45</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_constant"></block>
+      <block type="math_number_property">
+        <value name="NUMBER_TO_CHECK">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_change">
+        <value name="DELTA">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_round">
+        <value name="NUM">
+          <shadow type="math_number">
+            <field name="NUM">3.1</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_on_list"></block>
+      <block type="math_modulo">
+        <value name="DIVIDEND">
+          <shadow type="math_number">
+            <field name="NUM">64</field>
+          </shadow>
+        </value>
+        <value name="DIVISOR">
+          <shadow type="math_number">
+            <field name="NUM">10</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_constrain">
+        <value name="VALUE">
+          <shadow type="math_number">
+            <field name="NUM">50</field>
+          </shadow>
+        </value>
+        <value name="LOW">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="HIGH">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_random_int">
+        <value name="FROM">
+          <shadow type="math_number">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <value name="TO">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="math_random_float"></block>
+    </category>
+    <category id="catText" colour="160" name="Text">
+      <block type="text"></block>
+      <block type="text_join"></block>
+      <block type="text_append">
+        <value name="TEXT">
+          <shadow type="text"></shadow>
+        </value>
+      </block>
+      <block type="text_length">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_isEmpty">
+        <value name="VALUE">
+          <shadow type="text">
+            <field name="TEXT"></field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+        <value name="FIND">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_charAt">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_getSubstring">
+        <value name="STRING">
+          <block type="variables_get">
+            <field name="VAR">text</field>
+          </block>
+        </value>
+      </block>
+      <block type="text_changeCase">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_trim">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_print">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="text_prompt_ext">
+        <value name="TEXT">
+          <shadow type="text">
+            <field name="TEXT">abc</field>
+          </shadow>
+        </value>
+      </block>
+    </category>
+    <category id="catLists" colour="260" name="Lists">
+      <block type="lists_create_with">
+        <mutation items="0"></mutation>
+      </block>
+      <block type="lists_create_with"></block>
+      <block type="lists_repeat">
+        <value name="NUM">
+          <shadow type="math_number">
+            <field name="NUM">5</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="lists_length"></block>
+      <block type="lists_isEmpty"></block>
+      <block type="lists_indexOf">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_setIndex">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_getSublist">
+        <value name="LIST">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
+      <block type="lists_split">
+        <value name="DELIM">
+          <shadow type="text">
+            <field name="TEXT">,</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="lists_sort"></block>
+    </category>
+    <category id="catColour" colour="20" name="Color">
+      <block type="colour_picker"></block>
+      <block type="colour_random"></block>
+      <block type="colour_rgb">
+        <value name="RED">
+          <shadow type="math_number">
+            <field name="NUM">100</field>
+          </shadow>
+        </value>
+        <value name="GREEN">
+          <shadow type="math_number">
+            <field name="NUM">50</field>
+          </shadow>
+        </value>
+        <value name="BLUE">
+          <shadow type="math_number">
+            <field name="NUM">0</field>
+          </shadow>
+        </value>
+      </block>
+      <block type="colour_blend">
+        <value name="COLOUR1">
+          <shadow type="colour_picker">
+            <field name="COLOUR">#ff0000</field>
+          </shadow>
+        </value>
+        <value name="COLOUR2">
+          <shadow type="colour_picker">
+            <field name="COLOUR">#3333ff</field>
+          </shadow>
+        </value>
+        <value name="RATIO">
+          <shadow type="math_number">
+            <field name="NUM">0.5</field>
+          </shadow>
+        </value>
+      </block>
+    </category>
+    <sep></sep>
+    <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
+    <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
   </xml>
 {/template}

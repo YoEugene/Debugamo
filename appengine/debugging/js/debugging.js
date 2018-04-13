@@ -44,11 +44,17 @@ Scope.initBlocklyDivSize = function() {
 Scope.initHeaderWidth = function() {
     var toolboxHeader = document.getElementById('toolbox-header');
     var workspaceHeader = document.getElementById('workspace-header');
-    var width1 = document.getElementsByClassName('blocklyFlyoutBackground')[0].getBoundingClientRect().width;
-    var width2 = document.getElementsByClassName('blocklyWorkspace')[0].getBoundingClientRect().width;
-    toolboxHeader.style.width = width1 + 'px';
-    workspaceHeader.style.width = (width2 - width1 - 30) + 'px';
-    // console.log('initHeaderWidth done.');
+    var widthCategory = $('.blocklyToolboxDiv').width();
+    var widthBlock = document.getElementsByClassName('blocklyFlyoutBackground')[0].getBoundingClientRect().width;
+    var widthWorkspace = document.getElementsByClassName('blocklyWorkspace')[0].getBoundingClientRect().width;
+    if (widthCategory == undefined) {
+        toolboxHeader.style.width = widthBlock + 'px';
+        workspaceHeader.style.width = (widthWorkspace - widthBlock - 30) + 'px';
+    } else {
+        toolboxHeader.style.width = widthCategory + 'px';
+        workspaceHeader.style.width = (widthWorkspace - widthCategory - 30) + 'px';
+    }
+    console.log('Re-init Header Width.');
 }
 
 /**
@@ -71,12 +77,22 @@ Scope.init = function() {
     /* Init Blockly */
     var toolbox = document.getElementById('toolbox');
     var scale = Levels[BlocklyGames.LEVEL].scale || 1;
-    // init blocks
-    var blockIds = Levels[BlocklyGames.LEVEL].blockIds;
-    blockIds.forEach(function(blockId) {
-        var block = document.getElementById(blockId);
-        toolbox.appendChild(block);
-    });
+    // init blocks or categories
+    var categoryIds = Levels[BlocklyGames.LEVEL].categoryIds;
+    // No specify category
+    if (categoryIds.length == 0) {
+        var blockIds = Levels[BlocklyGames.LEVEL].blockIds;
+        blockIds.forEach(function(blockId) {
+            var block = document.getElementById(blockId);
+            toolbox.appendChild(block);
+        });
+    } else {
+        categoryIds.forEach(function(categoryId) {
+            var category = document.getElementById(categoryId);
+            toolbox.appendChild(category);
+        });
+    }
+    
     BlocklyGames.workspace = Blockly.inject('blockly', {
         'media': 'third-party/blockly/media/',
         'rtl': rtl,
@@ -99,13 +115,15 @@ Scope.init = function() {
     //   Blockly.JavaScript.addReservedWords('moveForward,moveBackward,' +
     //       'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
 
-    var done = JSON.parse(window.localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
-    if (!done) {
+
+    // if there is no saved xml(which means level just started, or empty xml, load the defaultBlocks from levels.js)
+    var savedXml = BlocklyGames.loadFromLocalStorage('debugging', BlocklyGames.LEVEL);
+    if ( savedXml == undefined || savedXml == "" || savedXml == '<xml xmlns="http://www.w3.org/1999/xhtml"><variables></variables></xml>') {
         BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
     }
 
     // load defualt blocks or load stored blocks from Local Storage / Session Storage / DB
-    var defaultXml = window.localStorage.savedBlocks;
+    var defaultXml = localStorage.savedBlocks;
     BlocklyInterface.loadBlocks(defaultXml, false);
     console.log('load blocks');
 
@@ -143,9 +161,19 @@ Scope.init = function() {
     // init Kibo
     var k = new Kibo();
 
-    k.down(['right','left','up','down'], function(e){
-        Debugging.UI.moveRobot(e.key[5].toLowerCase());
+    k.down(['right', 'left', 'up', 'down'], function(e) {
+        Scope.UI.moveRobot(e.key[5].toLowerCase());
     });
+
+    var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
+    // Show new player text
+    if (localStorage.newPlayer == "1") {
+        Scope.UI.showNewPlayerText();
+    }
+    // if not new player but undone
+    else if (done) {
+        UI.showWorkspace();
+    }
 
 };
 
@@ -259,13 +287,14 @@ Scope.interpretCode = function(interpreter, stepCount) {
         else {
             if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
                 Game.things.robot.img = 'robot4';
-                UI.drawGrid($('#playground')[0], false);
+                Scope.UI.drawGrid($('#playground')[0], false);
                 BlocklyInterface.saveToLocalStorage();
                 BlocklyDialogs.congratulations();
-                var done = JSON.parse(window.localStorage.done);
+                var done = JSON.parse(localStorage.done);
                 if (done.indexOf(BlocklyGames.LEVEL) == -1)
                     done.push(BlocklyGames.LEVEL);
-                window.localStorage.done = JSON.stringify(done);
+                localStorage.done = JSON.stringify(done);
+                $('.level_in_progress').addClass('level_done');
             }
             // else will throw error message
         }
@@ -336,10 +365,10 @@ Scope.resetButtonClick = function(e) {
 /** 
  * Clear LocalStorage
  */
-Scope.clearLocalStorageButton = function () {
-    window.localStorage.clear();
-    window.localStorage.setItem('debug', "1");
-    window.localStorage.setItem('newPlayer', "1");
+Scope.clearLocalStorageButton = function() {
+    localStorage.clear();
+    localStorage.setItem('debug', "1");
+    localStorage.setItem('newPlayer', "1");
 }
 
 /**
@@ -359,16 +388,11 @@ Scope.showHelp = function() {
     BlocklyDialogs.startDialogKeyDown();
 };
 
-Scope.showNewPlayerText = function() {
-    var begin = document.getElementById('begin');
-    var style = {
-        width: '50%',
-        left: '25%',
-        top: '5em'
-    };
-    BlocklyDialogs.showDialog(begin, null, true, true, style,
-        BlocklyDialogs.stopDialogKeyDown);
-    BlocklyDialogs.startDialogKeyDown();
+
+Scope.startGame = function() {
+    if (BlocklyDialogs.isDialogVisible_) {
+        BlocklyDialogs.hideDialog(false);
+    }
 }
 
 /**
@@ -376,14 +400,24 @@ Scope.showNewPlayerText = function() {
  */
 Scope.saveToStorage = function() {
     // MSIE 11 does not support sessionStorage on file:// URLs.
-    if (typeof Blockly != undefined && window.localStorage) {
+    if (typeof Blockly != undefined && localStorage) {
         var xml = Blockly.Xml.workspaceToDom(BlocklyGames.workspace);
         var text = Blockly.Xml.domToText(xml);
-        window.localStorage.savedBlocks = text;
+        localStorage.savedBlocks = text;
     }
 
     console.log('Current blocks saved!')
 };
+
+/**
+ * Change Debug Mode
+ */
+Scope.modeChange = function() {
+    if ($('#debugMode').prop("checked"))
+        localStorage.setItem('debug', '1');
+    else
+        localStorage.removeItem('debug');
+}
 
 /**
  * Initialize Blockly and the game.

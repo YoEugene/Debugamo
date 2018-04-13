@@ -178,3 +178,14 @@
     </button>
   </div>
 {/template}
+
+/** 
+ * Start button for new player
+ */
+{template .startGame private="true"}
+  <div class="farSide" style="padding: 1ex 3ex 0">
+    <button class="primary" onclick="Debugging.startGame();" disabled>
+      {{msg meaning="Games.dialogStartGame" desc="start game"}}開始任務!{{/msg}}
+    </button>
+  </div>
+{/template}

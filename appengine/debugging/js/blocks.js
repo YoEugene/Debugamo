@@ -11,35 +11,35 @@ goog.require('Blockly.JavaScript');
 goog.require('BlocklyGames');
 
 // goog.require('Blockly.Blocks.colour');  // Deprecated
-// goog.require('Blockly.Constants.Colour');
-// goog.require('Blockly.JavaScript.colour');
+goog.require('Blockly.Constants.Colour');
+goog.require('Blockly.JavaScript.colour');
 
 // goog.require('Blockly.Blocks.lists');  // Deprecated
-// goog.require('Blockly.Constants.Lists');
-// goog.require('Blockly.JavaScript.lists');
+goog.require('Blockly.Constants.Lists');
+goog.require('Blockly.JavaScript.lists');
 
 // goog.require('Blockly.Blocks.logic');  // Deprecated
-// goog.require('Blockly.Constants.Logic');
-// goog.require('Blockly.JavaScript.logic');
+goog.require('Blockly.Constants.Logic');
+goog.require('Blockly.JavaScript.logic');
 
 // goog.require('Blockly.Blocks.loops');  // Deprecated
-// goog.require('Blockly.Constants.Loops');
-// goog.require('Blockly.JavaScript.loops');
+goog.require('Blockly.Constants.Loops');
+goog.require('Blockly.JavaScript.loops');
 
-goog.require('Blockly.Blocks.math'); // Deprecated
+// goog.require('Blockly.Blocks.math'); // Deprecated
 goog.require('Blockly.Constants.Math');
 goog.require('Blockly.JavaScript.math');
 
-// goog.require('Blockly.Blocks.procedures');
-// goog.require('Blockly.JavaScript.procedures');
+goog.require('Blockly.Blocks.procedures');
+goog.require('Blockly.JavaScript.procedures');
 
 // goog.require('Blockly.Blocks.texts');  // Deprecated
-// goog.require('Blockly.Constants.Text');
-// goog.require('Blockly.JavaScript.texts');
+goog.require('Blockly.Constants.Text');
+goog.require('Blockly.JavaScript.texts');
 
 // goog.require('Blockly.Blocks.variables');  // Deprecated.
-// goog.require('Blockly.Constants.Variables');
-// goog.require('Blockly.JavaScript.variables');
+goog.require('Blockly.Constants.Variables');
+goog.require('Blockly.JavaScript.variables');
 
 
 var Scope_Blocks = Debugging.Blocks;

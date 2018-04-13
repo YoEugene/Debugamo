@@ -12,16 +12,14 @@ goog.require('BlocklyGames');
 
 var UI = Debugging.UI;
 
-var level = {}, robot = {};
+var level = {},
+    robot = {};
 // var robot.position = [0, 0];
 // var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 // window.requestAnimationFrame = requestAnimationFrame;
 
 UI.init = function() {
     level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
-
-    // 
-
 
     UI.missionGuideInd = 0;
     UI.images = {};
@@ -31,15 +29,10 @@ UI.init = function() {
     UI.getImage('robot3');
     UI.getImage('robot4');
     UI.drawGrid($('#playground')[0], false);
-    // UI.getImage('unknown.default');
-    if (window.localStorage.hasOwnProperty('avatar'))
-        $('#player-avatar').attr('src', 'debugging/public/img/' + window.localStorage.avatar);
+    if (localStorage.hasOwnProperty('avatar'))
+        $('#player-avatar').attr('src', 'debugging/public/img/' + localStorage.avatar);
     $('#guidePreviousButton').hide();
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
-
-    if (window.localStorage.newPlayer == "1") {
-        Debugging.showNewPlayerText()
-    }
 
     UI.reset();
 
@@ -59,10 +52,56 @@ UI.reset = function() {
     UI.updateRuntimeUserInterface();
 };
 
+UI.showNewPlayerText = function() {
+    var begin = document.getElementById('begin');
+    var style = {
+        width: '45%',
+        left: '25%',
+        top: '5em'
+    };
+    BlocklyDialogs.showDialog(begin, null, true, true, style,
+        BlocklyDialogs.stopDialogKeyDown, true);
+}
+
+UI.showPreviousGuide = function() {
+    UI.missionGuideInd -= 1;
+    $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
+    if (!isDef(level.missionGuideDescription[UI.missionGuideInd - 1])) {
+        $('#guidePreviousButton').hide();
+    }
+    $('#guideNextButton').show();
+}
+
+UI.showNextGuide = function() {
+    UI.missionGuideInd += 1;
+    $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
+    if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
+        $('#guideNextButton').hide();
+        $('#debugamo-code-editor-container').css('opacity', 1);
+        $('#mission-goal-container').css('opacity', 1)
+        $('#game-buttons').css('opacity', 1)
+    }
+    $('#guidePreviousButton').show();
+}
+
+UI.showWorkspace = function() {
+    $('#debugamo-code-editor-container').css('opacity', 1);
+    $('#mission-goal-container').css('opacity', 1)
+    $('#game-buttons').css('opacity', 1)
+}
+
 UI.setAvatar = function(avatar) {
-    window.localStorage.setItem('avatar', avatar);
-    window.localStorage.setItem('newPlayer', '0');
+    localStorage.setItem('avatar', avatar);
+    localStorage.setItem('newPlayer', '0');
     $('#player-avatar').attr('src', 'debugging/public/img/' + avatar);
+    var i;
+    for (i = 0; i < $('#avatar-choose-box').find('img').length; i++) {
+        if ($('#avatar-choose-box').find('img')[i].src.split('/')[$('#avatar-choose-box').find('img')[0].src.split('/').length - 1] == avatar)
+            $($('#avatar-choose-box').find('img')[i]).addClass('selected');
+        else
+            $($('#avatar-choose-box').find('img')[i]).removeClass('selected');
+    }
+    $('#begin').find('button').attr('disabled', false);
 }
 
 // JUSTTT FORRRRRR TESTTTTTTTT DELETE IT
@@ -89,14 +128,14 @@ UI.drawGrid = function(cvs, isAnimation) {
                     if (tmp == -1) {
                         try {
                             ctx.drawImage(grndImg, imgw * i, imgw * j, imgw, imgw);
-                        } catch(e) { console.log('unknown.default image not loaded yet');}
+                        } catch (e) { console.log('unknown.default image not loaded yet'); }
                         ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                     } else {
                         var specialImg = UI.getImage(specialGrndName[tmp]);
                         if (!specialImg) specialImg = UI.getImage('unknown.default');
                         try {
                             ctx.drawImage(specialImg, imgw * i, imgw * j, imgw, imgw);
-                        } catch(e) { console.log('unknown.default image not loaded yet');}
+                        } catch (e) { console.log('unknown.default image not loaded yet'); }
                         ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                     }
 
@@ -108,12 +147,12 @@ UI.drawGrid = function(cvs, isAnimation) {
                             if (!thingImg) thingImg = UI.getImage('unknown.default');
                             try {
                                 ctx.drawImage(thingImg, imgw * i, imgw * j, imgw, imgw);
-                            } catch(e) { console.log('unknown.default image not loaded yet');}
+                            } catch (e) { console.log('unknown.default image not loaded yet'); }
                             ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                             // console.log('draw ' + level.thingsName[tmp2]);
                         }
                     }
-                    
+
 
                     // console.log('draw grid ' + i + ', ' + j);
                 }
@@ -161,7 +200,7 @@ UI.drawThings = function(thing_name) {
     if (!!img) {
         try {
             ctx.drawImage(img, imgw * thing.position[0], imgw * thing.position[1], imgw, imgw);
-        } catch(e) { console.log('unknown.default image not loaded yet');}
+        } catch (e) { console.log('unknown.default image not loaded yet'); }
     }
 
 }
@@ -266,24 +305,6 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
 
 UI.moveRobot = function(direction) {
     UI.animate($('#playground')[0], 0, direction, 5, 10);
-}
-
-UI.showPreviousGuide = function() {
-    UI.missionGuideInd -= 1;
-    $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
-    if (!isDef(level.missionGuideDescription[UI.missionGuideInd - 1])) {
-        $('#guidePreviousButton').hide();
-    }
-    $('#guideNextButton').show();
-}
-
-UI.showNextGuide = function() {
-    UI.missionGuideInd += 1;
-    $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
-    if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
-        $('#guideNextButton').hide();
-    }
-    $('#guidePreviousButton').show();
 }
 
 function indexOfForArrays(search, origin) {

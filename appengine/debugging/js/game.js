@@ -56,12 +56,14 @@ Game.levelFailedMessage = function(msgKey) {
 Game.commands = {};
 
 Game.commands.moveRobot = function(direction, numOfMove) {
+    /////////////////////////////////// TO FIX: BUG
     UI.moveRobot(direction);
     if (numOfMove == 1) return;
-    var i;
-    for (i = 0; i < numOfMove - 1; i++) {
-        setTimeout(function() { Game.commands.moveRobot(direction, numOfMove-1); }, 150);
-    }
+    // var i;
+    // for (i = 0; i < numOfMove-1; i++) {
+        // UI.moveRobot(direction);
+    setTimeout(function() { Game.commands.moveRobot(direction, numOfMove-1); }, 30);
+    // }
 }
 
 Game.commands.robotGrab = function(thing) {
