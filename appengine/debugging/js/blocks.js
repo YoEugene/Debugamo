@@ -52,284 +52,6 @@ Scope_Blocks.LOOPS_HUE = 120;
 Scope_Blocks.LOGIC_HUE = 210;
 
 // Extensions to Blockly's language and JavaScript generator.
-
-Blockly.Blocks['DrinkShop_getNewCup'] = {
-    init: function() {
-        this.jsonInit({
-            "message0": BlocklyGames.getMsg('DrinkShop_getNewCup'),
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": Scope_Blocks.MOVEMENT_HUE,
-            "tooltip": BlocklyGames.getMsg('DrinkShop_getNewCup')
-        });
-    }
-}
-Blockly.JavaScript['DrinkShop_getNewCup'] = function(block) {
-    return 'getNewCup();\n';
-};
-
-Blockly.Blocks['robot_say'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "robot_say",
-            "message0": "機器人說出 %1",
-            "args0": [{
-                "type": "input_value",
-                "name": "robot_say_label"
-            }],
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": 285,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.JavaScript['robot_say'] = function(block) {
-    block.setDeletable(false);
-    block.setEditable(false);
-    block.setMovable(false);
-}
-
-Blockly.Blocks['str_io'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "str",
-            "message0": "%1",
-            "args0": [{
-                "type": "field_input",
-                "name": "str",
-                "text": "字串"
-            }],
-            "output": null,
-            "colour": 150,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['number_io'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "number_io",
-            "message0": "%1",
-            "args0": [{
-                "type": "field_number",
-                "name": "number",
-                "value": 0
-            }],
-            "output": null,
-            "colour": 0,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['variable_get'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "variable_get",
-            "message0": "%1",
-            "args0": [{
-                "type": "field_variable",
-                "name": "var_get",
-                "variable": "變數"
-            }],
-            "inputsInline": false,
-            "output": null,
-            "colour": 330,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['variable_set'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "variable_set",
-            "message0": "設定變數 %1 為 %2",
-            "args0": [{
-                    "type": "field_variable",
-                    "name": "variable",
-                    "variable": "變數"
-                },
-                {
-                    "type": "input_value",
-                    "name": "NAME"
-                }
-            ],
-            "inputsInline": false,
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": 330,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['counter_loop'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "counter_loop",
-            "message0": "計數 %1 , 從 %2 到 %3 執行: %4",
-            "args0": [{
-                    "type": "field_variable",
-                    "name": "counter_int",
-                    "variable": "counter"
-                },
-                {
-                    "type": "input_value",
-                    "name": "counter"
-                },
-                {
-                    "type": "input_value",
-                    "name": "from_int"
-                },
-                {
-                    "type": "input_statement",
-                    "name": "to_int"
-                }
-            ],
-            "inputsInline": true,
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": 120,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['arithmetic'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "arithmetic",
-            "message0": "%1 %2 %3",
-            "args0": [{
-                    "type": "input_value",
-                    "name": "arithmetic_a"
-                },
-                {
-                    "type": "field_dropdown",
-                    "name": "arithmetic_option",
-                    "options": [
-                        [
-                            "+",
-                            "plus"
-                        ],
-                        [
-                            "-",
-                            "minus"
-                        ],
-                        [
-                            "x",
-                            "time"
-                        ],
-                        [
-                            "÷",
-                            "divide"
-                        ]
-                    ]
-                },
-                {
-                    "type": "input_value",
-                    "name": "arithmetic_b"
-                }
-            ],
-            "inputsInline": true,
-            "output": null,
-            "colour": 90,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['check_order'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "check_order",
-            "message0": "查詢訂單 ( 第 %1 筆訂單飲料的 %2 )",
-            "args0": [{
-                    "type": "input_value",
-                    "name": "check_index"
-                },
-                {
-                    "type": "field_dropdown",
-                    "name": "check_item",
-                    "options": [
-                        [
-                            "名稱",
-                            "name"
-                        ],
-                        [
-                            "大小",
-                            "size"
-                        ],
-                        [
-                            "杯數",
-                            "amount"
-                        ]
-                    ]
-                }
-            ],
-            "output": null,
-            "colour": 230,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['check_menu_price'] = {
-    init: function() {
-        this.jsonInit({
-            "type": "check_menu_price",
-            "message0": "查詢價目表 (飲料名稱： %1 , 大小： %2 )",
-            "args0": [{
-                    "type": "field_variable",
-                    "name": "NAME",
-                    "variable": "name"
-                },
-                {
-                    "type": "field_variable",
-                    "name": "SIZE",
-                    "variable": "size"
-                }
-            ],
-            "output": null,
-            "colour": 230,
-            "tooltip": "",
-            "helpUrl": ""
-        })
-    }
-}
-
-Blockly.Blocks['DrinkShop_fillCupWith'] = {
-    init: function() {
-        this.jsonInit({
-            "message0": BlocklyGames.getMsg('DrinkShop_fillCupWith') + " %1",
-            "args0": [{
-                "type": "field_dropdown",
-                "name": "drink_dropdown",
-                "options": [
-                    [BlocklyGames.getMsg('DrinkShop_blackTea'), "black tea"],
-                    [BlocklyGames.getMsg('DrinkShop_greenTea'), "green tea"],
-                ]
-            }],
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": Scope_Blocks.MOVEMENT_HUE,
-            "tooltip": BlocklyGames.getMsg('DrinkShop_fillCupWith'),
-        });
-    }
-}
-
 Blockly.Blocks['Move_Robot'] = {
     init: function() {
         this.jsonInit({
@@ -339,22 +61,10 @@ Blockly.Blocks['Move_Robot'] = {
                     "type": "field_dropdown",
                     "name": "DIRECTION",
                     "options": [
-                        [
-                            "左邊",
-                            "LEFT"
-                        ],
-                        [
-                            "右邊",
-                            "RIGHT"
-                        ],
-                        [
-                            "上面",
-                            "UP"
-                        ],
-                        [
-                            "下面",
-                            "DOWN"
-                        ]
+                        ["左邊", "Left"],
+                        ["右邊", "Right"],
+                        ["上面", "Up"],
+                        ["下面", "Down"]
                     ]
                 },
                 {
@@ -362,7 +72,7 @@ Blockly.Blocks['Move_Robot'] = {
                     "name": "NUM_OF_MOVE",
                     "value": 0,
                     "min": 1,
-                    "max": 10
+                    "max": 99
                 }
             ],
             "previousStatement": null,
@@ -373,133 +83,82 @@ Blockly.Blocks['Move_Robot'] = {
         });
     }
 };
+Blockly.JavaScript['Move_Robot'] = function(block) {
+    // var direction = block.getFieldValue('DIRECTION')[0].toLowerCase();
+    var direction = block.getFieldValue('DIRECTION');
+    var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
+    var code = 'moveRobot("' + direction + '", ' + num + ', "block_id_' + block.id + '");\n';
+    return code;
+}
 
 Blockly.Blocks['Robot_Grab'] = {
     init: function() {
         this.jsonInit({
-          "type": "robot_grab",
-          "message0": "拿起 %1",
-          "args0": [
-            {
-              "type": "field_input",
-              "name": "GRAB_NAME",
-              "text": "物品名稱"
-            }
-          ],
-          "previousStatement": null,
-          "nextStatement": null,
-          "colour": 230,
-          "tooltip": "",
-          "helpUrl": ""
+            "type": "robot_grab",
+            "message0": "拿起 %1",
+            "args0": [{
+                "type": "field_variable",
+                "name": "GRAB_NAME",
+                "variable": "物件名稱"
+            }],
+            "previousStatement": null,
+            "nextStatement": null,
+            "colour": 230,
+            "tooltip": "",
+            "helpUrl": ""
         })
     }
+};
+Blockly.JavaScript['Robot_Grab'] = function(block) {
+    var thing_name = block.getFieldValue('GRAB_NAME');
+    var code = 'robotGrab("' + thing_name + '", "block_id_' + block.id + '");\n';
+    return code;
 };
 
 Blockly.Blocks['Robot_Drop'] = {
     init: function() {
         this.jsonInit({
-          "type": "robot_drop",
-          "message0": "放下 %1",
-          "args0": [
-            {
-              "type": "field_input",
-              "name": "DROP_NAME",
-              "text": "物品名稱"
-            }
-          ],
-          "previousStatement": null,
-          "nextStatement": null,
-          "colour": 230,
-          "tooltip": "",
-          "helpUrl": ""
+            "type": "robot_drop",
+            "message0": "放下 %1",
+            "args0": [{
+                "type": "field_variable",
+                "name": "DROP_NAME",
+                "variable": "物件名稱"
+            }],
+            "previousStatement": null,
+            "nextStatement": null,
+            "colour": 230,
+            "tooltip": "",
+            "helpUrl": ""
         })
     }
 };
-
-Blockly.JavaScript['Move_Robot'] = function(block) {
-    var direction = block.getFieldValue('DIRECTION')[0].toLowerCase();
-    var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
-    var code = 'moveRobot("' + direction +'", ' + num + ');\n';
-    return code;
-}
-
-Blockly.JavaScript['Robot_Grab'] = function(block) {
-    var thing_name = block.getFieldValue('GRAB_NAME');
-    var code = 'robotGrab("' + thing_name +'");\n';
-    return code;
-};
-
 Blockly.JavaScript['Robot_Drop'] = function(block) {
     var thing_name = block.getFieldValue('DROP_NAME');
-    var code = 'robotDrop("' + thing_name +'");\n';
+    var code = 'robotDrop("' + thing_name + '", "block_id_' + block.id + '");\n';
     return code;
 };
 
-Blockly.JavaScript['DrinkShop_fillCupWith'] = function(block) {
-    var drink_str = block.getFieldValue('drink_dropdown');
-    return 'fillCupWith("' + drink_str + '");\n';
-};
-
-Blockly.Blocks['DrinkShop_fillCupWithVolume'] = {
+Blockly.Blocks['Robot_Goto'] = {
     init: function() {
         this.jsonInit({
-            "message0": BlocklyGames.getMsg('DrinkShop_fillCupWithVolume') + " %1 %2 " + BlocklyGames.getMsg('DrinkShop_ml'),
+            "type": "robot_goto",
+            "message0": "前往 %1",
             "args0": [{
-                    "type": "field_dropdown",
-                    "name": "MATERIAL",
-                    "options": [
-                        [BlocklyGames.getMsg('DrinkShop_blackTea'), "black tea"],
-                        [BlocklyGames.getMsg('DrinkShop_greenTea'), "green tea"],
-                        [BlocklyGames.getMsg('DrinkShop_milk'), "milk"],
-                        // [ BlocklyGames.getMsg('DrinkShop_ice'), "ice" ],
-                        [BlocklyGames.getMsg('DrinkShop_boba'), "boba"],
-                    ]
-                },
-                {
-                    "type": "input_value",
-                    "name": "VOLUME"
-                }
-            ],
+                "type": "field_variable",
+                "name": "GOTO_NAME",
+                "variable": "物件名稱"
+            }],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": Scope_Blocks.MOVEMENT_HUE,
-            "tooltip": BlocklyGames.getMsg('DrinkShop_fillCupWithVolume'),
-        });
+            "colour": 120,
+            "tooltip": "",
+            "helpUrl": ""
+        })
     }
 }
-Blockly.JavaScript['DrinkShop_fillCupWithVolume'] = function(block) {
-    var material = block.getFieldValue('MATERIAL');
-    var volume = Blockly.JavaScript.valueToCode(block, 'VOLUME',
-        Blockly.JavaScript.ORDER_COMMA) || 0;
-    return 'fillCupWithVolume("' + material + '", ' + volume + ');\n';
-};
-
-Blockly.Blocks['DrinkShop_coverCup'] = {
-    init: function() {
-        this.jsonInit({
-            "message0": BlocklyGames.getMsg('DrinkShop_coverCup'),
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": Scope_Blocks.MOVEMENT_HUE,
-            "tooltip": BlocklyGames.getMsg('DrinkShop_coverCup')
-        });
-    }
-}
-Blockly.JavaScript['DrinkShop_coverCup'] = function(block) {
-    return 'coverCup();\n';
-};
-
-Blockly.Blocks['DrinkShop_serve'] = {
-    init: function() {
-        this.jsonInit({
-            "message0": BlocklyGames.getMsg('DrinkShop_serve'),
-            "previousStatement": null,
-            "nextStatement": null,
-            "colour": Scope_Blocks.MOVEMENT_HUE,
-            "tooltip": BlocklyGames.getMsg('DrinkShop_serve')
-        });
-    }
-}
-Blockly.JavaScript['DrinkShop_serve'] = function(block) {
-    return 'serve();\n';
+Blockly.JavaScript['Robot_Goto'] = function(block) {
+    var thing_name = block.getFieldValue('GOTO_NAME');
+    var code = 'robotGoto("' + thing_name + '", "block_id_' + block.id + '");\n';
+    return code;
 };

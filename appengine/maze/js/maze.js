@@ -560,8 +560,8 @@ Maze.init = function() {
         'trashcan': true,
         'zoom': { 'startScale': scale }
     });
-    BlocklyGames.workspace.loadAudio_(Maze.SKIN.winSound, 'win');
-    BlocklyGames.workspace.loadAudio_(Maze.SKIN.crashSound, 'fail');
+    // BlocklyGames.workspace.loadAudio_(Maze.SKIN.winSound, 'win');
+    // BlocklyGames.workspace.loadAudio_(Maze.SKIN.crashSound, 'fail');
     // Not really needed, there are no user-defined functions or variables.
     Blockly.JavaScript.addReservedWords('moveForward,moveBackward,' +
         'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
@@ -1479,6 +1479,7 @@ Maze.constrainDirection16 = function(d) {
  * @throws {false} If Pegman collides with a wall.
  */
 Maze.move = function(direction, id) {
+    console.log(id);
     if (!Maze.isPath(direction, null)) {
         Maze.log.push(['fail_' + (direction ? 'backward' : 'forward'), id]);
         throw false;

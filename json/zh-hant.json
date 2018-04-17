@@ -108,9 +108,10 @@
 	"Debugging.NewPlayerGuide2": "就在不久之前，一場威力強大的地震發生了，還好在國家級防災通知下，多數人幸運地即時逃出。然而在一棟倒塌的建築物之中，還是有為數不多的人與小動物，被石塊與碎瓦阻擋了逃生。你的任務是，透過",
 	"Debugging.NewPlayerGuide3": "遠端通訊與迪摩溝通",
 	"Debugging.NewPlayerGuide4": "，清除碎石與磚瓦，援救剩餘的人與小動物們。",
-	"Debugging.NewPlayerGuide5": "不幸的是，在迪摩進行救援時發生了一點意外，導致他的邏輯晶片出錯，必須仰賴你協助迪摩",
+	"Debugging.NewPlayerGuide5": "不幸的是，在迪摩進行救援時發生了一點意外，導致他的程式晶片出錯，必須仰賴你協助迪摩",
 	"Debugging.NewPlayerGuide6": "修復程式晶片",
 	"Debugging.NewPlayerGuide7": "，才能順利完成這次任務！",
 	"Debugging.NewPlayerGuide8": "請選擇您的玩家頭像：",
-	"Games.dialogStartGame": "開始任務"
+	"Games.dialogStartGame": "開始任務",
+	"Debugging.GoalHeader": "收到，迪摩。我們的任務是："
 }

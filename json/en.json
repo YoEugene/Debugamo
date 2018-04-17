@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2018-04-13 23:04:18.314966",
+		"lastupdated": "2018-04-18 02:16:24.409883",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -99,6 +99,9 @@
 	"DrinkShop_msg_cupCovered": "The cup has been covered.",
 	"DrinkShop_msg_drinkOverflow": "The cup is full. The drink will overflow.",
 	"Debugging_msg_noGoal": "You didn't reach the position of goal.",
+	"Debugging_msg_errGrabNoSuchThing": "There is no such a thing to Grab in this level.",
+	"Debugging_msg_errDropNoSuchThing": "There is no such a thing to Drop in this level.",
+	"Debugging_msg_errGotoNoSuchThing": "There is no such a thing to Goto in this level.",
 	"Games.debugging": "Debugging Mission",
 	"Debugging.clear": "Clear",
 	"Debugging.hint": "Hint",

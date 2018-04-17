@@ -3,9 +3,9 @@
 ##############################
 
 # USER_APPS = {index,courses,puzzle,maze,bird,turtle,movie,pond/docs,pond/tutor,pond/duck,debugging}
-USER_APPS = {index,debugging}
+USER_APPS = {index,maze,debugging}
 # ALL_JSON = {./,index,courses,puzzle,maze,bird,turtle,movie,pond/docs,pond,pond/tutor,pond/duck,debugging}
-ALL_JSON = {./,index,debugging}
+ALL_JSON = {./,index,maze,debugging}
 # ALL_TEMPLATES = appengine/template.soy,appengine/index/template.soy,appengine/template.soy,appengine/courses/template.soy,appengine/puzzle/template.soy,appengine/maze/template.soy,appengine/bird/template.soy,appengine/turtle/template.soy,appengine/movie/template.soy,appengine/pond/docs/template.soy,appengine/pond/template.soy,appengine/pond/tutor/template.soy,appengine/pond/duck/template.soy,appengine/shop/template.soy,appengine/debugging/template.soy
 ALL_TEMPLATES = appengine/template.soy,appengine/index/template.soy,appengine/debugging/template.soy
 
@@ -18,9 +18,6 @@ SOY_EXTRACTOR = java -jar third-party/SoyMsgExtractor.jar
 ##############################
 
 all: deps languages
-
-common-zh:
-	$(SOY_COMPILER) --outputPathFormat appengine/generated/zh-hant/soy.js --srcs appengine/template.soy
 
 courses-en:
 	mkdir -p appengine/generated/en/
@@ -128,6 +125,16 @@ maze-zh: common-zh
 	python build-app.py maze zh-hant
 
 
+common-en:
+	$(SOY_COMPILER) --outputPathFormat appengine/generated/en/soy.js --srcs appengine/template.soy
+
+common-zh: extract-msgs
+	$(SOY_COMPILER) --outputPathFormat appengine/generated/zh-hant/soy.js --srcs appengine/template.soy
+	$(SOY_EXTRACTOR) --outputFile extracted_msgs.xlf --srcs $(ALL_TEMPLATES)
+	i18n/xliff_to_json.py --xlf extracted_msgs.xlf --templates $(ALL_TEMPLATES)
+	mkdir -p appengine/generated
+	i18n/json_to_js.py --path_to_jar third-party --output_dir appengine/generated --template appengine/template.soy --key_file json/keys.json json/*.json
+
 
 index-en:
 	mkdir -p appengine/generated/en/
@@ -173,9 +180,6 @@ genetics-en: common-en
 
 pond-common-en: common-en
 	$(SOY_COMPILER) --outputPathFormat appengine/pond/generated/en/soy.js --srcs appengine/pond/template.soy
-
-common-en:
-	$(SOY_COMPILER) --outputPathFormat appengine/generated/en/soy.js --srcs appengine/template.soy
 
 en: index-en courses-en puzzle-en maze-en bird-en turtle-en movie-en pond-docs-en pond-tutor-en pond-duck-en genetics-en
 

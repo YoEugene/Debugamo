@@ -2,4 +2,8 @@
 
 - debugging / template.soy 的 .messages 可拿掉?
 
-- 
+- Grab / Drop / Goto 改成中文字
+
+- 過關 javaScript 更人性化
+	- 中文化
+	- 簡潔化

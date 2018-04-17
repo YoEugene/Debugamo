@@ -2,7 +2,7 @@
  * 遊戲 UI 功能設定區
  */
 
-// UI functioin 定義
+// UI function 定義
 
 goog.provide('Debugging.UI');
 
@@ -20,6 +20,9 @@ var level = {},
 
 UI.init = function() {
     level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
+    robot = $.extend(true, {}, level.robot);
+
+    Debugging.Game.things.robot = robot;
 
     UI.missionGuideInd = 0;
     UI.images = {};
@@ -34,22 +37,45 @@ UI.init = function() {
     $('#guidePreviousButton').hide();
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
 
-    UI.reset();
+    UI.initGoalList();
 
-    Debugging.Game.things.robot = robot;
+    UI.updateRuntimeUserInterface();
+
+    UI.stopAnimation = false;
+    UI.animationSetTimeoutIds = [];
 };
 
 UI.reset = function() {
+    // disable animation for a short of period
+    UI.stopAnimation = true;
+
     // deep copy of object
     level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
-    // deep copy of array
     robot = $.extend(true, {}, level.robot);
-    // deep copy of array
-    // robot.grab = Debugging.Levels[BlocklyGames.LEVEL].robot.grab.slice();
+
+    var i;
+    for (i = 0; i < UI.animationSetTimeoutIds.length + 10; i++) {
+        clearTimeout(UI.animationSetTimeoutIds[i]);
+    }
 
     Debugging.Game.things.robot = robot;
 
     UI.updateRuntimeUserInterface();
+
+    $('#goal-list').find('li').removeClass('success');
+    $('#goal-list').find('li').removeClass('fail');
+
+    UI.animationSetTimeoutIds = [];
+    
+    // enable animation after short of period
+    setTimeout(function(){UI.stopAnimation = false;}, 100);
+};
+
+UI.initGoalList = function() {
+    var i;
+    for (i = 0; i < level.goals.length; i++) {
+        $('#goal-list').append('<li><span class="icon success_icon">✔</span><span class="icon fail_icon">✘</span>' + level.goals[i] + '</li>');
+    }
 };
 
 UI.showNewPlayerText = function() {
@@ -77,16 +103,22 @@ UI.showNextGuide = function() {
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
     if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
         $('#guideNextButton').hide();
+        $('#debugamo-code-editor-container').css('z-index', 1);
         $('#debugamo-code-editor-container').css('opacity', 1);
+        $('#mission-goal-container').css('z-index', 1)
         $('#mission-goal-container').css('opacity', 1)
+        $('#game-buttons').css('z-index', 1)
         $('#game-buttons').css('opacity', 1)
     }
     $('#guidePreviousButton').show();
 }
 
 UI.showWorkspace = function() {
+    $('#debugamo-code-editor-container').css('z-index', 1);
     $('#debugamo-code-editor-container').css('opacity', 1);
+    $('#mission-goal-container').css('z-index', 1)
     $('#mission-goal-container').css('opacity', 1)
+    $('#game-buttons').css('z-index', 1)
     $('#game-buttons').css('opacity', 1)
 }
 
@@ -104,7 +136,6 @@ UI.setAvatar = function(avatar) {
     $('#begin').find('button').attr('disabled', false);
 }
 
-// JUSTTT FORRRRRR TESTTTTTTTT DELETE IT
 UI.drawGrid = function(cvs, isAnimation) {
 
     ctx = cvs.getContext("2d");
@@ -149,12 +180,8 @@ UI.drawGrid = function(cvs, isAnimation) {
                                 ctx.drawImage(thingImg, imgw * i, imgw * j, imgw, imgw);
                             } catch (e) { console.log('unknown.default image not loaded yet'); }
                             ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
-                            // console.log('draw ' + level.thingsName[tmp2]);
                         }
                     }
-
-
-                    // console.log('draw grid ' + i + ', ' + j);
                 }
             }
         }
@@ -175,6 +202,7 @@ UI.drawThings = function(thing_name) {
             var thingPos = level.thingsInd[i];
             var thingName = level.thingsName[i];
             Game.things[thingName] = { position: thingPos, img: thingName };
+            Game.addThingToVariables(thingName);
             UI.drawThings(thingName);
         }
 
@@ -182,8 +210,6 @@ UI.drawThings = function(thing_name) {
 
         return;
     }
-
-    // console.log('draw ' + thing_name);
 
     if (thing_name == 'robot')
         var thing = Game.things.robot;
@@ -246,6 +272,13 @@ UI.updateRuntimeUserInterface = function() {
 }
 
 UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTimeMs) {
+    // Clicked reset button
+    if (UI.stopAnimation) {
+        UI.updateRuntimeUserInterface();
+        return;
+    }
+
+
     var ctx = cvs.getContext('2d');
 
     if (percentFinished >= 100) {
@@ -289,22 +322,17 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
         }
     }
 
-    setTimeout(function() {
-        percentFinished += 100 / animateFrameNum;
-        UI.drawGrid(cvs, true);
-        UI.animate(cvs, percentFinished, direction, animateFrameNum, frameTimeMs);
-    }, frameTimeMs);
-
-
-    // if (percentFinished < 100) {
-    //     requestAnimationFrame(UI.animate)
-    // }
+    UI.animationSetTimeoutIds.push(
+        setTimeout(function() {
+            percentFinished += 100 / animateFrameNum;
+            UI.drawGrid(cvs, true);
+            UI.animate(cvs, percentFinished, direction, animateFrameNum, frameTimeMs);
+        }, frameTimeMs)
+    )
 }
 
-// requestAnimationFrame(UI.animate);
-
 UI.moveRobot = function(direction) {
-    UI.animate($('#playground')[0], 0, direction, 5, 10);
+    UI.animate($('#playground')[0], 0, direction, UI.drawFrame, UI.drawSpeed);
 }
 
 function indexOfForArrays(search, origin) {

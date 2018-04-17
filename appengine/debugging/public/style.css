@@ -57,7 +57,7 @@ img[src$="help_down.png"] {
 
 #begin-box p {
     margin: 0px;
-    line-height: 20px;
+    line-height: 24px;
 }
 
 #begin .farSide {
@@ -66,7 +66,7 @@ img[src$="help_down.png"] {
 
 #begin .farSide button {
     padding: 10px 20px;
-    margin: 15px 0 22px;
+    margin: 5px 0 22px;
     letter-spacing: 2px;
 }
 
@@ -93,6 +93,7 @@ img[src$="help_down.png"] {
 }
 
 
+
 /* Buttons */
 
 button.primary {
@@ -103,6 +104,7 @@ button.primary {
 html[dir="RTL"] button.primary {
     text-align: right;
 }
+
 
 
 
@@ -251,8 +253,14 @@ pre#containerCode {
 }
 
 #game-buttons {
-    padding: 16px 26px;
-    opacity: 0;   
+    padding: 16px 25px 0 25px;
+    position: relative;
+    opacity: 0;
+    z-index: -1;
+
+    transition-property: opacity, z-index;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
 }
 
 #game-buttons button {
@@ -280,46 +288,122 @@ pre#containerCode {
 
 #mission-goal-container {
     position: relative;
-    padding: 25px 10px;
+    padding: 10px 25px;
     opacity: 0;
+    z-index: -1;
+    height: calc(100vh - 35vw - 58px);
 
-    transition-property: opacity;
+    transition-property: opacity, z-index;
     transition-duration: 0.2s;
     transition-timing-function: linear;
+}
+
+#mission-goal-box {
+    position: relative;
+    height: 100%;
+    background-color: rgb(221, 221, 221);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    padding-top: 13px;
 }
 
 #player-avatar-box {
     display: inline-block;
     position: absolute;
     left: 10px;
-    top: 28px;
+    top: 38px;
 }
 
 #player-avatar {
     width: 45px;
 }
 
-#mission-goal-box {
-    position: relative;
-}
-
 #goal-arrow {
     position: absolute;
     display: inline-block;
-    left: 50px;
-    top: 35px;
+    left: 51px;
+    top: 38px;
 }
 
 #goal-right-box {
-    width: calc(35vw - 110px);
-    height: calc(100vh - 35vw - 124px);
+    width: calc(35vw - 136px);
+    height: calc(100vh - 35vw - 102px);
     background-color: #fff;
     border-radius: 10px;
     display: inline-block;
     position: absolute;
-    right: 15px;
+    right: 13px;
     min-height: 100px;
-    padding: 10px;
+    padding: 15px;
+    white-space: pre;
+    overflow: auto;
+}
+
+#goal-right-box p {
+    margin: 0 0 10px 0;
+}
+
+#goal-right-box ul {
+    margin: 0;
+}
+
+#goal-list li {
+    color: #1e87f0;
+    line-height: 1.5;
+    padding: 4px 2px;
+}
+
+#goal-list li .icon {
+    font-family: Verdana, sans-serif;
+    font-size: small;
+    margin: 0 5px;
+}
+
+#goal-list li .success_icon {
+    display: none;
+}
+
+#goal-list li.success .success_icon {
+    display: inline-block;
+    color: rgb(37, 185, 0);
+}
+
+#goal-list li .fail_icon {
+    display: none;
+}
+
+#goal-list li.fail .fail_icon {
+    display: inline-block;
+    color: red;
+}
+
+#goal-list li.success {
+    color: #48a04b;
+}
+
+#goal-list li.fail {
+    color: #e01c1c;
+}
+
+#goal-list li:nth-child(n+2) {
+    margin-top: 3px;
+}
+
+
+
+#goal-right-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 8px;
+    height: 8px;
+}
+
+#goal-right-box::-webkit-scrollbar-corner {
+    background-color: rgb(220,220,220);
+}
+
+#goal-right-box::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #bbb;
 }
 
 #debugamo-right-container {
@@ -404,7 +488,7 @@ pre#containerCode {
     background-color: white;
     border-radius: 10px;
     margin: 10px 0px;
-    padding: 7px 14px;
+    padding: 6px 14px 5px;
     position: absolute;
     border-style: dashed;
     border-width: 1px;
@@ -414,14 +498,32 @@ pre#containerCode {
     width: calc(65vw - 231px);
     height: 79px;
     overflow: hidden;
-    line-height: 21px;
+    line-height: 22px;
     overflow: scroll;
-    -webkit-user-select: text;  /* Chrome all / Safari all */
-    -moz-user-select: text;     /* Firefox all */
-    -ms-user-select: text;      /* IE 10+ */
+    -webkit-user-select: text;
+    /* Chrome all / Safari all */
+    -moz-user-select: text;
+    /* Firefox all */
+    -ms-user-select: text;
+    /* IE 10+ */
     user-select: text;
 }
+/*
+#guide-inner-box::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 8px;
+    height: 8px;
+}
 
+#guide-inner-box::-webkit-scrollbar-corner {
+    background-color: rgb(220,220,220);
+}
+
+#guide-inner-box::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: #bbb;
+}
+*/
 #guide-inner-box p {
     margin: 0;
 }
@@ -469,8 +571,9 @@ pre#containerCode {
     position: relative;
     height: calc(100vh - 200px);
     opacity: 0;
+    z-index: -1;
 
-    transition-property: width height left top opacity;
+    transition-property: opacity, z-index;
     transition-duration: 0.2s;
     transition-timing-function: linear;
 }
@@ -553,4 +656,66 @@ svg text .fa {
 .status-text {
     font-family: monospace;
     font-size: 3.5em;
+}
+
+.switch {
+    position: absolute;
+    /*display: inline-block;*/
+    width: 44px;
+    height: 24px;
+    left: calc(0.5 * 35vw - 19px);
+    top: 27px;
+}
+
+.switch input {
+    display: none;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+
+/* Rounded sliders */
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }

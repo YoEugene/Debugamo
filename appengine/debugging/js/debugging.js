@@ -10,6 +10,7 @@ goog.require('Blockly.FieldDropdown');
 goog.require('BlocklyDialogs');
 goog.require('BlocklyGames');
 goog.require('BlocklyInterface');
+goog.require('Blockly.Workspace');
 goog.require('Debugging.Blocks');
 goog.require('Debugging.Game');
 goog.require('Debugging.UI');
@@ -21,7 +22,6 @@ BlocklyGames.NAME = 'debugging';
 var Scope = Debugging;
 
 Scope.MAX_STEPS = 10000;
-Scope.STEP_SPEED = 90;
 
 BlocklyInterface.nextLevel = function() {
     if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
@@ -144,6 +144,7 @@ Scope.init = function() {
     Scope.Game.init(level = BlocklyGames.LEVEL);
 
     BlocklyGames.bindClick('runButton', Scope.runButtonClick);
+    BlocklyGames.bindClick('stepButton', Scope.stepButtonClick);
     BlocklyGames.bindClick('resetButton', Scope.resetButtonClick);
     BlocklyGames.bindClick('clearLocalStorageButton', Scope.clearLocalStorageButton);
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
@@ -175,14 +176,20 @@ Scope.init = function() {
         UI.showWorkspace();
     }
 
+    if (localStorage.speed == "1") {
+        Scope.changeToSpeedMode();
+        $('#speedMode').prop("checked", true);
+    } else {
+        Scope.changeToSlowMode();
+    }
+
 };
 
-
-// /**
-//  * Inject the Maze API into a JavaScript interpreter.
-//  * @param {!Object} scope Global scope.
-//  * @param {!Interpreter} interpreter The JS interpreter.
-//  */
+/**
+ * Inject the Maze API into a JavaScript interpreter.
+ * @param {!Object} scope Global scope.
+ * @param {!Interpreter} interpreter The JS interpreter.
+ */
 Scope.initInterpreter = function(interpreter, scope) {
     //   // API
     var wrapper;
@@ -204,6 +211,9 @@ Scope.initInterpreter = function(interpreter, scope) {
  * Execute the user's code.  Heaven help us...
  */
 Scope.execute = function() {
+
+    Game.stopProgram = false;
+
     if (!('Interpreter' in window)) {
         // Interpreter lazy loads and hasn't arrived yet.  Try again later.
         setTimeout(Scope.execute, 250);
@@ -271,6 +281,81 @@ Scope.execute = function() {
     // Maze.pidList.push(setTimeout(Maze.animate, 100));
 };
 
+Scope.executeStep = function(pass_in_interpreter) {
+
+    Game.stepInProgress = true;
+
+    if (!('Interpreter' in window)) {
+        // Interpreter lazy loads and hasn't arrived yet.  Try again later.
+        setTimeout(Scope.executeStep, 250);
+        return;
+    }
+
+    if (!!pass_in_interpreter) {
+        var interpreter = pass_in_interpreter;
+    }
+    else if (!Game.currentInterpreter) {
+        var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
+        console.log(code);
+        var interpreter = new Interpreter(code, Scope.initInterpreter);
+    } else {
+        var interpreter = Game.currentInterpreter;
+    }
+
+    try {
+        if (!Game.stepAnchor && interpreter.step()) {
+            setTimeout(function() {
+                Scope.executeStep(interpreter);
+            }, Scope.STEP_SPEED);
+        } else if (!interpreter.step()) {
+            // finished all steps
+            // clear saved interpreter
+            Game.currentInterpreter = undefined;
+            $('#stepButton').hide();
+
+            // Check if level is completed
+            if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+                setTimeout(function(){
+                    Game.things.robot.img = 'robot4';
+                    Scope.UI.drawGrid($('#playground')[0], false);
+                    BlocklyInterface.saveToLocalStorage();
+                    BlocklyDialogs.congratulations();
+                    var done = JSON.parse(localStorage.done);
+                    if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+                        done.push(BlocklyGames.LEVEL);
+                        localStorage.done = JSON.stringify(done);
+                        $('.level_in_progress').addClass('level_done');
+                        if ($('.level_disable')[0] != undefined) {
+                            $($('.level_disable')[0]).addClass('level_in_progress');
+                            $($('.level_disable')[0]).removeClass('level_disable');
+                        }
+                    }
+                    BlocklyInterface.highlight(null);
+                }, 500);
+            }
+        } else if (Game.stepAnchor) {
+            // Save current interpreter
+            Game.currentInterpreter = interpreter;
+        } 
+    } catch (e) {
+        // Debugamo: setTimeout generate a short period of delay, so dom can update normally
+        // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
+        if (e === Infinity) {
+            setTimeout(function(){window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));},10);
+        } else if (typeof e === 'string') {
+            setTimeout(function(){window.alert(e);},10);
+            console.log(e);
+        } else {
+            // Syntax error, can't happen.
+            setTimeout(function(){window.alert(e);},10);
+            console.log(e);
+        }
+    }
+
+    Game.stepInProgress = false;
+
+}
+
 Scope.interpretCode = function(interpreter, stepCount) {
     try {
         // infinite loop
@@ -278,35 +363,50 @@ Scope.interpretCode = function(interpreter, stepCount) {
             throw Infinity;
         }
         // next step
-        if (interpreter.step()) {
+        if (!Game.stopProgram && interpreter.step()) {
             setTimeout(function() {
                 Scope.interpretCode(interpreter, stepCount + 1);
             }, Scope.STEP_SPEED);
         }
+        // click reset/stop button
+        else if (Game.stopProgram) {
+            Game.stopProgram = false;
+            return;
+        }
         // when the code is fully executed, check if the user passes the level
-        else {
+        else if (!interpreter.step()) {
             if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
-                Game.things.robot.img = 'robot4';
-                Scope.UI.drawGrid($('#playground')[0], false);
-                BlocklyInterface.saveToLocalStorage();
-                BlocklyDialogs.congratulations();
-                var done = JSON.parse(localStorage.done);
-                if (done.indexOf(BlocklyGames.LEVEL) == -1)
-                    done.push(BlocklyGames.LEVEL);
-                localStorage.done = JSON.stringify(done);
-                $('.level_in_progress').addClass('level_done');
+                setTimeout(function(){
+                    Game.things.robot.img = 'robot4';
+                    Scope.UI.drawGrid($('#playground')[0], false);
+                    BlocklyInterface.saveToLocalStorage();
+                    BlocklyDialogs.congratulations();
+                    var done = JSON.parse(localStorage.done);
+                    if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+                        done.push(BlocklyGames.LEVEL);
+                        localStorage.done = JSON.stringify(done);
+                        $('.level_in_progress').addClass('level_done');
+                        if ($('.level_disable')[0] != undefined) {
+                            $($('.level_disable')[0]).addClass('level_in_progress');
+                            $($('.level_disable')[0]).removeClass('level_disable');
+                        }
+                    }
+                    BlocklyInterface.highlight(null);
+                }, 500);
             }
             // else will throw error message
         }
     } catch (e) {
+        // Debugamo: setTimeout generate a short period of delay, so dom can update normally
+        // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));
+            setTimeout(function(){window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));},10);
         } else if (typeof e === 'string') {
-            window.alert(e);
+            setTimeout(function(){window.alert(e);},10);
             console.log(e);
         } else {
             // Syntax error, can't happen.
-            window.alert(e);
+            setTimeout(function(){window.alert(e);},10);
             console.log(e);
         }
     }
@@ -322,6 +422,7 @@ Scope.runButtonClick = function(e) {
         return;
     }
     BlocklyDialogs.hideDialog(false);
+
     // Only allow a single top block on level 1.
     // if (BlocklyGames.LEVEL == 1 &&
     //     BlocklyGames.workspace.getTopBlocks().length > 1 &&
@@ -332,17 +433,51 @@ Scope.runButtonClick = function(e) {
     //   return;
     // }
     var runButton = document.getElementById('runButton');
+    var stepButton = document.getElementById('stepButton');
     var resetButton = document.getElementById('resetButton');
     // Ensure that Reset button is at least as wide as Run button.
     if (!resetButton.style.minWidth) {
         resetButton.style.minWidth = runButton.offsetWidth + 'px';
     }
     runButton.style.display = 'none';
+    stepButton.style.display = 'none';
     resetButton.style.display = 'inline';
     // BlocklyGames.workspace.traceOn(true);
 
     Scope.Game.reset();
     Scope.execute();
+};
+
+/**
+ * Click the step button.  Run the program for one step.
+ * @param {!Event} e Mouse or touch event.
+ */
+Scope.stepButtonClick = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e) || Game.stepInProgress) {
+        return;
+    }
+
+    BlocklyDialogs.hideDialog(false);
+
+    var runButton = document.getElementById('runButton');
+    var stepButton = document.getElementById('stepButton');
+    var resetButton = document.getElementById('resetButton');
+    var gameButtons = document.getElementById('game-buttons');
+    // Ensure that Reset button is at least as wide as Run button.
+    if (!resetButton.style.minWidth) {
+        resetButton.style.minWidth = runButton.offsetWidth + 'px';
+    }
+    runButton.style.display = 'none';
+    // stepButton.style.display = 'none';
+    // gameButtons.style.textAlign = 'right';
+    resetButton.style.display = 'inline-block';
+
+    Game.stopProgram = false;
+    Game.stepAnchor = false;
+
+    Scope.executeStep();
+
 };
 
 /**
@@ -354,13 +489,14 @@ Scope.resetButtonClick = function(e) {
     if (BlocklyInterface.eventSpam(e)) {
         return;
     }
-    document.getElementById('runButton').style.display = 'inline';
+    document.getElementById('runButton').style.display = 'inline-block';
+    document.getElementById('stepButton').style.display = 'inline-block';
     document.getElementById('resetButton').style.display = 'none';
+    document.getElementById('game-buttons').style.textAlign = 'left';
     // BlocklyGames.workspace.traceOn(false);
     Scope.Game.reset();
     // Maze.levelHelp();
 };
-
 
 /** 
  * Clear LocalStorage
@@ -388,7 +524,6 @@ Scope.showHelp = function() {
     BlocklyDialogs.startDialogKeyDown();
 };
 
-
 Scope.startGame = function() {
     if (BlocklyDialogs.isDialogVisible_) {
         BlocklyDialogs.hideDialog(false);
@@ -412,12 +547,47 @@ Scope.saveToStorage = function() {
 /**
  * Change Debug Mode
  */
-Scope.modeChange = function() {
+Scope.debugModeChange = function() {
     if ($('#debugMode').prop("checked"))
         localStorage.setItem('debug', '1');
     else
         localStorage.removeItem('debug');
 }
+
+/**
+ * Toggle change speed mode
+ */
+Scope.speedModeChange = function() {
+    console.log('speed mode change');
+    if (!$('#speedMode').prop("checked")) {
+        Scope.changeToSpeedMode();   
+    }
+    else {
+        Scope.changeToSlowMode();   
+    }
+}
+
+/**
+ * Change to speed mode
+ */
+Scope.changeToSpeedMode = function() {
+    localStorage.setItem('speed', '1');
+    Scope.STEP_SPEED = 20;
+    Scope.UI.drawFrame = 3;
+    Scope.UI.drawSpeed = 10;
+    console.log('changed to speed mode');
+ }
+
+/**
+ * Change to slow mode
+ */
+Scope.changeToSlowMode = function() {
+    localStorage.removeItem('speed');
+    Scope.STEP_SPEED = 60;
+    Scope.UI.drawFrame = 10;
+    Scope.UI.drawSpeed = 10;
+    console.log('changed to slow mode');
+ }
 
 /**
  * Initialize Blockly and the game.

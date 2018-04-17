@@ -192,11 +192,14 @@ BlocklyGames.LEVEL =
  */
 BlocklyGames.init = function() {
   // change url if level param is changed
-  var search = window.location.search;
-  search = search.replace(/([?&]level=)[^&]*/, '$1' + BlocklyGames.LEVEL);
-  if (search == "")
-    search = "?level=" + BlocklyGames.LEVEL
-  history.replaceState({}, "", "debugging" + search);
+  if (BlocklyGames.NAME == "debugging") {
+    var search = window.location.search;
+    search = search.replace(/([?&]level=)[^&]*/, '$1' + BlocklyGames.LEVEL);
+    if (search == "")
+      search = "?level=" + BlocklyGames.LEVEL
+    history.replaceState({}, "", "debugging" + search);
+  }
+  
 
   // Set the page title with the content of the H1 title.
   document.title = document.getElementById('title').textContent;
@@ -241,8 +244,8 @@ BlocklyGames.init = function() {
   // Highlight levels that have been completed.
   for (var i = 1; i <= BlocklyGames.MAX_LEVEL; i++) {
     var link = document.getElementById('level' + i);
-    var in_progress = !!BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME, i);
     var done = JSON.parse(window.localStorage.done).indexOf(i) != -1;
+    var in_progress = (i == (JSON.parse(window.localStorage.done).length + 1)) ? true : false;
     if (link && done) {
       goog.dom.classes.add(link, 'level_done');
     } else if (link && in_progress) {

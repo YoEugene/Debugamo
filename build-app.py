@@ -72,7 +72,7 @@ CORE_LANGUAGE_MAP = {
   # 'tr': 'Blockly.Msg.tr',
   # 'uk': 'Blockly.Msg.uk',
   # 'vi': 'Blockly.Msg.vi',
-  'zh-hans': 'Blockly.Msg.zh.hans',
+  # 'zh-hans': 'Blockly.Msg.zh.hans',
   'zh-hant': 'Blockly.Msg.zh.hant'
 }
 
