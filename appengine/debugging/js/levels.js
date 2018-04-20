@@ -44,8 +44,8 @@ Levels = [
             '確保 robot.位置 == kitten.位置',
         ],
         // Solution
+        defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables><variable type="" id="1G8/0+MAm_[Rv]cv1014">kitten</variable></variables><block type="Move_Robot" id="Move_Robot" x="108" y="84"><field name="DIRECTION">Right</field><field name="NUM_OF_MOVE">3</field><next><block type="Move_Robot" id="4*RfZgzbkf!]z+hE30eD"><field name="DIRECTION">Down</field><field name="NUM_OF_MOVE">3</field></block></next></block></xml>',
         // defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables></variables><block type="Move_Robot" id="Move_Robot" x="148" y="71"><field name="DIRECTION">Right</field><field name="NUM_OF_MOVE">4</field><next><block type="Move_Robot" id="-12TWtq26}36_UOl}F_o"><field name="DIRECTION">Down</field><field name="NUM_OF_MOVE">3</field></block></next></block></xml>',
-        defaultBlocks: '',
         checkLevelComplete: function() {
             var robotPos = Debugging.Game.getThingPos('robot');
             if (robotPos[0] !== 4 || robotPos[1] !== 4) {
@@ -89,8 +89,8 @@ Levels = [
             '確保 rock.位置 == bucket.位置',
         ],
         // Solution
+        defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables><variable type="" id="oZb5,BABi:VM}U(uKX7o">basket</variable><variable type="" id="TS6xgC;ZgJg-{Xpa!bW(">bucket</variable><variable type="" id="HWkBG~K8*,s6^-!ieHCj">rock</variable><variable type="" id="TMW@h8I}2xAL#_XFk^S2">kitten</variable></variables><block type="Robot_Goto" id="Robot_Goto" x="97" y="100"><value name="GOTO_NAME"><block type="variables_get" id="M/IaJP9EGgY1R*4*Iqx|"><field name="VAR" id="HWkBG~K8*,s6^-!ieHCj" variabletype="">rock</field></block></value><next><block type="Robot_Grab" id="Robot_Grab"><value name="GRAB_NAME"><block type="variables_get" id="B@IOToz?/a}Yu!x9u[9-"><field name="VAR" id="HWkBG~K8*,s6^-!ieHCj" variabletype="">rock</field></block></value><next><block type="Robot_Goto" id="oz+,~UZ(/h=9}I`z0-y,"><value name="GOTO_NAME"><block type="variables_get" id="@Jy2t0#|6tp`]7`NvO|L"><field name="VAR" id="TS6xgC;ZgJg-{Xpa!bW(" variabletype="">bucket</field></block></value><next><block type="Robot_Drop" id="Robot_Drop"><value name="DROP_NAME"><block type="variables_get" id="XaIz$55[b1gu8{YaUaW?"><field name="VAR" id="HWkBG~K8*,s6^-!ieHCj" variabletype="">rock</field></block></value><next><block type="Robot_Goto" id="ygpq3etGTIlv3O)A$OO{"><value name="GOTO_NAME"><block type="variables_get" id="vfXa?p!IdhjHJ5DK9c9~"><field name="VAR" id="oZb5,BABi:VM}U(uKX7o" variabletype="">basket</field></block></value><next><block type="Robot_Grab" id="-RQM(tGz3m}[MY9Kpa=g"><value name="GRAB_NAME"><block type="variables_get" id="/#tY^?Ch2-eKX#v=GSQ("><field name="VAR" id="oZb5,BABi:VM}U(uKX7o" variabletype="">basket</field></block></value><next><block type="Robot_Goto" id="V8^m{+7]CC/f!74Z*J)*"><value name="GOTO_NAME"><block type="variables_get" id="`Yu!N1s+j-Qk!JX}hNc;"><field name="VAR" id="TMW@h8I}2xAL#_XFk^S2" variabletype="">kitten</field></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>',
         // defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables></variables><block type="Move_Robot" id="Move_Robot" x="104" y="61"><field name="DIRECTION">Left</field><field name="NUM_OF_MOVE">1</field><next><block type="Move_Robot" id="=e]0@mA:a{G2HG(aRi|}"><field name="DIRECTION">Up</field><field name="NUM_OF_MOVE">1</field><next><block type="Robot_Grab" id="Robot_Grab"><field name="GRAB_NAME">rock</field><next><block type="Move_Robot" id="r-,XAc81^%tDy_mAvdeB"><field name="DIRECTION">Left</field><field name="NUM_OF_MOVE">3</field><next><block type="Robot_Drop" id="Robot_Drop"><field name="DROP_NAME">rock</field><next><block type="Move_Robot" id="%@,_ky_D*N.x!.lgY]5/"><field name="DIRECTION">Down</field><field name="NUM_OF_MOVE">2</field><next><block type="Move_Robot" id="@Rvm_z=7^QSy^wdu^tRV"><field name="DIRECTION">Right</field><field name="NUM_OF_MOVE">1</field><next><block type="Robot_Grab" id="e#lIQpaM_p*1,6aTlGOz"><field name="GRAB_NAME">kitten</field><next><block type="Move_Robot" id="~@^7eLqM$W$)?omul;)K"><field name="DIRECTION">Right</field><field name="NUM_OF_MOVE">3</field><next><block type="Move_Robot" id="/(mS~e,PcXvp3XWMzgUe"><field name="DIRECTION">Down</field><field name="NUM_OF_MOVE">1</field></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>',
-        defaultBlocks: '',
         checkLevelComplete: function() {
             var robotPos = Debugging.Game.getThingPos('robot');
             var bucketPos = Debugging.Game.getThingPos('bucket');
@@ -137,7 +137,8 @@ Levels = [
             '確保 piglet.位置 == basket.位置',
             '確保 rock.位置 == bucket.位置',
         ],
-        defaultBlocks: '',
+        // Solution
+        defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables><variable type="" id="IY|8Bjmna/R[M5ju|2Q^">piglet</variable><variable type="" id="C*`JJ[d[-$;6=Yi=VjiB">basket</variable><variable type="" id="WYvoA(@/FzNI#)gd{O$e">rock</variable><variable type="" id="PO3wj]bmjv48M0.QmRcn">kitten</variable><variable type="" id="L)4r,7zHA`h^U.9pzKKI">bucket</variable></variables><block type="Robot_Goto" id="Robot_Goto" x="101" y="26"><value name="GOTO_NAME"><block type="variables_get" id="8a#7Y/Khl}U[]XyNk]_L"><field name="VAR" id="IY|8Bjmna/R[M5ju|2Q^" variabletype="">piglet</field></block></value><next><block type="Robot_Grab" id="Robot_Grab"><value name="GRAB_NAME"><block type="variables_get" id="!-P+XKsc`f28iSN0JWnK"><field name="VAR" id="IY|8Bjmna/R[M5ju|2Q^" variabletype="">piglet</field></block></value><next><block type="Robot_Goto" id="UQ9va(!/4.HsH^DOI6bd"><value name="GOTO_NAME"><block type="variables_get" id="R.g6,ORTIjA|)h-eRTvo"><field name="VAR" id="C*`JJ[d[-$;6=Yi=VjiB" variabletype="">basket</field></block></value><next><block type="Robot_Grab" id="Gs^FM2AJZ-b$t,Y/LfmF"><value name="GRAB_NAME"><block type="variables_get" id="n~R%h1R6STD2Qe+d1v}I"><field name="VAR" id="C*`JJ[d[-$;6=Yi=VjiB" variabletype="">basket</field></block></value><next><block type="Robot_Goto" id="GS=]2hqz]7$!DwHcpy)z"><value name="GOTO_NAME"><block type="variables_get" id="+3v9%PuoNh3%Bj=z+tS."><field name="VAR" id="PO3wj]bmjv48M0.QmRcn" variabletype="">kitten</field></block></value><next><block type="Robot_Drop" id="Robot_Drop"><value name="DROP_NAME"><block type="variables_get" id=";W4l`3iEM-U.e#Ybq=O;"><field name="VAR" id="C*`JJ[d[-$;6=Yi=VjiB" variabletype="">basket</field></block></value><next><block type="Robot_Drop" id="5Z6B/RyHb$Z_N$YUnD+8"><value name="DROP_NAME"><block type="variables_get" id="}e!o1FIk!d+i:jNK%{}A"><field name="VAR" id="IY|8Bjmna/R[M5ju|2Q^" variabletype="">piglet</field></block></value><next><block type="Robot_Goto" id="U}8v/]58_B^n}-PNi-Uf"><value name="GOTO_NAME"><block type="variables_get" id="y8qTzF/^N0%2O[CYCLPm"><field name="VAR" id="L)4r,7zHA`h^U.9pzKKI" variabletype="">bucket</field></block></value><next><block type="Robot_Grab" id="w{m~p+BS3spi!V%J0{Y("><value name="GRAB_NAME"><block type="variables_get" id="H607l4R}Uf~iEAO+RU/W"><field name="VAR" id="L)4r,7zHA`h^U.9pzKKI" variabletype="">bucket</field></block></value><next><block type="Robot_Goto" id="rF=,bt}~u1Hi~8aV:+B7"><value name="GOTO_NAME"><block type="variables_get" id="k|[~C=!r,hl#+yybO=tc"><field name="VAR" id="WYvoA(@/FzNI#)gd{O$e" variabletype="">rock</field></block></value></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>',
         checkLevelComplete: function(){
             var robotPos = Debugging.Game.getThingPos('robot');
             var bucketPos = Debugging.Game.getThingPos('bucket');
@@ -180,21 +181,25 @@ Levels = [
         robot: {position:[0,0], state: 'default', grab: []},
         specialGrndInd: [[0,0],[2,0],[0,1],[1,1],[2,2],[3,2],[0,3],[2,3],[3,3]],
         specialGrndName: ['dirt','wood.crack','dirt','brick','dirt','dirt','wood.crack','dirt','brick'],
-        thingsInd: [[1,1],[2,3],[3,3]],
-        thingsName: ['kitten1','basket','kitten2'],
+        thingsInd: [[1,1],[2,3],[3,3], [0,3], [1,3]],
+        thingsName: ['kitten1','basket','kitten2', 'goop1', 'goop2'],
         missionGuideDescription: [
             "哦！這關有兩隻<span class='uk-text-primary'>小貓們（kittens）</span>！，每次面對有相同<span class='uk-text-primary'>名稱</span>的物件，我總是感到相當困惑。",
             "為了解決這個問題，我總是會建立一個清單叫做「kittens」（小貓們）積木，再用「第一個」與「最後一個」來分辨他們。",
             "試著跑跑看原始的積木，了解清單的用法。這關的目標是<span class='uk-text-primary'>讓小貓們都回到籃子之中</span>。"
         ],
         goals: [
-            "確保 kittens.位置 == basket.位置"
+            "確保 kittens.位置 == basket.位置",
+            "確保 goops.位置 == [2, 2]"
         ],
-        defaultBlocks: "",
+        // Solution
+        defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables><variable type="" id="FL%7`R|ytP8Xmguc/u@L">kittens</variable><variable type="" id="{GfLekXS7*@i7|=GJ8V2">kitten1</variable><variable type="" id="{^-Apd,6YE-FXGVO}d`2">kitten2</variable><variable type="" id="JU4ypmw%}4sDAVhSb*ov">basket</variable></variables><block type="Robot_Goto" id="Robot_Goto" x="83" y="75"><value name="GOTO_NAME"><block type="lists_getIndex" id="SCiR#i^PqJ7zo2)?XrhJ"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">FIRST</field><value name="VALUE"><block type="variables_get" id="?rW7[xLHO3Y02n,Yl*gQ"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Grab" id="Robot_Grab"><value name="GRAB_NAME"><block type="lists_getIndex" id="y;8{LTm]3KFqLxK[f,qa"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">FIRST</field><value name="VALUE"><block type="variables_get" id=")Mt8*MYaMUO0FWk$ubyG"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Goto" id="3r=GsNMM{9J*)O8,^y$N"><value name="GOTO_NAME"><block type="lists_getIndex" id="6(lYd0D]Q22BIuxO{J1O"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">LAST</field><value name="VALUE"><block type="variables_get" id="Qs#Sm%lIoh}qv!:_[wep"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Grab" id="47*lEXPEq~:,[Lv@e_z~"><value name="GRAB_NAME"><block type="lists_getIndex" id="hWo2jXR/8ju62^h24nil"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">LAST</field><value name="VALUE"><block type="variables_get" id="Jp$!nIYTFB63?r!(@uCp"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Goto" id=")OJC#|Uf-_?(ud:y^9_+"><value name="GOTO_NAME"><block type="variables_get" id="W_:;*2I=wQ_@k%bwW7xk"><field name="VAR" id="JU4ypmw%}4sDAVhSb*ov" variabletype="">basket</field></block></value></block></next></block></next></block></next></block></next></block></xml>',
         checkLevelComplete: function(){
             var robotPos = Debugging.Game.getThingPos('robot');
             var kitten1Pos = Debugging.Game.getThingPos('kitten1');
             var kitten2Pos = Debugging.Game.getThingPos('kitten2');
+            var goop1Pos = Debugging.Game.getThingPos('goop1');
+            var goop2Pos = Debugging.Game.getThingPos('goop2');
             var basketPos = Debugging.Game.getThingPos('basket');
 
             if (!(Game.isSamePosition(kitten1Pos, basketPos) && Game.isSamePosition(kitten2Pos, basketPos))) {
@@ -203,6 +208,15 @@ Levels = [
                 return false;
             }
             $($('#goal-list').find('li')[0]).addClass('success');
+
+            
+            if (!(Game.isSamePosition(goop1Pos, [2,2]) && Game.isSamePosition(goop2Pos, [2,2]))) {
+                $($('#goal-list').find('li')[1]).addClass('fail');
+                UI.showFailText('Goops is not at right place!');
+                return false;
+            }
+            $($('#goal-list').find('li')[1]).addClass('success');
+
 
             return true;
         }

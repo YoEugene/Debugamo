@@ -85,7 +85,7 @@
 	"DrinkShop_msg_noCup": "手中沒有杯子。",
 	"DrinkShop_msg_cupCovered": "杯子已經被蓋住。",
 	"DrinkShop_msg_drinkOverflow": "飲料已經裝滿了。",
-	"Debugging_msg_noGoal": "沒有抵達目標位置。",
+	"Debugging_msg_noGoal": "迪摩沒有抵達目標位置。",
 	"Debugging_msg_noGoalKitten": "小貓沒有在正確的位置上。",
 	"Debugging_msg_noGoalRock": "石頭沒有在正確的位置上。",
 	"Debugging_msg_noGoalPiglet": "小豬沒有在正確的位置上。",
