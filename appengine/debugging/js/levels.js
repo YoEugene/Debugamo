@@ -181,16 +181,15 @@ Levels = [
         robot: {position:[0,0], state: 'default', grab: []},
         specialGrndInd: [[0,0],[2,0],[0,1],[1,1],[2,2],[3,2],[0,3],[2,3],[3,3]],
         specialGrndName: ['dirt','wood.crack','dirt','brick','dirt','dirt','wood.crack','dirt','brick'],
-        thingsInd: [[1,1],[2,3],[3,3], [0,3], [1,3]],
-        thingsName: ['kitten1','basket','kitten2', 'goop1', 'goop2'],
+        thingsInd: [[1,1],[2,3],[3,3]],
+        thingsName: ['kitten1','basket','kitten2'],
         missionGuideDescription: [
             "哦！這關有兩隻<span class='uk-text-primary'>小貓們（kittens）</span>！，每次面對有相同<span class='uk-text-primary'>名稱</span>的物件，我總是感到相當困惑。",
             "為了解決這個問題，我總是會建立一個清單叫做「kittens」（小貓們）積木，再用「第一個」與「最後一個」來分辨他們。",
             "試著跑跑看原始的積木，了解清單的用法。這關的目標是<span class='uk-text-primary'>讓小貓們都回到籃子之中</span>。"
         ],
         goals: [
-            "確保 kittens.位置 == basket.位置",
-            "確保 goops.位置 == [2, 2]"
+            "確保 kittens.位置 == basket.位置"
         ],
         // Solution
         defaultBlocks: '<xml xmlns="http://www.w3.org/1999/xhtml"><variables><variable type="" id="FL%7`R|ytP8Xmguc/u@L">kittens</variable><variable type="" id="{GfLekXS7*@i7|=GJ8V2">kitten1</variable><variable type="" id="{^-Apd,6YE-FXGVO}d`2">kitten2</variable><variable type="" id="JU4ypmw%}4sDAVhSb*ov">basket</variable></variables><block type="Robot_Goto" id="Robot_Goto" x="83" y="75"><value name="GOTO_NAME"><block type="lists_getIndex" id="SCiR#i^PqJ7zo2)?XrhJ"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">FIRST</field><value name="VALUE"><block type="variables_get" id="?rW7[xLHO3Y02n,Yl*gQ"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Grab" id="Robot_Grab"><value name="GRAB_NAME"><block type="lists_getIndex" id="y;8{LTm]3KFqLxK[f,qa"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">FIRST</field><value name="VALUE"><block type="variables_get" id=")Mt8*MYaMUO0FWk$ubyG"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Goto" id="3r=GsNMM{9J*)O8,^y$N"><value name="GOTO_NAME"><block type="lists_getIndex" id="6(lYd0D]Q22BIuxO{J1O"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">LAST</field><value name="VALUE"><block type="variables_get" id="Qs#Sm%lIoh}qv!:_[wep"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Grab" id="47*lEXPEq~:,[Lv@e_z~"><value name="GRAB_NAME"><block type="lists_getIndex" id="hWo2jXR/8ju62^h24nil"><mutation statement="false" at="false"></mutation><field name="MODE">GET</field><field name="WHERE">LAST</field><value name="VALUE"><block type="variables_get" id="Jp$!nIYTFB63?r!(@uCp"><field name="VAR" id="FL%7`R|ytP8Xmguc/u@L" variabletype="">kittens</field></block></value></block></value><next><block type="Robot_Goto" id=")OJC#|Uf-_?(ud:y^9_+"><value name="GOTO_NAME"><block type="variables_get" id="W_:;*2I=wQ_@k%bwW7xk"><field name="VAR" id="JU4ypmw%}4sDAVhSb*ov" variabletype="">basket</field></block></value></block></next></block></next></block></next></block></next></block></xml>',
@@ -198,8 +197,6 @@ Levels = [
             var robotPos = Debugging.Game.getThingPos('robot');
             var kitten1Pos = Debugging.Game.getThingPos('kitten1');
             var kitten2Pos = Debugging.Game.getThingPos('kitten2');
-            var goop1Pos = Debugging.Game.getThingPos('goop1');
-            var goop2Pos = Debugging.Game.getThingPos('goop2');
             var basketPos = Debugging.Game.getThingPos('basket');
 
             if (!(Game.isSamePosition(kitten1Pos, basketPos) && Game.isSamePosition(kitten2Pos, basketPos))) {
@@ -208,15 +205,6 @@ Levels = [
                 return false;
             }
             $($('#goal-list').find('li')[0]).addClass('success');
-
-            
-            if (!(Game.isSamePosition(goop1Pos, [2,2]) && Game.isSamePosition(goop2Pos, [2,2]))) {
-                $($('#goal-list').find('li')[1]).addClass('fail');
-                UI.showFailText('Goops is not at right place!');
-                return false;
-            }
-            $($('#goal-list').find('li')[1]).addClass('success');
-
 
             return true;
         }

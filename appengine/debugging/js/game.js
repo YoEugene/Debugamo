@@ -50,8 +50,10 @@ Game.getThingPos = function(thing) {
 };
 
 Game.addThingToVariables = function(variable_name) {
-    if (Number.isInteger(variable_name[variable_name.length - 1] * 1))
+    if (Number.isInteger(variable_name[variable_name.length - 1] * 1)) {
+        Blockly.getMainWorkspace().createVariable(variable_name.slice(0, variable_name.length-1)+'s', '', '');
         return;
+    }
     Blockly.getMainWorkspace().createVariable(variable_name, '', '')
 };
 

@@ -116,9 +116,21 @@ Scope.init = function() {
     //       'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
 
 
+    var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
+    // Show new player text
+    if (localStorage.newPlayer == "1") {
+        UI.showNewPlayerText();
+    }
+    // if not new player but undone
+    else if (done) {
+        UI.showWorkspace();
+    }
+
     // if there is no saved xml(which means level just started, or empty xml, load the defaultBlocks from levels.js)
     var savedXml = BlocklyGames.loadFromLocalStorage('debugging', BlocklyGames.LEVEL);
-    if ( savedXml == undefined || savedXml == "" || savedXml == '<xml xmlns="http://www.w3.org/1999/xhtml"><variables></variables></xml>') {
+    console.log(BlocklyGames.workspace.getAllBlocks().length == 0);
+    if ( !done ) {
+        console.log('load default blocks');
         BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
     }
 
@@ -166,15 +178,7 @@ Scope.init = function() {
     //     UI.moveRobot(e.key[5].toLowerCase());
     // });
 
-    var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
-    // Show new player text
-    if (localStorage.newPlayer == "1") {
-        UI.showNewPlayerText();
-    }
-    // if not new player but undone
-    else if (done) {
-        UI.showWorkspace();
-    }
+    
 
     if (localStorage.speed == "1") {
         Scope.changeToSpeedMode();
@@ -194,8 +198,8 @@ Scope.mergeCodeWithListInit = function(code, thingsName) {
         name = thingsName[i];
         if (Number.isInteger(name[name.length - 1] * 1)) {
             name = name.slice(0, name.length - 1);
-            listTag.push(name);
-            break
+            if (listTag.indexOf(name) == -1)
+                listTag.push(name);
         }
     }
 
