@@ -162,17 +162,30 @@
 
     <span id="DrinkShop_msg_cupNotCovered">{msg meaning="DrinkShop_msg_cupNotCovered" desc="game message"}The cup is not covered.{/msg}</span>
 
-    <span id="DrinkShop_msg_levelFailed">{msg meaning="DrinkShop_msg_levelFailed" desc="game message"}Level Failed.{/msg}</span>
+    <span id="DrinkShop_msg_levelFailed1">{msg meaning="DrinkShop_msg_levelFailed1" desc="game message"}Level Failed...{/msg}</span>
+    <span id="DrinkShop_msg_levelFailed2">{msg meaning="DrinkShop_msg_levelFailed2" desc="game message"}Oops...{/msg}</span>
+    <span id="DrinkShop_msg_levelFailed3">{msg meaning="DrinkShop_msg_levelFailed3" desc="game message"}Something's wrong...{/msg}</span>
     <span id="DrinkShop_msg_errorIn">{msg meaning="DrinkShop_msg_errorIn" desc="game message"}An error occured in '%1'.{/msg}</span>
     <span id="DrinkShop_msg_reason">{msg meaning="DrinkShop_msg_reason" desc="game message"}Reason{/msg}</span>
     <span id="DrinkShop_msg_noCup">{msg meaning="DrinkShop_msg_noCup" desc="game message"}There is no cup in my hand.{/msg}</span>
     <span id="DrinkShop_msg_cupCovered">{msg meaning="DrinkShop_msg_cupCovered" desc="game message"}The cup has been covered.{/msg}</span>
     <span id="DrinkShop_msg_drinkOverflow">{msg meaning="DrinkShop_msg_drinkOverflow" desc="game message"}The cup is full. The drink will overflow.{/msg}</span>
 
+    // TODO: ENGLISH TRANSLATION NEED TO BE REFINE
     <span id="Debugging_msg_noGoal">{msg meaning="Debugging_msg_noGoal" desc="game message"}You didn't reach the position of goal.{/msg}</span>
+    <span id="Debugging_msg_noGoalKitten">{msg meaning="Debugging_msg_noGoalKitten" desc="game message"}You didn't put kitten on the right place.{/msg}</span>
+    <span id="Debugging_msg_noGoalRock">{msg meaning="Debugging_msg_noGoalRock" desc="game message"}You didn't put rock on the right place.{/msg}</span>
+    <span id="Debugging_msg_noGoalPiglet">{msg meaning="Debugging_msg_noGoalPiglet" desc="game message"}You didn't put piglet on the right place.{/msg}</span>
     <span id="Debugging_msg_errGrabNoSuchThing">{msg meaning="Debugging_msg_errGrabNoSuchThing" desc="game message"}There is no such a thing to Grab in this level.{/msg}</span>
+    <span id="Debugging_msg_errGrabWrongPosition">{msg meaning="Debugging_msg_errGrabWrongPosition" desc="game message"}DeMo can only grab a thing at DeMo's position :({/msg}</span>
+    <span id="Debugging_msg_errGrabDontKnowWhichToGrab">{msg meaning="Debugging_msg_errGrabDontKnowWhichToGrab" desc="game message"}DeMo don't know which thing to Grab.{/msg}</span>
     <span id="Debugging_msg_errDropNoSuchThing">{msg meaning="Debugging_msg_errDropNoSuchThing" desc="game message"}There is no such a thing to Drop in this level.{/msg}</span>
+    <span id="Debugging_msg_errDropHaventGrabYet">{msg meaning="Debugging_msg_errDropHaventGrabYet" desc="game message"}DeMo haven't grab it yet.{/msg}</span>
+    <span id="Debugging_msg_errDropDontKnowWhichToDrop">{msg meaning="Debugging_msg_errDropDontKnowWhichToDrop" desc="game message"}DeMo don't know which thing to Drop.{/msg}</span>
     <span id="Debugging_msg_errGotoNoSuchThing">{msg meaning="Debugging_msg_errGotoNoSuchThing" desc="game message"}There is no such a thing to Goto in this level.{/msg}</span>
+    <span id="Debugging_msg_errGotoDontKnowWhichToGoto">{msg meaning="Debugging_msg_errGotoDontKnowWhichToGoto" desc="game message"}DeMo don't know which thing to Goto.{/msg}</span>
+    <span id="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce">{msg meaning="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce" desc="game message"}DeMo cannot goto multiple things at one time.{/msg}</span>
+    <span id="Debugging_msg_errGotoEmptyList">{msg meaning="Debugging_msg_errGotoEmptyList" desc="game message"}DeMo don't know where to go.{/msg}</span>
 
   </div>
 {/template}
@@ -210,7 +223,7 @@
       <button id="helpButton" data-intro='Hello step one!' data-step='1'>
         {{msg meaning="Debugging.hint" desc="hint"}}Hint{{/msg}}
       </button>
-      <button id="guideButton" onclick="javascript:introJs().start();">
+      <button id="guideButton" onclick="introJs().start();">
         {{msg meaning="Debugging.guide" desc="guide"}}Guide{{/msg}}
       </button>
     </div>
@@ -282,7 +295,7 @@
   <div id="mission-guide-container">
     <div id="mission-guide-box">
       <div id="robot-guide-icon">
-        <img src="debugging/public/img/robot2.png"></img>
+        <img src="debugging/public/img/robot.default.png"></img>
       </div>
       <svg id="guide-arrow" height="30" width="30">
         <polyline points="25,25 5,25 25,5" stroke-dasharray="3,3" style="stroke: white; stroke-width: 1; fill: white;"></polyline>
@@ -329,19 +342,28 @@
 {template .toolbox}
   <xml id="all-blocks" style="display: none;">
     <category id="Debugamo" name="Debugamo" colour="90">
-      // <block type="robot_say" id="robot_say"></block>
-      // <block type="str_io" id="str_io"></block>
-      // <block type="number_io" id="number_io"></block>
-      // <block type="variable_get" id="variable_get"></block>
-      // <block type="variable_set" id="variable_set"></block>
-      // <block type="counter_loop" id="counter_loop"></block>
-      // <block type="arithmetic" id="arithmetic"></block>
-      // <block type="check_order" id="check_order"></block>
-      // <block type="check_menu_price" id="check_menu_price"></block>
       <block type="Move_Robot" id="Move_Robot"></block>
-      <block type="Robot_Grab" id="Robot_Grab"></block>
-      <block type="Robot_Drop" id="Robot_Drop"></block>
-      <block type="Robot_Goto" id="Robot_Goto"></block>
+      <block type="Robot_Goto" id="Robot_Goto">
+        <value name="GOTO_NAME">
+          <block type="variables_get">
+            <field name="VAR">kitten</field>
+          </block>
+        </value>
+      </block>
+      <block type="Robot_Grab" id="Robot_Grab">
+        <value name="GRAB_NAME">
+          <block type="variables_get">
+            <field name="VAR">kitten</field>
+          </block>
+        </value>
+      </block>
+      <block type="Robot_Drop" id="Robot_Drop">
+        <value name="DROP_NAME">
+          <block type="variables_get">
+            <field name="VAR">kitten</field>
+          </block>
+        </value>
+      </block>
     </category>
   </xml>
   <xml id="toolbox" style="display: none;">

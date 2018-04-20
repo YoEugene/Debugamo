@@ -884,7 +884,7 @@ Maze.hidePegmanMenu = function(e) {
         return;
     }
     document.getElementById('pegmanMenu').style.display = 'none';
-    Blockly.removeClass_(document.getElementById('pegmanButton'), 'buttonHover');
+    // Blockly.removeClass_(document.getElementById('pegmanButton'), 'buttonHover');
     if (Maze.pegmanMenuMouse_) {
         Blockly.unbindEvent_(Maze.pegmanMenuMouse_);
         delete Maze.pegmanMenuMouse_;
@@ -1086,6 +1086,7 @@ Maze.execute = function() {
 
     Maze.log = [];
     var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
+    console.log(code);
     Maze.result = Maze.ResultType.UNSET;
     var interpreter = new Interpreter(code, Maze.initInterpreter);
 
@@ -1349,9 +1350,9 @@ Maze.scheduleFail = function(forward) {
 Maze.scheduleFinish = function(sound) {
     var direction16 = Maze.constrainDirection16(Maze.pegmanD * 4);
     Maze.displayPegman(Maze.pegmanX, Maze.pegmanY, 16);
-    if (sound) {
-        BlocklyGames.workspace.playAudio('win', 0.5);
-    }
+    // if (sound) {
+        // BlocklyGames.workspace.playAudio('win', 0.5);
+    // }
     Maze.stepSpeed = 150; // Slow down victory animation a bit.
     Maze.pidList.push(setTimeout(function() {
         Maze.displayPegman(Maze.pegmanX, Maze.pegmanY, 18);

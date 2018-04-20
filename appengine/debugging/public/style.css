@@ -132,7 +132,7 @@ html[dir="RTL"] button.primary {
 
 .header .leftSide {
     display: inline-block;
-    width: calc(100vw - 400px);
+    width: calc(100vw - 300px);
     padding: 4px 0;
     text-align: center;
 }
@@ -204,6 +204,7 @@ html[dir="RTL"] button.primary {
 .header .rightSide {
     display: inline-block;
     float: right;
+    /*display: none;*/
 }
 
 .header .rightSide button {
@@ -387,6 +388,10 @@ pre#containerCode {
 
 #goal-list li:nth-child(n+2) {
     margin-top: 3px;
+}
+
+.failText {
+    margin: 10px;
 }
 
 
@@ -618,6 +623,14 @@ button {
 }
 
 #linkButton {
+    display: none;
+}
+
+#clearLocalStorageButton {
+    display: none;
+}
+
+#helpButton {
     display: none;
 }
 

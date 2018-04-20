@@ -141,15 +141,15 @@ Scope.init = function() {
         console.log('Saved to Localstorage by change.');
     });
 
-    Scope.Game.init(level = BlocklyGames.LEVEL);
+    Game.init(BlocklyGames.LEVEL);
 
     BlocklyGames.bindClick('runButton', Scope.runButtonClick);
     BlocklyGames.bindClick('stepButton', Scope.stepButtonClick);
     BlocklyGames.bindClick('resetButton', Scope.resetButtonClick);
     BlocklyGames.bindClick('clearLocalStorageButton', Scope.clearLocalStorageButton);
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
-    BlocklyGames.bindClick('guidePreviousButton', Scope.UI.showPreviousGuide);
-    BlocklyGames.bindClick('guideNextButton', Scope.UI.showNextGuide);
+    BlocklyGames.bindClick('guidePreviousButton', UI.showPreviousGuide);
+    BlocklyGames.bindClick('guideNextButton', UI.showNextGuide);
 
     // Lazy-load the JavaScript interpreter.
     setTimeout(BlocklyInterface.importInterpreter, 1);
@@ -159,17 +159,17 @@ Scope.init = function() {
     // init IntroJS
     // BlocklyGames.bindClick('guideButton', introJs().start());
 
-    // init Kibo
-    var k = new Kibo();
+    // // enable Kibo
+    // var k = new Kibo();
 
-    k.down(['right', 'left', 'up', 'down'], function(e) {
-        Scope.UI.moveRobot(e.key[5].toLowerCase());
-    });
+    // k.down(['right', 'left', 'up', 'down'], function(e) {
+    //     UI.moveRobot(e.key[5].toLowerCase());
+    // });
 
     var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
     // Show new player text
     if (localStorage.newPlayer == "1") {
-        Scope.UI.showNewPlayerText();
+        UI.showNewPlayerText();
     }
     // if not new player but undone
     else if (done) {
@@ -186,24 +186,51 @@ Scope.init = function() {
 };
 
 /**
+ * merge code with list initiation...  append such like "var kittens = ['kitten1', 'kitten2'];\n" into code
+ */
+Scope.mergeCodeWithListInit = function(code, thingsName) {
+    var i, j, k, listTag = [];
+    for (i = 0; i < thingsName.length; i++) {
+        name = thingsName[i];
+        if (Number.isInteger(name[name.length - 1] * 1)) {
+            name = name.slice(0, name.length - 1);
+            listTag.push(name);
+            break
+        }
+    }
+
+    console.log(listTag);
+    if (listTag.length == 0)
+        return code;
+    // var kittens = ['kitten1','kitten2'];\n
+    for (j = 0; j < listTag.length; j++) {
+        var prependCode = "var " + listTag[j] + "s = [";
+        var tmp = [];
+        for (k = 0; k < thingsName.length; k++) {
+            nm = thingsName[k];
+            if (nm.indexOf(listTag[j]) != -1) {
+                tmp.push(nm);
+            }
+        }
+        tmp = tmp.join('", "');
+        tmp = '"' + tmp + '"';
+        prependCode += tmp + '];\n';
+        console.log(prependCode);
+        code = prependCode + code;
+    }
+
+    return code;
+}
+
+/**
  * Inject the Maze API into a JavaScript interpreter.
  * @param {!Object} scope Global scope.
  * @param {!Interpreter} interpreter The JS interpreter.
  */
 Scope.initInterpreter = function(interpreter, scope) {
-    //   // API
-    var wrapper;
-    //   wrapper = function(id) {
-    //     Maze.move(0, id.toString());
-    //   };
-    //   interpreter.setProperty(scope, 'moveForward',
-    //       interpreter.createNativeFunction(wrapper));
-
-    /* create native functions for commands in interpreter */
-
-    var commandNames = Object.keys(Scope.Game.commands);
+    var commandNames = Object.keys(Game.commands);
     commandNames.map(function(commandName) {
-        interpreter.setProperty(scope, commandName, interpreter.createNativeFunction(Scope.Game.commands[commandName]));
+        interpreter.setProperty(scope, commandName, interpreter.createNativeFunction(Game.commands[commandName]));
     });
 };
 
@@ -216,14 +243,18 @@ Scope.execute = function() {
 
     if (!('Interpreter' in window)) {
         // Interpreter lazy loads and hasn't arrived yet.  Try again later.
+        console.log('lazy load');
         setTimeout(Scope.execute, 250);
         return;
     }
 
-    // Maze.log = [];
     var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
+
+    console.log(Object.keys(Game.things));
+    code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
+
     console.log(code);
-    // Maze.result = Maze.ResultType.UNSET;
+
     var interpreter = new Interpreter(code, Scope.initInterpreter);
 
 
@@ -233,53 +264,13 @@ Scope.execute = function() {
     //   alert(e);
     // }
 
-    // interpreter.run();
 
     Scope.interpretCode(interpreter, 0);
-
-    // Try running the user's code.  There are four possible outcomes:
-    // 1. If pegman reaches the finish [SUCCESS], true is thrown.
-    // 2. If the program is terminated due to running too long [TIMEOUT],
-    //    false is thrown.
-    // 3. If another error occurs [ERROR], that error is thrown.
-    // 4. If the program ended normally but without solving the maze [FAILURE],
-    //    no error or exception is thrown.
-    // try {
-    //   var ticks = 10000;  // 10k ticks runs Pegman for about 8 minutes.
-    //   while (interpreter.step()) {
-    //     if (ticks-- == 0) {
-    //       throw Infinity;
-    //     }
-    //   }
-    //   Maze.result = Maze.notDone() ?
-    //       Maze.ResultType.FAILURE : Maze.ResultType.SUCCESS;
-    // } catch (e) {
-    //   // A boolean is thrown for normal termination.
-    //   // Abnormal termination is a user error.
-    //   if (e === Infinity) {
-    //     Maze.result = Maze.ResultType.TIMEOUT;
-    //   } else if (e === false) {
-    //     Maze.result = Maze.ResultType.ERROR;
-    //   } else {
-    //     // Syntax error, can't happen.
-    //     Maze.result = Maze.ResultType.ERROR;
-    //     alert(e);
-    //   }
-    // }
-
-    // // Fast animation if execution is successful.  Slow otherwise.
-    // if (Maze.result == Maze.ResultType.SUCCESS) {
-    //   Maze.stepSpeed = 100;
-    //   Maze.log.push(['finish', null]);
-    // } else {
-    //   Maze.stepSpeed = 150;
-    // }
-
-    // // Maze.log now contains a transcript of all the user's actions.
-    // // Reset the maze and animate the transcript.
-    // Maze.reset(false);
-    // Maze.pidList.push(setTimeout(Maze.animate, 100));
 };
+
+/**
+ * Execute a step of workspace code
+ */
 
 Scope.executeStep = function(pass_in_interpreter) {
 
@@ -296,7 +287,12 @@ Scope.executeStep = function(pass_in_interpreter) {
     }
     else if (!Game.currentInterpreter) {
         var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
+        
+        console.log(Object.keys(Game.things));
+        code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
+
         console.log(code);
+
         var interpreter = new Interpreter(code, Scope.initInterpreter);
     } else {
         var interpreter = Game.currentInterpreter;
@@ -314,25 +310,9 @@ Scope.executeStep = function(pass_in_interpreter) {
             $('#stepButton').hide();
 
             // Check if level is completed
-            if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
-                setTimeout(function(){
-                    Game.things.robot.img = 'robot4';
-                    Scope.UI.drawGrid($('#playground')[0], false);
-                    BlocklyInterface.saveToLocalStorage();
-                    BlocklyDialogs.congratulations();
-                    var done = JSON.parse(localStorage.done);
-                    if (done.indexOf(BlocklyGames.LEVEL) == -1) {
-                        done.push(BlocklyGames.LEVEL);
-                        localStorage.done = JSON.stringify(done);
-                        $('.level_in_progress').addClass('level_done');
-                        if ($('.level_disable')[0] != undefined) {
-                            $($('.level_disable')[0]).addClass('level_in_progress');
-                            $($('.level_disable')[0]).removeClass('level_disable');
-                        }
-                    }
-                    BlocklyInterface.highlight(null);
-                }, 500);
-            }
+            setTimeout(function(){
+                Scope.checkCurrentLevelComplete();
+            }, 300);
         } else if (Game.stepAnchor) {
             // Save current interpreter
             Game.currentInterpreter = interpreter;
@@ -341,13 +321,13 @@ Scope.executeStep = function(pass_in_interpreter) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function(){window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));},10);
+            setTimeout(function(){UI.showFailText('DrinkShop_msg_tooManySteps');},10);
         } else if (typeof e === 'string') {
-            setTimeout(function(){window.alert(e);},10);
+            setTimeout(function(){UI.showFailText(e);},10);
             console.log(e);
         } else {
             // Syntax error, can't happen.
-            setTimeout(function(){window.alert(e);},10);
+            setTimeout(function(){UI.showFailText(e);},10);
             console.log(e);
         }
     }
@@ -355,6 +335,10 @@ Scope.executeStep = function(pass_in_interpreter) {
     Game.stepInProgress = false;
 
 }
+
+/**
+ * Interpret Workspace Code
+ */
 
 Scope.interpretCode = function(interpreter, stepCount) {
     try {
@@ -375,41 +359,54 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // when the code is fully executed, check if the user passes the level
         else if (!interpreter.step()) {
-            if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
-                setTimeout(function(){
-                    Game.things.robot.img = 'robot4';
-                    Scope.UI.drawGrid($('#playground')[0], false);
-                    BlocklyInterface.saveToLocalStorage();
-                    BlocklyDialogs.congratulations();
-                    var done = JSON.parse(localStorage.done);
-                    if (done.indexOf(BlocklyGames.LEVEL) == -1) {
-                        done.push(BlocklyGames.LEVEL);
-                        localStorage.done = JSON.stringify(done);
-                        $('.level_in_progress').addClass('level_done');
-                        if ($('.level_disable')[0] != undefined) {
-                            $($('.level_disable')[0]).addClass('level_in_progress');
-                            $($('.level_disable')[0]).removeClass('level_disable');
-                        }
-                    }
-                    BlocklyInterface.highlight(null);
-                }, 500);
-            }
+            setTimeout(function(){
+                Scope.checkCurrentLevelComplete();
+            }, 300);
             // else will throw error message
         }
     } catch (e) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function(){window.alert(BlocklyGames.getMsg('DrinkShop_msg_tooManySteps'));},10);
+            setTimeout(function(){UI.showFailText('DrinkShop_msg_tooManySteps');},10);
         } else if (typeof e === 'string') {
-            setTimeout(function(){window.alert(e);},10);
+            setTimeout(function(){UI.showFailText(e);},10);
             console.log(e);
         } else {
             // Syntax error, can't happen.
-            setTimeout(function(){window.alert(e);},10);
+            setTimeout(function(){UI.showFailText(e);},10);
             console.log(e);
         }
     }
+}
+
+/**
+ * Check if this level is completed
+ * If yes, show congratz msg; else show fail msg
+ */
+
+Scope.checkCurrentLevelComplete = function() {
+    if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+        Game.things.robot.state = 'happy';
+        BlocklyInterface.saveToLocalStorage();
+        BlocklyDialogs.congratulations();
+        var done = JSON.parse(localStorage.done);
+        if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+            done.push(BlocklyGames.LEVEL);
+            localStorage.done = JSON.stringify(done);
+            $('.level_in_progress').addClass('level_done');
+            if ($('.level_disable')[0] != undefined) {
+                $($('.level_disable')[0]).addClass('level_in_progress');
+                $($('.level_disable')[0]).removeClass('level_disable');
+            }
+        }
+        BlocklyInterface.highlight(null);
+    } else {
+        Game.things.robot.state = 'sad';
+    }
+    UI.drawGrid($('#playground')[0], false);
+    UI.drawThings();
+    UI.drawTags();
 }
 
 /**
@@ -444,7 +441,7 @@ Scope.runButtonClick = function(e) {
     resetButton.style.display = 'inline';
     // BlocklyGames.workspace.traceOn(true);
 
-    Scope.Game.reset();
+    Game.reset();
     Scope.execute();
 };
 
@@ -489,13 +486,18 @@ Scope.resetButtonClick = function(e) {
     if (BlocklyInterface.eventSpam(e)) {
         return;
     }
+    // disable animation for a short of period
+    UI.stopAnimation = true;
+
     document.getElementById('runButton').style.display = 'inline-block';
     document.getElementById('stepButton').style.display = 'inline-block';
     document.getElementById('resetButton').style.display = 'none';
     document.getElementById('game-buttons').style.textAlign = 'left';
     // BlocklyGames.workspace.traceOn(false);
-    Scope.Game.reset();
+    Game.reset();
     // Maze.levelHelp();
+    // enable animation after short of period
+    setTimeout(function(){UI.stopAnimation = false;}, 500)
 };
 
 /** 
@@ -558,12 +560,13 @@ Scope.debugModeChange = function() {
  * Toggle change speed mode
  */
 Scope.speedModeChange = function() {
-    console.log('speed mode change');
     if (!$('#speedMode').prop("checked")) {
         Scope.changeToSpeedMode();   
+        console.log('changed to speed mode');
     }
     else {
         Scope.changeToSlowMode();   
+        console.log('changed to slow mode');
     }
 }
 
@@ -572,22 +575,20 @@ Scope.speedModeChange = function() {
  */
 Scope.changeToSpeedMode = function() {
     localStorage.setItem('speed', '1');
-    Scope.STEP_SPEED = 20;
-    Scope.UI.drawFrame = 3;
-    Scope.UI.drawSpeed = 10;
-    console.log('changed to speed mode');
- }
+    Scope.STEP_SPEED = 7;
+    UI.drawFrame = 5;
+    UI.drawSpeed = 10;
+}
 
 /**
  * Change to slow mode
  */
 Scope.changeToSlowMode = function() {
     localStorage.removeItem('speed');
-    Scope.STEP_SPEED = 60;
-    Scope.UI.drawFrame = 10;
-    Scope.UI.drawSpeed = 10;
-    console.log('changed to slow mode');
- }
+    Scope.STEP_SPEED = 18;
+    UI.drawFrame = 10;
+    UI.drawSpeed = 20;
+}
 
 /**
  * Initialize Blockly and the game.

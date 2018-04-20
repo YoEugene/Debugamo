@@ -22,15 +22,15 @@ UI.init = function() {
     level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
     robot = $.extend(true, {}, level.robot);
 
-    Debugging.Game.things.robot = robot;
+    Game.things.robot = robot;
 
     UI.missionGuideInd = 0;
     UI.images = {};
-    UI.getImage('unknown.default');
-    UI.getImage('robot1');
-    UI.getImage('robot2');
-    UI.getImage('robot3');
-    UI.getImage('robot4');
+    UI.getImage('unknown');
+    UI.getImage('robot');
+    UI.getImage('robot', 'happy');
+    UI.getImage('robot', 'sad');
+    UI.getImage('robot', 'grab');
     UI.drawGrid($('#playground')[0], false);
     if (localStorage.hasOwnProperty('avatar'))
         $('#player-avatar').attr('src', 'debugging/public/img/' + localStorage.avatar);
@@ -46,19 +46,17 @@ UI.init = function() {
 };
 
 UI.reset = function() {
-    // disable animation for a short of period
-    UI.stopAnimation = true;
 
     // deep copy of object
     level = $.extend(true, {}, Levels[BlocklyGames.LEVEL]);
     robot = $.extend(true, {}, level.robot);
 
     var i;
-    for (i = 0; i < UI.animationSetTimeoutIds.length + 10; i++) {
+    for (i = 0; i < UI.animationSetTimeoutIds.length + 30; i++) {
         clearTimeout(UI.animationSetTimeoutIds[i]);
     }
 
-    Debugging.Game.things.robot = robot;
+    Game.things.robot = robot;
 
     UI.updateRuntimeUserInterface();
 
@@ -66,9 +64,8 @@ UI.reset = function() {
     $('#goal-list').find('li').removeClass('fail');
 
     UI.animationSetTimeoutIds = [];
-    
-    // enable animation after short of period
-    setTimeout(function(){UI.stopAnimation = false;}, 100);
+
+    BlocklyInterface.highlight(null);
 };
 
 UI.initGoalList = function() {
@@ -89,7 +86,12 @@ UI.showNewPlayerText = function() {
         BlocklyDialogs.stopDialogKeyDown, true);
 }
 
-UI.showPreviousGuide = function() {
+UI.showPreviousGuide = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e)) {
+        return;
+    }
+
     UI.missionGuideInd -= 1;
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
     if (!isDef(level.missionGuideDescription[UI.missionGuideInd - 1])) {
@@ -98,7 +100,12 @@ UI.showPreviousGuide = function() {
     $('#guideNextButton').show();
 }
 
-UI.showNextGuide = function() {
+UI.showNextGuide = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e)) {
+        return;
+    }
+
     UI.missionGuideInd += 1;
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
     if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
@@ -111,6 +118,26 @@ UI.showNextGuide = function() {
         $('#game-buttons').css('opacity', 1)
     }
     $('#guidePreviousButton').show();
+}
+
+UI.showFailText = function(msg) {
+    $('#runButton').hide();
+    $('#stepButton').hide();
+    $('#resetButton').show();
+    Game.stop();
+    var fail = document.createElement('div');
+    fail.className = "failText";
+    fail.innerHTML = "<img style='width: 60px' src='debugging/public/img/robot.sad.png' />：" + Game.levelFailedMessage(msg);
+
+    var style = {
+        width: '50%',
+        left: '25%',
+        top: '5em'
+    };
+    BlocklyDialogs.showDialog(fail, null, false, true, style,
+        BlocklyDialogs.stopDialogKeyDown);
+
+    Game.stepAnchor = true;
 }
 
 UI.showWorkspace = function() {
@@ -138,70 +165,104 @@ UI.setAvatar = function(avatar) {
 
 UI.drawGrid = function(cvs, isAnimation) {
 
+    // console.log('drawgrid: ' + isAnimation);
+
     ctx = cvs.getContext("2d");
     var robotPos = robot.position;
     var specialGrndInd = level.specialGrndInd;
     var specialGrndName = level.specialGrndName;
 
-    var grndImg = UI.getImage(level.ground);
-    if (!grndImg) grndImg = UI.getImage('unknown.default');
-
     var imgw = cvs.width / level.mapSize;
     ctx.strokeStyle = level.grndColor;
     ctx.lineWidth = 1;
 
+    var grndImg = UI.getImage(level.ground);
+    if (!grndImg) grndImg = UI.getImage('unknown');
     if (!!grndImg) {
-        for (var i = 0; i < level.mapSize; i++) {
-            for (var j = 0; j < level.mapSize; j++) {
+        for (var j = 0; j < level.mapSize; j++) {
+            for (var i = 0; i < level.mapSize; i++) {
                 // If animation is not in progress, draw anyway; if is in progress, draw only the grids beside robot
-                if (!isAnimation || (Math.floor(Math.abs(robotPos[0] - i)) <= 1 && Math.floor(Math.abs(robotPos[1] - j)) <= 1)) {
+                if (!isAnimation || UI.isAdjacentGrid(robotPos, [i, j])) {
                     var tmp = indexOfForArrays([i, j], specialGrndInd);
                     if (tmp == -1) {
-                        try {
-                            ctx.drawImage(grndImg, imgw * i, imgw * j, imgw, imgw);
-                        } catch (e) { console.log('unknown.default image not loaded yet'); }
+                        ctx.drawImage(grndImg, imgw * i, imgw * j, imgw, imgw);
                         ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
                     } else {
-                        var specialImg = UI.getImage(specialGrndName[tmp]);
-                        if (!specialImg) specialImg = UI.getImage('unknown.default');
-                        try {
+                        var specialImg;
+                        if (specialGrndName[tmp].indexOf('.') != -1) {
+                            var grndimgname = specialGrndName[tmp].split('.')[0];
+                            var grndimgstate = specialGrndName[tmp].split('.')[1];
+                            specialImg = UI.getImage(grndimgname, grndimgstate);
+                        } else {
+                            specialImg = UI.getImage(specialGrndName[tmp]);
+                        }
+                        if (!specialImg) specialImg = UI.getImage('unknown');
+                        if (!!specialImg) {
                             ctx.drawImage(specialImg, imgw * i, imgw * j, imgw, imgw);
-                        } catch (e) { console.log('unknown.default image not loaded yet'); }
-                        ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
-                    }
-
-                    var k;
-                    for (k = 0; k < level.thingsInd.length; k++) {
-                        // there is level.thingsName[k] at position [i, j]
-                        if (i == level.thingsInd[k][0] && j == level.thingsInd[k][1]) {
-                            var thingImg = UI.getImage(level.thingsName[k]);
-                            if (!thingImg) thingImg = UI.getImage('unknown.default');
-                            try {
-                                ctx.drawImage(thingImg, imgw * i, imgw * j, imgw, imgw);
-                            } catch (e) { console.log('unknown.default image not loaded yet'); }
                             ctx.strokeRect(imgw * i, imgw * j, imgw, imgw)
+                        }
+                    }
+                }
+
+                // Must be animation in progress AND nearby, will draw the thing
+                if (isAnimation && UI.isAdjacentGrid(robotPos, [i, j])) {
+                    // draw things nearby
+                    var k;
+                    for (k = 0; k < level.thingsName.length; k++) {
+                        // there is level.thingsName[k] at position [i, j]
+                        if (Game.things.hasOwnProperty(level.thingsName[k]))
+                            var position = Game.things[level.thingsName[k]].position;
+                        else
+                            var position = level.thingsInd[k];
+                        // Dont draw it if robot is grabing it, will draw it later anyway
+                        if (i == position[0] && j == position[1] && (robot.grab.indexOf(level.thingsName[k]) == -1)) {
+                            UI.drawThings(level.thingsName[k]);
                         }
                     }
                 }
             }
         }
-    }
 
-    UI.drawThings('robot');
-    if (isAnimation) {
-        for (i = 0; i < robot.grab.length; i++) {
-            UI.drawThings(robot.grab[i]);
+        UI.drawThings('robot');
+        UI.drawTags('robot');
+        if (isAnimation) {
+            for (i = 0; i < robot.grab.length; i++) {
+                UI.drawThings(robot.grab[i]);
+                UI.drawTags(robot.grab[i]);
+            }
+        }
+
+        for (var j = 0; j < level.mapSize; j++) {
+            for (var i = 0; i < level.mapSize; i++) {
+                if (isAnimation && UI.isAdjacentGrid(robotPos, [i, j - 1])) {
+                    // draw things nearby
+                    var k;
+                    for (k = 0; k < level.thingsName.length; k++) {
+                        if (Game.things.hasOwnProperty(level.thingsName[k]))
+                            var position = Game.things[level.thingsName[k]].position;
+                        if (position[0] == i && position[1] == j)
+                            UI.drawTags(level.thingsName[k]);
+                    }
+                }
+            }
         }
     }
 }
 
 UI.drawThings = function(thing_name) {
     if (!isDef(thing_name)) {
-        var i;
+        var i, thingName, thingPos, thingState;
         for (i = 0; i < level.thingsInd.length; i++) {
-            var thingPos = level.thingsInd[i];
-            var thingName = level.thingsName[i];
-            Game.things[thingName] = { position: thingPos, img: thingName };
+            if (Game.things.hasOwnProperty(level.thingsName[i])) {
+                thingName = level.thingsName[i];
+                thingPos = Game.things[thingName].position;
+                thingState = Game.things[thingName].state;
+            } else {
+                thingName = level.thingsName[i].slice();
+                thingPos = level.thingsInd[i].slice();
+                thingState = 'default';
+            }
+            Game.things[thingName] = { position: thingPos, state: thingState };
             Game.addThingToVariables(thingName);
             UI.drawThings(thingName);
         }
@@ -220,46 +281,100 @@ UI.drawThings = function(thing_name) {
     ctx = cvs.getContext("2d");
     var size_of_map = level.mapSize;
     var imgw = cvs.width / size_of_map;
-    var img = UI.getImage(thing.img);
-    if (!img) img = UI.getImage('unknown.default');
-
+    var img = UI.getImage(thing_name, thing.state);
+    if (!img) img = UI.getImage('unknown');
     if (!!img) {
-        try {
-            ctx.drawImage(img, imgw * thing.position[0], imgw * thing.position[1], imgw, imgw);
-        } catch (e) { console.log('unknown.default image not loaded yet'); }
+        ctx.drawImage(img, imgw * thing.position[0], imgw * thing.position[1], imgw, imgw);
+        // console.log('drawed ' + thing_name);
     }
-
 }
 
-UI.getImage = function(label) {
+UI.drawTags = function(thing_name) {
+    cvs = $('#playground')[0];
+    ctx = cvs.getContext("2d");
+    ctx.font = "14px Arial";
+    var size_of_map = level.mapSize;
+    var imgw = cvs.width / size_of_map;
+    if (isDef(thing_name)) {
+        UI.drawATag(thing_name, ctx, imgw);
+        // console.log('draw tag: ' + thing_name);
+    } else {
+        for (thing_name in Game.things) {
+            UI.drawATag(thing_name, ctx, imgw);
+        }
+        // console.log('draw all tags');
+    }
+}
+
+UI.drawATag = function(thing, ctx, imgw) {
+    var tag_name;
+    // if name's last index is integer, it should be an item in a list
+    if (Number.isInteger(thing[thing.length - 1] * 1)) {
+        // 'kitten1' --> 'kitten'
+        tag_name = thing.slice(0, thing.length - 1)
+    } else {tag_name = thing;}
+
+    ctx.fillStyle = "black";
+    var textWidth = ctx.measureText(tag_name).width;
+    var textXOffset = (imgw - textWidth) / 2;
+    var textYOffset = UI.getTextOffset([Game.things[thing].position[0], Game.things[thing].position[1]], thing);
+    ctx.fillText(tag_name, imgw * Game.things[thing].position[0] + textXOffset, imgw * Game.things[thing].position[1] - textYOffset - 5);
+    ctx.fillStyle = "white";
+    textYOffset -= 1;
+    textXOffset += 1;
+    ctx.fillText(tag_name, imgw * Game.things[thing].position[0] + textXOffset, imgw * Game.things[thing].position[1] - textYOffset - 5);
+}
+
+UI.getTextOffset = function(pos, name) {
+    var i;
+    var counter = 0;
+    for (thing in Game.things) {
+        if (Game.things[thing].position[0] == pos[0] && Game.things[thing].position[1] == pos[1] && thing != name) {
+            counter += 15;
+        } else if (Game.things[thing].position[0] == pos[0] && Game.things[thing].position[1] == pos[1] && thing == name) {
+            return counter;
+        }
+    }
+}
+
+UI.getImage = function(name, state) {
+
+    // if name's last index is integer, it should be an item in a list
+    if (Number.isInteger(name[name.length - 1] * 1)) {
+        // 'kitten1' --> 'kitten'
+        name = name.slice(0, name.length - 1)
+    }
+
+    if (state)
+        var imgName = name + '.' + state;
+    else
+        var imgName = name + '.default';
 
     // If this has already been checked, return what's there.
-    if (this.images.hasOwnProperty(label)) {
-        return this.images[label];
+    if (this.images.hasOwnProperty(imgName)) {
+        return this.images[imgName];
     }
 
     // For now, mark it as false.
-    this.images[label] = false;
+    this.images[imgName] = false;
 
     $.ajax({
-        url: "debugging/public/img/" + label + ".png",
+        url: "debugging/public/img/" + imgName + ".png",
         context: this,
         success: function() {
             // An image has loaded! Create the image, cache it, and update the UI.
             var image = new Image();
             // we update the interface after AJAX returns its result
             image.onload = function() {
-                UI.images[label] = image;
+                UI.images[imgName] = image;
                 UI.updateRuntimeUserInterface();
             };
-            image.src = "debugging/public/img/" + label + ".png";
-
+            image.src = "debugging/public/img/" + imgName + ".png";
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
-
-            // Mark this name as not existing
-            this.images[label] = false;
-
+            // Mark this name as not existing, so UI will show unknown image
+            console.log('[UI] Fail loading image: ' + imgName);
+            this.images[imgName] = false;
         }
     });
 
@@ -269,15 +384,17 @@ UI.getImage = function(label) {
 UI.updateRuntimeUserInterface = function() {
     UI.drawGrid($('#playground')[0], false);
     UI.drawThings();
+    UI.drawTags();
+    // console.log('[UI] Canvas updated.');
 }
 
 UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTimeMs) {
     // Clicked reset button
     if (UI.stopAnimation) {
-        UI.updateRuntimeUserInterface();
+        UI.drawGrid(cvs, true);
+        BlocklyInterface.highlight(null);
         return;
     }
-
 
     var ctx = cvs.getContext('2d');
 
@@ -290,14 +407,20 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
 
     if (direction != undefined) {
         if (direction == 'r' && robot.position[0] == (size_of_map - 1)) {
+            console.log('reach end');
             return;
         } else if (direction == 'l' && robot.position[0] == 0) {
+            console.log('reach end');
             return;
         } else if (direction == 'u' && robot.position[1] == 0) {
+            console.log('reach end');
             return;
         } else if (direction == 'd' && robot.position[1] == (size_of_map - 1)) {
+            console.log('reach end');
             return;
         }
+
+        // console.log('animate');
 
         if (direction == 'r' || direction == 'l')
             posIndex = 0;
@@ -325,14 +448,25 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
     UI.animationSetTimeoutIds.push(
         setTimeout(function() {
             percentFinished += 100 / animateFrameNum;
+            percentFinished = Math.round(percentFinished * animateFrameNum) / animateFrameNum;
             UI.drawGrid(cvs, true);
             UI.animate(cvs, percentFinished, direction, animateFrameNum, frameTimeMs);
         }, frameTimeMs)
     )
 }
 
-UI.moveRobot = function(direction) {
+UI.moveRobot = function(direction, numOfMove, disableAnchor) {
     UI.animate($('#playground')[0], 0, direction, UI.drawFrame, UI.drawSpeed);
+}
+
+UI.isAdjacentGrid = function(a, b) {
+    // a is robot position
+    if (Math.floor(Math.abs(a[0] - b[0])) < 1 && Math.floor(Math.abs(a[1] - b[1])) <= 1)
+        return true
+    else if ((Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1])) == 1)
+        return true
+    else
+        return false
 }
 
 function indexOfForArrays(search, origin) {
