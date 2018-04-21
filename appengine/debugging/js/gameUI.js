@@ -24,6 +24,9 @@ UI.init = function() {
 
     Game.things.robot = robot;
 
+    for (var i = 0; i < level.thingsName.length; i++)
+        Game.addThingToVariables(level.thingsName[i]);
+
     UI.missionGuideInd = 0;
     UI.images = {};
     UI.getImage('unknown');
@@ -263,7 +266,6 @@ UI.drawThings = function(thing_name) {
                 thingState = 'default';
             }
             Game.things[thingName] = { position: thingPos, state: thingState };
-            Game.addThingToVariables(thingName);
             UI.drawThings(thingName);
         }
 

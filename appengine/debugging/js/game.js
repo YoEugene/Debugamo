@@ -51,9 +51,12 @@ Game.getThingPos = function(thing) {
 
 Game.addThingToVariables = function(variable_name) {
     if (Number.isInteger(variable_name[variable_name.length - 1] * 1)) {
-        Blockly.getMainWorkspace().createVariable(variable_name.slice(0, variable_name.length-1)+'s', '', '');
+        console.log(variable_name);
+        // Blockly.getMainWorkspace().createVariable(variable_name.slice(0, variable_name.length-1)+'s', '', '');
+        console.log(variable_name.slice(0, variable_name.length-1)+'s');
         return;
     }
+    console.log(variable_name);
     Blockly.getMainWorkspace().createVariable(variable_name, '', '')
 };
 
