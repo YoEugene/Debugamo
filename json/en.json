@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2018-04-21 04:15:53.921986",
+		"lastupdated": "2018-04-22 00:11:13.722546",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -16,6 +16,7 @@
 	"Games.genetics": "Genetics",
 	"Games.linesOfCode1": "You solved this level with 1 line of JavaScript:",
 	"Games.linesOfCode2": "You solved this level with %1 lines of JavaScript:",
+	"Games.showCode": "Even top universities teach block-based coding (e.g., Berkeley, Harvard). But under the hood, the blocks you have assembled can also be shown in JavaScript, the world's most widely used coding language:",
 	"Games.nextLevel": "Are you ready for level %1?",
 	"Games.finalLevel": "Are you ready for the next challenge?",
 	"Games.linkTooltip": "Save and link to blocks.",
@@ -113,7 +114,8 @@
 	"Debugging_msg_errGotoNoSuchThing": "There is no such a thing to Goto in this level.",
 	"Debugging_msg_errGotoDontKnowWhichToGoto": "DeMo don't know which thing to Goto.",
 	"Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce": "DeMo cannot goto multiple things at one time.",
-	"Debugging_msg_errGotoEmptyList": "DeMo don't know where to go.",
+	"Debugging_msg_errGotoEmptyList": "DeMo don't know where to go... the list is empty.",
+	"Debugging_msg_errGotoCannotGotoAList": "DeMo don't know where to go.",
 	"Games.debugging": "Debugging Mission",
 	"Debugging.clear": "Clear",
 	"Debugging.hint": "Hint",
@@ -128,5 +130,7 @@
 	"Debugging_nextGuide": "Show next guide text",
 	"Debugging.nextGuide": "next",
 	"Debugging.toolboxHeader": "Blocks",
-	"Debugging.workspaceHeader": "Debug Workspace"
+	"Debugging.workspaceHeader": "Debug Workspace",
+	"Debugging.showCodeHeader": "Show Code",
+	"Debugging.restoreBlockHeader": "Original Blocks"
 }

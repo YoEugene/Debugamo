@@ -23,6 +23,9 @@ var Scope = Debugging;
 
 Scope.MAX_STEPS = 10000;
 
+/**
+ * Route-to and Start next level
+ */
 BlocklyInterface.nextLevel = function() {
     if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
         window.location = window.location.protocol + '//' +
@@ -33,14 +36,9 @@ BlocklyInterface.nextLevel = function() {
     }
 };
 
-Scope.initBlocklyDivSize = function() {
-    // resize blocklyDiv width
-    // var blocklyFlyoutWidth = document.getElementsByClassName('blocklyFlyout')[0].clientWidth;
-    // document.getElementById('blockly').style.width = "calc(35vw + " + blocklyFlyoutWidth + "px)";
-    // document.getElementById('debugamo-code-editor-left').style.width = "calc(65vw - 50px - " + blocklyFlyoutWidth + "px)";
-    // Blockly.svgResize(BlocklyGames.workspace);
-};
-
+/**
+ * Initiate workspace header width
+ */
 Scope.initHeaderWidth = function() {
     var toolboxHeader = document.getElementById('toolbox-header');
     var workspaceHeader = document.getElementById('workspace-header');
@@ -49,10 +47,10 @@ Scope.initHeaderWidth = function() {
     var widthWorkspace = document.getElementsByClassName('blocklyWorkspace')[0].getBoundingClientRect().width;
     if (widthCategory == undefined) {
         toolboxHeader.style.width = widthBlock + 'px';
-        workspaceHeader.style.width = (widthWorkspace - widthBlock - 30) + 'px';
+        workspaceHeader.style.width = (widthWorkspace - widthBlock - 15) + 'px';
     } else {
         toolboxHeader.style.width = widthCategory + 'px';
-        workspaceHeader.style.width = (widthWorkspace - widthCategory - 30) + 'px';
+        workspaceHeader.style.width = (widthWorkspace - widthCategory - 15) + 'px';
     }
     console.log('Re-init Header Width.');
 }
@@ -92,7 +90,7 @@ Scope.init = function() {
             toolbox.appendChild(category);
         });
     }
-    
+
     BlocklyGames.workspace = Blockly.inject('blockly', {
         'media': 'third-party/blockly/media/',
         'rtl': rtl,
@@ -115,6 +113,9 @@ Scope.init = function() {
     //   Blockly.JavaScript.addReservedWords('moveForward,moveBackward,' +
     //       'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
 
+    // add highlight function;
+    Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
+    Blockly.JavaScript.STATEMENT_SUFFIX = 'stepAnchor();\n';
 
     var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
     // Show new player text
@@ -129,7 +130,7 @@ Scope.init = function() {
     // if there is no saved xml(which means level just started, or empty xml, load the defaultBlocks from levels.js)
     var savedXml = BlocklyGames.loadFromLocalStorage('debugging', BlocklyGames.LEVEL);
     console.log(BlocklyGames.workspace.getAllBlocks().length == 0);
-    if ( !done ) {
+    if (!done) {
         console.log('load default blocks');
         BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
     }
@@ -139,7 +140,6 @@ Scope.init = function() {
     BlocklyInterface.loadBlocks(defaultXml, false);
     console.log('load blocks');
 
-    // Scope.initBlocklyDivSize();
     Scope.initHeaderWidth();
 
     // On Window resize init workspace header width
@@ -162,6 +162,8 @@ Scope.init = function() {
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
     BlocklyGames.bindClick('guidePreviousButton', UI.showPreviousGuide);
     BlocklyGames.bindClick('guideNextButton', UI.showNextGuide);
+    BlocklyGames.bindClick('restoreBlockHeader', Scope.restoreBlock);
+    BlocklyGames.bindClick('showCodeHeader', Scope.showCode);
 
     // Lazy-load the JavaScript interpreter.
     setTimeout(BlocklyInterface.importInterpreter, 1);
@@ -178,7 +180,7 @@ Scope.init = function() {
     //     UI.moveRobot(e.key[5].toLowerCase());
     // });
 
-    
+
 
     if (localStorage.speed == "1") {
         Scope.changeToSpeedMode();
@@ -188,6 +190,21 @@ Scope.init = function() {
     }
 
 };
+
+/**
+ * restore to original blocks
+ */
+Scope.restoreBlock = function() {
+    BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
+    BlocklyInterface.loadBlocks(Levels[BlocklyGames.LEVEL].defaultBlocks, false);
+}
+
+/**
+ * show JavaScript code
+ */
+Scope.showCode = function() {
+    BlocklyDialogs.showCode();
+}
 
 /**
  * merge code with list initiation...  append such like "var kittens = ['kitten1', 'kitten2'];\n" into code
@@ -254,10 +271,10 @@ Scope.execute = function() {
 
     var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
 
-    console.log(Object.keys(Game.things));
+    // console.log(Object.keys(Game.things));
     code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
 
-    console.log(code);
+    // console.log(code);
 
     var interpreter = new Interpreter(code, Scope.initInterpreter);
 
@@ -275,7 +292,6 @@ Scope.execute = function() {
 /**
  * Execute a step of workspace code
  */
-
 Scope.executeStep = function(pass_in_interpreter) {
 
     Game.stepInProgress = true;
@@ -288,13 +304,17 @@ Scope.executeStep = function(pass_in_interpreter) {
 
     if (!!pass_in_interpreter) {
         var interpreter = pass_in_interpreter;
-    }
-    else if (!Game.currentInterpreter) {
+    } else if (!Game.currentInterpreter) {
         var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
-        
+
         console.log(Object.keys(Game.things));
         code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
 
+        // delete last line (must be "stepAnchor();\n")
+        if (code.lastIndexOf("\n") > 0) {
+            code = code.substring(0, code.lastIndexOf("\n"));
+            code = code.substring(0, code.lastIndexOf("\n"));
+        }
         console.log(code);
 
         var interpreter = new Interpreter(code, Scope.initInterpreter);
@@ -314,36 +334,34 @@ Scope.executeStep = function(pass_in_interpreter) {
             $('#stepButton').hide();
 
             // Check if level is completed
-            setTimeout(function(){
+            setTimeout(function() {
                 Scope.checkCurrentLevelComplete();
             }, 300);
         } else if (Game.stepAnchor) {
             // Save current interpreter
             Game.currentInterpreter = interpreter;
-        } 
+        }
     } catch (e) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function(){UI.showFailText('DrinkShop_msg_tooManySteps');},10);
+            setTimeout(function() { UI.showFailText('DrinkShop_msg_tooManySteps'); }, 10);
         } else if (typeof e === 'string') {
-            setTimeout(function(){UI.showFailText(e);},10);
+            setTimeout(function() { UI.showFailText(e); }, 10);
             console.log(e);
         } else {
             // Syntax error, can't happen.
-            setTimeout(function(){UI.showFailText(e);},10);
+            setTimeout(function() { UI.showFailText(e); }, 10);
             console.log(e);
         }
     }
 
     Game.stepInProgress = false;
-
 }
 
 /**
  * Interpret Workspace Code
  */
-
 Scope.interpretCode = function(interpreter, stepCount) {
     try {
         // infinite loop
@@ -363,7 +381,7 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // when the code is fully executed, check if the user passes the level
         else if (!interpreter.step()) {
-            setTimeout(function(){
+            setTimeout(function() {
                 Scope.checkCurrentLevelComplete();
             }, 300);
             // else will throw error message
@@ -372,13 +390,13 @@ Scope.interpretCode = function(interpreter, stepCount) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function(){UI.showFailText('DrinkShop_msg_tooManySteps');},10);
+            setTimeout(function() { UI.showFailText('DrinkShop_msg_tooManySteps'); }, 10);
         } else if (typeof e === 'string') {
-            setTimeout(function(){UI.showFailText(e);},10);
+            setTimeout(function() { UI.showFailText(e); }, 10);
             console.log(e);
         } else {
             // Syntax error, can't happen.
-            setTimeout(function(){UI.showFailText(e);},10);
+            setTimeout(function() { UI.showFailText(e); }, 10);
             console.log(e);
         }
     }
@@ -388,7 +406,6 @@ Scope.interpretCode = function(interpreter, stepCount) {
  * Check if this level is completed
  * If yes, show congratz msg; else show fail msg
  */
-
 Scope.checkCurrentLevelComplete = function() {
     if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
         Game.things.robot.state = 'happy';
@@ -411,7 +428,7 @@ Scope.checkCurrentLevelComplete = function() {
     UI.drawGrid($('#playground')[0], false);
     UI.drawThings();
     UI.drawTags();
-}
+};
 
 /**
  * Click the run button.  Start the program.
@@ -478,7 +495,6 @@ Scope.stepButtonClick = function(e) {
     Game.stepAnchor = false;
 
     Scope.executeStep();
-
 };
 
 /**
@@ -501,10 +517,10 @@ Scope.resetButtonClick = function(e) {
     Game.reset();
     // Maze.levelHelp();
     // enable animation after short of period
-    setTimeout(function(){UI.stopAnimation = false;}, 500)
+    setTimeout(function() { UI.stopAnimation = false; }, 500)
 };
 
-/** 
+/**
  * Clear LocalStorage
  */
 Scope.clearLocalStorageButton = function() {
@@ -516,7 +532,6 @@ Scope.clearLocalStorageButton = function() {
 /**
  * Show the help pop-up.
  */
-
 Scope.showHelp = function() {
     var help = document.getElementById('help');
     var button = document.getElementById('helpButton');
@@ -530,11 +545,14 @@ Scope.showHelp = function() {
     BlocklyDialogs.startDialogKeyDown();
 };
 
+/**
+ * hide dialog
+ */
 Scope.startGame = function() {
     if (BlocklyDialogs.isDialogVisible_) {
         BlocklyDialogs.hideDialog(false);
     }
-}
+};
 
 /**
  * Save the blocks for a one-time reload.
@@ -558,21 +576,20 @@ Scope.debugModeChange = function() {
         localStorage.setItem('debug', '1');
     else
         localStorage.removeItem('debug');
-}
+};
 
 /**
  * Toggle change speed mode
  */
 Scope.speedModeChange = function() {
     if (!$('#speedMode').prop("checked")) {
-        Scope.changeToSpeedMode();   
+        Scope.changeToSpeedMode();
         console.log('changed to speed mode');
-    }
-    else {
-        Scope.changeToSlowMode();   
+    } else {
+        Scope.changeToSlowMode();
         console.log('changed to slow mode');
     }
-}
+};
 
 /**
  * Change to speed mode
@@ -582,7 +599,7 @@ Scope.changeToSpeedMode = function() {
     Scope.STEP_SPEED = 7;
     UI.drawFrame = 5;
     UI.drawSpeed = 10;
-}
+};
 
 /**
  * Change to slow mode
@@ -592,7 +609,7 @@ Scope.changeToSlowMode = function() {
     Scope.STEP_SPEED = 18;
     UI.drawFrame = 10;
     UI.drawSpeed = 20;
-}
+};
 
 /**
  * Initialize Blockly and the game.

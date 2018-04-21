@@ -386,16 +386,13 @@ BlocklyDialogs.congratulations = function() {
     var noCommentsList = noComments.split('\n');
     var i, block_id = undefined;
     for (i = 0; i < noCommentsList.length; i++) {
-      if (noCommentsList[i].indexOf('block_id_') != -1) {
-        var current_block_id = noCommentsList[i].split('block_id_')[1].split('\',')[0];
-        if (block_id == current_block_id) {
-          var tmp = noCommentsList.splice(i, 1);
-          i--;
-        } else {
-          block_id = current_block_id;
-        }
+      // trim PREFIX and SUFFIX code: highlight, stepAnchor
+      if (noCommentsList[i].indexOf('highlightBlock') != -1 || noCommentsList[i].indexOf('stepAnchor') != -1) {
+        noCommentsList.splice(i,1);
+        i--;
       }
     }
+    
     if (noCommentsList[0].substr(0,3) == 'var') {
       noCommentsList.splice(0,1);
       noComments = noCommentsList.join('\n');
@@ -441,6 +438,64 @@ BlocklyDialogs.congratulations = function() {
 
   document.getElementById('dialogDoneText').textContent = text;
 };
+
+/**
+ * If the user clicks "Show Original Code" on the top-right of workspace
+ * @suppress {checkVars}
+ */ 
+BlocklyDialogs.showCode = function() {
+  var content = document.getElementById('dialogShowCode');
+  var style = {
+    width: '50%',
+    left: '25%',
+    top: '3em'
+  };
+
+  // Add the user's code.
+  if (BlocklyGames.workspace) {
+    var linesText = document.getElementById('dialogShowCodeLinesText');
+    linesText.textContent = '';
+    var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
+    // code = BlocklyInterface.stripCode(code);
+    var noComments = code.replace(/\/\/[^\n]*/g, '');  // Inline comments.
+    noComments = noComments.replace(/\/\*.*\*\//g, '');  /* Block comments. */
+    noComments = noComments.replace(/[ \t]+\n/g, '\n');  // Trailing spaces.
+    noComments = noComments.replace(/\n+/g, '\n');  // Blank lines.
+    noComments = noComments.trim();
+    // Debugamo: get rid of first line of "var xxx, yyy, kitten"
+    var noCommentsList = noComments.split('\n');
+    var i, block_id = undefined;
+    for (i = 0; i < noCommentsList.length; i++) {
+      // trim PREFIX and SUFFIX code: highlight, stepAnchor
+      if (noCommentsList[i].indexOf('highlightBlock') != -1 || noCommentsList[i].indexOf('stepAnchor') != -1) {
+        noCommentsList.splice(i,1);
+        i--;
+      }
+    }
+    if (noCommentsList[0].substr(0,3) == 'var') {
+      noCommentsList.splice(0,1);
+      noComments = noCommentsList.join('\n');
+    }
+    noComments = BlocklyInterface.stripCode(noComments);
+    var lineCount = noComments.split('\n').length;
+    var pre = document.getElementById('containerShowCode');
+    pre.textContent = noComments;
+    if (typeof prettyPrintOne == 'function') {
+      code = pre.innerHTML;
+      code = prettyPrintOne(code, 'js');
+      pre.innerHTML = code;
+    }
+    var text = BlocklyGames.getMsg('Games_showCode');
+    var img = document.createElement('img');
+    img.className = 'showCodeRobot';
+    img.src = '/debugging/public/img/robot.happy.png';
+    linesText.appendChild(img);
+    linesText.appendChild(document.createTextNode(text));
+  }
+
+  BlocklyDialogs.showDialog(content, null, false, true, style,BlocklyDialogs.stopDialogKeyDown);
+};
+
 
 /**
  * If the user preses enter, escape, or space, hide the dialog.

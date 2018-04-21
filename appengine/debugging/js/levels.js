@@ -118,7 +118,7 @@ Levels = [
     }, {
         categoryIds: ['Debugamo'],
         blockIds: ["Move_Robot", "Robot_Grab", "Robot_Drop", "Robot_Goto"],
-        scale: 1.1,
+        scale: 1,
         ground: "wood",
         grndColor: "rgb(255, 184, 148)",
         mapSize: 5,
@@ -174,7 +174,7 @@ Levels = [
     }, {
         categoryIds: ['Debugamo'],
         blockIds: ["Move_Robot", "Robot_Grab", "Robot_Drop", "Robot_Goto"],
-        scale: 1.1,
+        scale: 1,
         ground: "wood",
         grndColor: "rgb(255, 184, 148)",
         mapSize: 4,
@@ -185,8 +185,8 @@ Levels = [
         thingsName: ['kitten1','basket','kitten2'],
         missionGuideDescription: [
             "哦！這關有兩隻<span class='uk-text-primary'>小貓們（kittens）</span>！，每次面對有相同<span class='uk-text-primary'>名稱</span>的物件，我總是感到相當困惑。",
-            "為了解決這個問題，我總是會建立一個清單叫做「kittens」（小貓們）積木，再用「第一個」與「最後一個」來分辨他們。",
-            "試著跑跑看原始的積木，了解清單的用法。這關的目標是<span class='uk-text-primary'>讓小貓們都回到籃子之中</span>。"
+            "為了解決這個問題，我總是會建立一個叫做<span class='uk-text-primary'>「kittens」（小貓們）</span>的<span class='uk-text-primary'>清單</span>，再用「第一筆」與「最後一筆」來分辨他們。",
+            "底下有一些範例，試著跑跑看原始的積木，了解清單的用法。<br>這關的目標是<span class='uk-text-primary'>讓小貓們都回到籃子之中</span>。"
         ],
         goals: [
             "確保 kittens.位置 == basket.位置"

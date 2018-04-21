@@ -70,65 +70,54 @@ Game.levelFailedMessage = function(msgKey) {
     return "<span>" + BlocklyGames.getMsg('DrinkShop_msg_levelFailed' + Math.ceil(Math.random() * 3)) + '<br><br>' + msg + "</span>";
 };
 
-Game.isLastBlock = function(id) {
-    var lastBlock = BlocklyGames.workspace.getAllBlocks()[BlocklyGames.workspace.getAllBlocks().length - 1].type == 'variables_get' ? BlocklyGames.workspace.getAllBlocks()[BlocklyGames.workspace.getAllBlocks().length - 2] : BlocklyGames.workspace.getAllBlocks()[BlocklyGames.workspace.getAllBlocks().length - 1];
-    if (id !== 'block_id_' + lastBlock.id)
-        return true;
-    else
-        return false;
-}
-
 // block methods
 
 Game.commands = {};
 
-Game.commands.moveRobot = function(direction_name, numOfMove, id, disableAnchor, originalStepSpeed) {
+Game.commands.moveRobot = function(direction_name, numOfMove, disableAnchor, originalStepSpeed) {
     if (!originalStepSpeed) {
         var originalStepSpeed = Debugging.STEP_SPEED;
         Debugging.STEP_SPEED = numOfMove * (UI.drawSpeed * UI.drawFrame + UI.drawSpeed + 30) + 30;
     }
 
-    // highlight current block;
-    BlocklyInterface.highlight(id);
-
     var direction = direction_name[0].toLowerCase();
 
-    ////////////////// BUGGY /////////////////  (try UI.moveRobot(99))
     UI.moveRobot(direction);
 
     if (numOfMove == 1) {
         if (!disableAnchor) {
             Debugging.STEP_SPEED = originalStepSpeed;
-            if (Game.isLastBlock(id))
-                Game.stepAnchor = true;
         }
     } else {
         setTimeout(function() {
-            Game.commands.moveRobot(direction, numOfMove - 1, id, disableAnchor, originalStepSpeed);
+            Game.commands.moveRobot(direction, numOfMove - 1, disableAnchor, originalStepSpeed);
         }, UI.drawSpeed * UI.drawFrame + UI.drawSpeed + 30);
     }
 }
 
-Game.commands.robotGoto = function(thing, id) {
+Game.commands.robotGoto = function(thing) {
 
     console.log('goto ' + thing);
 
+    // "thing" type is Array
     if (thing.hasOwnProperty('class') && thing.class == "Array") {
         if (thing.properties.length > 1)
             UI.showFailText('Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce')
         else if (thing.properties.length == 0) {
             UI.showFailText('Debugging_msg_errGotoEmptyList')
         } else {
-            Game.commands.robotGoto(thing.properties[0], id);
+            Game.commands.robotGoto(thing.properties[0]);
         }
         return;
     }
 
-    // highlight current block;
-    BlocklyInterface.highlight(id);
-
     // there is a 'kitten1', 'kitten2' such a list-like thing, but user try to find 'kitten'
     for (thing_name in Game.things) {
+        // there are some list-like things such as 'kitten1' 'kitten' but no 'kitten'
+        if (thing_name.indexOf(thing) != -1 && thing != thing_name) {
+            UI.showFailText('Debugging_msg_errGotoCannotGotoAList');
+            return;
+        }
         if (thing_name.indexOf(thing) != -1 && thing_name != thing) {
             UI.showFailText('Debugging_msg_errGotoDontKnowWhichToGoto');
             return;
@@ -151,35 +140,29 @@ Game.commands.robotGoto = function(thing, id) {
         var totalNumOfMove = Math.abs(x_delta) + Math.abs(y_delta);
         var originalStepSpeed = Debugging.STEP_SPEED;
         Debugging.STEP_SPEED = totalNumOfMove * (UI.drawFrame * UI.drawSpeed + UI.drawSpeed + 60) + 60;
-        Game.commands.moveRobot(direction_x, Math.abs(x_delta), id, true, originalStepSpeed);
-        setTimeout(function() { Game.commands.moveRobot(direction_y, Math.abs(y_delta), id, false, originalStepSpeed); }, Math.abs(x_delta) * (UI.drawFrame * UI.drawSpeed + UI.drawSpeed + 30) + 60);
+        Game.commands.moveRobot(direction_x, Math.abs(x_delta), true, originalStepSpeed);
+        setTimeout(function() { Game.commands.moveRobot(direction_y, Math.abs(y_delta), false, originalStepSpeed); }, Math.abs(x_delta) * (UI.drawFrame * UI.drawSpeed + UI.drawSpeed + 30) + 60);
     } else if (x_delta !== 0) {
-        Game.commands.moveRobot(direction_x, Math.abs(x_delta), id, false);
+        Game.commands.moveRobot(direction_x, Math.abs(x_delta), false);
     } else if (y_delta !== 0) {
-        Game.commands.moveRobot(direction_y, Math.abs(y_delta), id, false);
+        Game.commands.moveRobot(direction_y, Math.abs(y_delta), false);
     }
-    // if not last block
-    if (Game.isLastBlock(id))
-        Game.stepAnchor = true;
 
     // console.log('goto [' + Game.things[thing].position + ']');
 
 }
 
-Game.commands.robotGrab = function(thing, id) {
+Game.commands.robotGrab = function(thing) {
 
     console.log('grab ' + thing);
 
     if (thing.hasOwnProperty('class') && thing.class == "Array") {
         var i;
         for (i = 0; i < thing.properties.length; i++) {
-            Game.commands.robotGrab(thing.properties[i], id);
+            Game.commands.robotGrab(thing.properties[i]);
         }
         return;
     }
-
-    // highlight current block;
-    BlocklyInterface.highlight(id);
 
     // there is a 'kitten1', 'kitten2' such a list-like thing, but user try to find 'kitten'
     for (thing_name in Game.things) {
@@ -202,15 +185,13 @@ Game.commands.robotGrab = function(thing, id) {
         Game.things.robot.grab.push(thing);
         Game.things.robot.state = "grab";
         UI.drawGrid($('#playground')[0], true);
-        if (Game.isLastBlock(id))
-            Game.stepAnchor = true;
     } else {
         UI.showFailText("Debugging_msg_errGrabWrongPosition");
         return;
     }
 }
 
-Game.commands.robotDrop = function(thing, id) {
+Game.commands.robotDrop = function(thing) {
 
     console.log('drop ' + thing);
 
@@ -218,13 +199,10 @@ Game.commands.robotDrop = function(thing, id) {
     if (thing.hasOwnProperty('class') && thing.class == "Array") {
         var i;
         for (i = 0; i < thing.properties.length; i++) {
-            Game.commands.robotDrop(thing.properties[i], id);
+            Game.commands.robotDrop(thing.properties[i]);
         }
         return;
     }
-
-    // highlight current block;
-    BlocklyInterface.highlight(id);
 
     // there is a 'kitten1', 'kitten2' such a list-like thing DeMo is grabbing, but user try to drop 'kitten'
     var i, counter = 0;
@@ -259,10 +237,12 @@ Game.commands.robotDrop = function(thing, id) {
             Game.things.robot.state = "default";
             UI.drawGrid($('#playground')[0], true);
         }
-        if (Game.isLastBlock(id))
-            Game.stepAnchor = true;
     } else {
         UI.showFailText("Debugging_msg_errDropHaventGrabYet")
         return;
     }
 }
+
+Game.commands.highlightBlock = function(id) { BlocklyInterface.highlight(id); }
+
+Game.commands.stepAnchor = function() { Game.stepAnchor = true; }

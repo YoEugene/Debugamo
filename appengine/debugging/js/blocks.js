@@ -84,15 +84,10 @@ Blockly.Blocks['Move_Robot'] = {
     }
 };
 Blockly.JavaScript['Move_Robot'] = function(block) {
-    // var direction = block.getFieldValue('DIRECTION')[0].toLowerCase();
     var direction = block.getFieldValue('DIRECTION');
     var num = parseInt(block.getFieldValue('NUM_OF_MOVE'));
     var code = "";
-    code += "moveRobot('" + direction + "', " + num + ", 'block_id_" + block.id + "');\n";
-    // var i;
-    // for (i = 0; i < num; i++) {
-    // code += "moveRobot('" + direction + "', " + (num - i) + ", 'block_id_" + block.id + "');\n";
-    // }
+    code += "moveRobot('" + direction + "', " + num + ");\n";
     return code;
 }
 
@@ -125,13 +120,13 @@ Blockly.JavaScript['Robot_Goto'] = function(block) {
     var thing_name, code;
     if (block.getInputTargetBlock('GOTO_NAME').type == 'lists_create_with') {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GOTO_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
-        code = 'robotGoto(["' + thing_name + '"], \'block_id_' + block.id + '\');\n';
+        code = 'robotGoto(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('GOTO_NAME').type == 'lists_getIndex') {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GOTO_NAME'))[0];
-        code = 'robotGoto(' + thing_name + ', \'block_id_' + block.id + '\');\n';
+        code = 'robotGoto(' + thing_name + ');\n';
     } else {
         thing_name = Blockly.JavaScript.valueToCode(block, 'GOTO_NAME', Blockly.JavaScript.ORDER_ATOMIC);
-        code = "robotGoto('" + thing_name + "', 'block_id_" + block.id + "');\n";
+        code = "robotGoto('" + thing_name + "');\n";
     }
     return code;
 };
@@ -167,13 +162,13 @@ Blockly.JavaScript['Robot_Grab'] = function(block) {
     var thing_name, code;
     if (block.getInputTargetBlock('GRAB_NAME').type == "lists_create_with") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GRAB_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
-        code = 'robotGrab(["' + thing_name + '"], \'block_id_' + block.id + '\');\n';
+        code = 'robotGrab(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('GRAB_NAME').type == "lists_getIndex") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GRAB_NAME'))[0];
-        code = 'robotGrab(' + thing_name + ', \'block_id_' + block.id + '\');\n';
+        code = 'robotGrab(' + thing_name + ');\n';
     } else {
         thing_name = block.getInputTargetBlock('GRAB_NAME').getFieldValue('VAR') || block.getInputTargetBlock('GRAB_NAME').getFieldValue('TEXT');
-        code = "robotGrab('" + thing_name + "', 'block_id_" + block.id + "');\n";
+        code = "robotGrab('" + thing_name + "');\n";
     }
     return code;
 };
@@ -210,14 +205,14 @@ Blockly.JavaScript['Robot_Drop'] = function(block) {
     // allow list of text OR list of variable as input
     if (block.getInputTargetBlock('DROP_NAME').type == "lists_create_with") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('DROP_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
-        code += 'robotDrop(["' + thing_name + '"], \'block_id_' + block.id + '\');\n';
+        code += 'robotDrop(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('DROP_NAME').type == "lists_getIndex") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('DROP_NAME'))[0];
-        code += 'robotDrop(' + thing_name + ', \'block_id_' + block.id + '\');\n';
+        code += 'robotDrop(' + thing_name + ');\n';
     } else {
         // allow text OR variable as input
         thing_name = block.getInputTargetBlock('DROP_NAME').getFieldValue('VAR') || block.getInputTargetBlock('DROP_NAME').getFieldValue('TEXT');
-        code += "robotDrop('" + thing_name + "', 'block_id_" + block.id + "');\n";
+        code += "robotDrop('" + thing_name + "');\n";
     }
     return code;
 };

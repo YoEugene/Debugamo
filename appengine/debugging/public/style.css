@@ -572,6 +572,35 @@ pre#containerCode {
     line-height: 30px;
 }
 
+#workspace-header div {
+    display: inline-block;
+}
+
+#workspace-header .right-side {
+    margin: 3px 4px 3px 0;
+    background-color: rgb(166, 155, 193);
+    height: 24px;
+    float: right;
+    overflow: hidden;
+    border-radius: 4px;
+    line-height: 18px;
+    cursor: pointer;
+    font-family: "Gotham 5r", sans-serif;
+    padding: 3px 9px;
+}
+
+#workspace-header .right-side:hover {
+    background-color: rgb(0, 148, 202);
+}
+
+#dialogShowCodeLinesText {
+    font-size: 16px;
+    line-height: 24px;
+    color: #5b6770;
+    padding: 10px;
+    margin: 1em;
+}
+
 #debugamo-code-editor-container {
     position: relative;
     height: calc(100vh - 200px);
@@ -722,6 +751,12 @@ input:checked+.slider:before {
     transform: translateX(20px);
 }
 
+img.showCodeRobot {
+    position: absolute;
+    width: 95px;
+    left: -40px;
+    top: -35px;
+}
 
 /* Rounded sliders */
 

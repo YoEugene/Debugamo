@@ -33,6 +33,7 @@
 
     <span id="Games_linesOfCode1">{msg meaning="Games.linesOfCode1" desc="alert - Displayed when a level is complete."}You solved this level with 1 line of JavaScript:{/msg}</span>
     <span id="Games_linesOfCode2">{msg meaning="Games.linesOfCode2" desc="alert - Displayed when a level is complete.  %1 is an integer greater than 1."}You solved this level with %1 lines of JavaScript:{/msg}</span>
+    <span id="Games_showCode">{msg meaning="Games.showCode" desc="alert - Displayed when player clicks show code."}Even top universities teach block-based coding (e.g., Berkeley, Harvard). But under the hood, the blocks you have assembled can also be shown in JavaScript, the world's most widely used coding language:{/msg}</span>
     <span id="Games_nextLevel">{msg meaning="Games.nextLevel" desc="alert - This is displayed when the user solves the level, inviting them to procede to the next level of difficulty.  %1 is an integer greater than 1."}Are you ready for level %1?{/msg}</span>
     <span id="Games_finalLevel">{msg meaning="Games.finalLevel" desc="alert - This is displayed when the user solves the most difficult level and is going to go to the next game."}Are you ready for the next challenge?{/msg}</span>
 
@@ -140,6 +141,18 @@
 {/template}
 
 /**
+ * Show code dialog.
+ */
+{template .dialogShowCode private="true"}
+  <div id="dialogShowCode" class="dialogHiddenContent">
+    <div id="dialogShowCodeLinesText"></div>
+    <pre id="containerShowCode"></pre>
+    <div id="dialogShowCodeText" style="font-size: large; margin: 1em;"></div>
+    {call BlocklyGames.soy.ok /}
+  </div>
+{/template}
+
+/**
  * Abort dialog.
  */
 {template .abortDialog private="true"}
@@ -173,7 +186,7 @@
  */
 {template .ok private="true"}
   <div class="farSide" style="padding: 1ex 3ex 0">
-    <button class="secondary" onclick="BlocklyDialogs.hideDialog(true)">
+    <button class="secondary" style="background-color: #ffa400; border: 1px solid #ffa400" onclick="BlocklyDialogs.hideDialog(true)">
       {{msg meaning="Games.dialogOk" desc="IBID"}}OK{{/msg}}
     </button>
   </div>

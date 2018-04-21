@@ -39,7 +39,17 @@ html[dir="RTL"] .farSide {
 #containerCode {
   direction: ltr;
   background-color: #eee;
-  padding: 5px;
+  padding: 6px 10px;
+  margin: 0 3ex;
+  font-size: 16px;
+  overflow: auto;
+  max-height: 200px;
+}
+
+#containerShowCode {
+  direction: ltr;
+  background-color: #eee;
+  padding: 6px 10px;
   margin: 0 3ex;
   font-size: 16px;
   overflow: auto;
@@ -119,7 +129,7 @@ button:hover:not(:disabled) {
   position: absolute;
   border-radius: 8px;
   box-shadow: 5px 5px 5px #888;
-  padding: 10px;
+  padding: 10px 10px 16px;
 }
 #dialogBorder {
   visibility: hidden;

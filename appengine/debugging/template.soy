@@ -20,6 +20,7 @@
   </div>
   {call BlocklyGames.soy.dialog /}
   {call BlocklyGames.soy.doneDialog /}
+  {call BlocklyGames.soy.dialogShowCode /}
   {call BlocklyGames.soy.abortDialog /}
   {call BlocklyGames.soy.storageDialog /}
   {call .dialogHiddenContent /}
@@ -185,7 +186,8 @@
     <span id="Debugging_msg_errGotoNoSuchThing">{msg meaning="Debugging_msg_errGotoNoSuchThing" desc="game message"}There is no such a thing to Goto in this level.{/msg}</span>
     <span id="Debugging_msg_errGotoDontKnowWhichToGoto">{msg meaning="Debugging_msg_errGotoDontKnowWhichToGoto" desc="game message"}DeMo don't know which thing to Goto.{/msg}</span>
     <span id="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce">{msg meaning="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce" desc="game message"}DeMo cannot goto multiple things at one time.{/msg}</span>
-    <span id="Debugging_msg_errGotoEmptyList">{msg meaning="Debugging_msg_errGotoEmptyList" desc="game message"}DeMo don't know where to go.{/msg}</span>
+    <span id="Debugging_msg_errGotoEmptyList">{msg meaning="Debugging_msg_errGotoEmptyList" desc="game message"}DeMo don't know where to go... the list is empty.{/msg}</span>
+    <span id="Debugging_msg_errGotoCannotGotoAList">{msg meaning="Debugging_msg_errGotoCannotGotoAList" desc="game message"}DeMo don't know where to go.{/msg}</span>
 
   </div>
 {/template}
@@ -325,7 +327,9 @@
         {msg meaning="Debugging.toolboxHeader" desc="block toolbox header"}Blocks{/msg}
       </div>
       <div id="workspace-header">
-        {msg meaning="Debugging.workspaceHeader" desc="workspace header"}Debug Workspace{/msg}
+        <div id="workspace-header-span">{msg meaning="Debugging.workspaceHeader" desc="workspace header"}Debug Workspace{/msg}</div>
+        <div id="showCodeHeader" class="right-side"><i uk-icon="icon: code; ratio: 0.7" style="position:relative;bottom:1px;right:2px;"></i>{msg meaning="Debugging.showCodeHeader" desc="Debugging - Show JS Code Header"}Show Code{/msg}</div>
+        <div id="restoreBlockHeader" class="right-side"><i uk-icon="icon: refresh; ratio: 0.7" style="position:relative;bottom:1px;right:2px;"></i>{msg meaning="Debugging.restoreBlockHeader" desc="Debugging - Restore Original Block Header"}Original Blocks{/msg}</div>
       </div>
     </div>
     <div id="debugamo-code-editor">

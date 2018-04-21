@@ -14,8 +14,9 @@
 	"Games.pondTutor": "池塘導師",
 	"Games.pond": "池塘",
 	"Games.genetics": "遺傳",
-	"Games.linesOfCode1": "您僅使用一行JavaScript通過這關：",
-	"Games.linesOfCode2": "您使用 %1 行JavaScript通過這關：",
+	"Games.linesOfCode1": "您僅使用一行 JavaScript 通過這關：",
+	"Games.linesOfCode2": "您使用 %1 行 JavaScript 通過這關：",
+	"Games.showCode": "像是美國 哈佛 和 柏克萊 這樣的頂尖大學也都在教學這種積木式（block-based）的程式。不過萬變不離其宗，你組合的每個積木，都可以用 JavaScript（世界廣泛使用的程式語言之一）來表示：",
 	"Games.nextLevel": "準備好闖第 %1 關了嗎？",
 	"Games.finalLevel": "您準備好下一個挑戰了嗎？",
 	"Games.linkTooltip": "儲存積木組並提供連結。",
@@ -97,6 +98,8 @@
 	"Debugging_msg_errDropDontKnowWhichToDrop": "迪摩不知道要放下哪一個物件。試試看用「清單」，讓迪摩知道你要放下的物件。",
 	"Debugging_msg_errGotoNoSuchThing": "迪摩找不到想「前往」的目標。確認一下前往的物件名稱，是不是跟地圖上的英文名稱一樣。",
 	"Debugging_msg_errGotoDontKnowWhichToGoto": "迪摩不知道要前往哪一個物件。試試看用「清單」，讓迪摩知道你要前往的物件。",
+	"Debugging_msg_errGotoEmptyList": "迪摩不知道要前往哪一個物件，因為清單是空的。",
+	"Debugging_msg_errGotoCannotGotoAList": "迪摩不知道要前往清單上的哪一個物件。試試看使用「自清單取得第一筆」或「自清單取得最後一筆」的積木。",
 	"Games.debugging": "幫幫迪摩",
 	"Debugging.clear": "清除",
 	"Debugging.hint": "提示",
@@ -126,5 +129,7 @@
 	"Debugging.NewPlayerGuide7": "，才能順利完成這次任務！",
 	"Debugging.NewPlayerGuide8": "請選擇您的玩家頭像：",
 	"Games.dialogStartGame": "開始任務",
-	"Debugging.GoalHeader": "收到，迪摩。我們的任務是："
+	"Debugging.GoalHeader": "收到，迪摩。我們的任務是：",
+	"Debugging.restoreBlockHeader": "重新開始",
+	"Debugging.showCodeHeader": "顯示程式碼"
 }
