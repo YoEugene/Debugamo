@@ -35,6 +35,42 @@ Game.init = function(level) {
 
     // disable orphan block, see: https://developers.google.com/blockly/guides/create-custom-blocks/block-paradigms
     BlocklyGames.workspace.addChangeListener(Blockly.Events.disableOrphans);
+
+    Game.kiboFunction = true;
+    Game.stopProgram = true;
+    Game.UIVisible = true;
+
+    // init Kibo
+    var k = new Kibo();
+    k.down(['down'], function(e) {
+        if (Game.kiboFunction && isDef(Levels[BlocklyGames.LEVEL].missionGuideDescription[UI.missionGuideInd + 1])) {
+            UI.showNextGuide(e);
+        }
+    });
+    k.down(['up'], function(e) {
+        if (Game.kiboFunction && UI.missionGuideInd > 0)
+            UI.showPreviousGuide(e);
+    });
+
+    k.down(['w'], function(e) {
+        if (Game.UIVisible && $('#runButton').css('display') != 'none')
+            $('#runButton').click();
+    });
+
+    k.down(['e'], function(e) {
+        if (Game.UIVisible && $('#stepButton').css('display') != 'none')
+            $('#stepButton').click();
+    });
+
+    k.down(['r'], function(e) {
+        if (Game.UIVisible && $('#resetButton').css('display') != 'none')
+            $('#resetButton').click();
+    });
+
+    k.down(['space'], function(e) {
+        if (Game.UIVisible && $('#resetButton').css('display') != 'none')
+            $('#resetButton').click();
+    });
 };
 
 /**
@@ -117,7 +153,7 @@ Game.changeToSpeedMode = function() {
     UI.drawFrame = 5;
     UI.drawSpeed = 10;
     localStorage.setItem('speed', '1');
-    console.log('speed');  
+    console.log('speed');
 };
 
 /**
@@ -129,7 +165,7 @@ Game.changeToSlowMode = function() {
     UI.drawFrame = 10;
     UI.drawSpeed = 20;
     localStorage.removeItem('speed');
-    console.log('slow');  
+    console.log('slow');
 };
 
 /** private methods
@@ -349,4 +385,5 @@ Game.commands.robotDrop = function(thing) {
 
 Game.commands.highlightBlock = function(id) { BlocklyInterface.highlight(id); }
 
-Game.commands.stepAnchor = function(id) { if (id == 'When_Run') return; Game.stepAnchor = true; }
+Game.commands.stepAnchor = function(id) { if (id == 'When_Run') return;
+    Game.stepAnchor = true; }

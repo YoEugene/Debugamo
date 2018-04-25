@@ -209,11 +209,11 @@ Scope.startIntro = function() {
     $('#guideNextButton').hide();
     $('#guidePreviousButton').hide();
     $('#guide-inner-box').find('p').html(BlocklyGames.getMsg('Debugging_hello'))
-    UI.kiboFunction = false;
+    Game.kiboFunction = false;
     var intro = introJs();
     intro.setOptions({
         steps: [{
-                intro: "歡迎來到 <b>Debugamo 幫幫迪摩</b>！<br><br>迪摩需要你的幫忙，<b>找出並修復有問題的積木</b>，清理倒塌建築並拯救小動物。讓我們來看看等一下會用到的介面吧！",
+                intro: "<b>歡迎來到 Debugamo 介面導覽</b><br><br>迪摩需要你的幫忙，<b>找出並修復有問題的積木</b>，清理倒塌建築並拯救小動物。讓我們來看看等一下會用到的介面吧！",
             },{
                 element: '#mission-guide-box',
                 intro: "<b>【關卡指示】</b><br><br>為了幫助你理解關卡任務，迪摩會在每一關的最開始<b>解釋目前的情況</b>，以及要援救的對象。",
@@ -253,8 +253,11 @@ Scope.startIntro = function() {
     intro.oncomplete(function() {
         if (!localStorage.tutorialFinishedOne)
             UI.showOrHideInterface(false);
-        UI.kiboFunction = true;
+        $('#guideNextButton').show();
+        UI.missionGuideInd = 0;
+        $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
         localStorage.setItem('tutorialFinishedOne', '1');
+        Game.kiboFunction = true;
     })
     intro.start();
 }
@@ -528,8 +531,10 @@ Scope.executeStep = function(pass_in_interpreter) {
         }
     }
 
-    // enable step button function
-    Game.stepInProgress = false;
+    // enable step button function after a short while
+    setTimeout(function(){
+        Game.stepInProgress = false;
+    }, 500);
 }
 
 /**
@@ -543,6 +548,7 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // next step
         if (!Game.stopProgram && interpreter.step()) {
+            Game.stopProgram = false;
             setTimeout(function() {
                 Scope.interpretCode(interpreter, stepCount + 1);
             }, Scope.STEP_SPEED);
@@ -639,7 +645,7 @@ Scope.startGame = function() {
     }
     localStorage.setItem('newPlayer', '0');
     Scope.startIntro();
-    UI.kiboFunction = false;
+    Game.kiboFunction = false;
 };
 
 /**

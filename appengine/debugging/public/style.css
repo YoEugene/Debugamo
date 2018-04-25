@@ -89,7 +89,7 @@ img[src$="help_down.png"] {
 }
 
 .introjs-helperNumberLayer {
-    left: 0 !important;
+    /*left: 0 !important;*/
 }
 
 
@@ -272,6 +272,7 @@ pre#containerCode {
 }
 
 #debugamo-left-container {
+    padding: 10px 25px 0;
     width: 35vw;
     height: calc(100vh - 50px);
     overflow: scroll;
@@ -281,15 +282,14 @@ pre#containerCode {
 }
 
 #debugamo-world-container {
-    padding-bottom: 10px;
+    /*padding: 10px;*/
 }
 
 #canvas-container {
     width: calc(35vw - 50px);
     height: calc(35vw - 50px);
     position: relative;
-    left: 25px;
-    top: 10px;
+    /*left: 15px;*/
     z-index: 6;
 }
 
@@ -300,7 +300,7 @@ pre#containerCode {
 }
 
 #game-buttons {
-    padding: 16px 25px 0 25px;
+    padding: 8px 0;
     position: relative;
     opacity: 0;
     z-index: -1;
@@ -335,7 +335,7 @@ pre#containerCode {
 
 #mission-goal-container {
     position: relative;
-    padding: 0 25px 10px 25px;
+    padding: 0 0 10px 0;
     opacity: 0;
     z-index: -1;
     height: calc(100vh - 35vw - 68px);
@@ -741,25 +741,25 @@ svg text .fa {
 .switch-container img {
     width: 30px;
     position: absolute;
-    top: 22px;
+    top: 15px;
 }
 
 /* turtle image */
 .switch-container img:nth-child(1) {
-    left: calc(0.5 * 35vw - 47px);
+    left: calc(0.5 * 35vw - 78px);
 }
 
 /* rabbie image */
 .switch-container img:nth-child(2) {
-    left: calc(0.5 * 35vw + 28px);
+    left: calc(0.5 * 35vw - 3px);
 }
 
 .switch {
     position: absolute;
     width: 36px;
     height: 20px;
-    left: calc(0.5 * 35vw - 10px);
-    top: 27px;
+    left: calc(0.5 * 35vw - 41px);
+    top: 20px;
 }
 
 .switch input {

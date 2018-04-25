@@ -46,20 +46,6 @@ UI.init = function() {
 
     UI.stopAnimation = false;
     UI.animationSetTimeoutIds = [];
-
-    UI.kiboFunction = true;
-
-    // init Kibo
-    var k = new Kibo();
-    k.down(['down'], function(e){
-        if (UI.kiboFunction && isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
-            UI.showNextGuide(e);
-        }
-    });
-    k.down(['up'], function(e){
-        if (UI.kiboFunction && UI.missionGuideInd > 0)
-            UI.showPreviousGuide(e);
-    });
 };
 
 UI.reset = function() {
@@ -145,6 +131,7 @@ UI.showOrHideInterface = function(show) {
         $('#mission-goal-container').css('opacity', 1)
         $('#game-buttons').css('z-index', 1)
         $('#game-buttons').css('opacity', 1)
+        Game.UIVisible = true;
     } else {
         $('#guideNextButton').show();
         UI.missionGuideInd = 0;
@@ -161,6 +148,7 @@ UI.showOrHideInterface = function(show) {
         $('#mission-goal-container').css('opacity', 0)
         $('#game-buttons').css('z-index', -1)
         $('#game-buttons').css('opacity', 0)
+        Game.UIVisible = false;
     }
 }
 
