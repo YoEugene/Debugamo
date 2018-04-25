@@ -75,11 +75,17 @@ Scope.init = function() {
     /* Init Blockly */
     var toolbox = document.getElementById('toolbox');
     var scale = Levels[BlocklyGames.LEVEL].scale || 1;
+    var readOnly = Levels[BlocklyGames.LEVEL].readOnly || false;
+    
     // init blocks or categories
+    var defaultCategories = ["Logic","Loops","Math","Text","Lists","Colour","Variables","Functions"];
     var categoryIds = Levels[BlocklyGames.LEVEL].categoryIds;
-    // No specify category
+    if (categoryIds.length > 0)
+        categoryIds = defaultCategories.concat(categoryIds);
+
+    var blockIds = [];
     if (categoryIds.length == 0) {
-        var blockIds = Levels[BlocklyGames.LEVEL].blockIds;
+        blockIds = Levels[BlocklyGames.LEVEL].blockIds;
         blockIds.forEach(function(blockId) {
             var block = document.getElementById(blockId);
             toolbox.appendChild(block);
@@ -90,11 +96,14 @@ Scope.init = function() {
             toolbox.appendChild(category);
         });
     }
+    // if category then enable scrollbar, else if block is more than 3, enable scrollbar
+    var scrollbars = categoryIds.length > 0 || blockIds.length > 3;
 
     BlocklyGames.workspace = Blockly.inject('blockly', {
         'media': 'third-party/blockly/media/',
         'rtl': rtl,
-        'readOnly': false,
+        'scrollbars': scrollbars,
+        'readOnly': readOnly,
         'toolbox': toolbox,
         'trashcan': true,
         'zoom': {
@@ -107,15 +116,13 @@ Scope.init = function() {
         },
     });
 
-    //   BlocklyGames.workspace.loadAudio_(Maze.SKIN.winSound, 'win');
-    //   BlocklyGames.workspace.loadAudio_(Maze.SKIN.crashSound, 'fail');
-    //   Not really needed, there are no user-defined functions or variables.
-    //   Blockly.JavaScript.addReservedWords('moveForward,moveBackward,' +
-    //       'turnRight,turnLeft,isPathForward,isPathRight,isPathBackward,isPathLeft');
+    // init Game
+    Game.init(BlocklyGames.LEVEL);
 
     // add highlight function;
     Blockly.JavaScript.STATEMENT_PREFIX = 'highlightBlock(%1);\n';
-    Blockly.JavaScript.STATEMENT_SUFFIX = 'stepAnchor();\n';
+    Blockly.JavaScript.STATEMENT_SUFFIX = 'stepAnchor(%1);\n';
+    Blockly.JavaScript.addReservedWords('stepAnchor,highlightBlock');
 
     var done = JSON.parse(localStorage.done).indexOf(BlocklyGames.LEVEL) != -1;
     // Show new player text
@@ -129,7 +136,6 @@ Scope.init = function() {
 
     // if there is no saved xml(which means level just started, or empty xml, load the defaultBlocks from levels.js)
     var savedXml = BlocklyGames.loadFromLocalStorage('debugging', BlocklyGames.LEVEL);
-    console.log(BlocklyGames.workspace.getAllBlocks().length == 0);
     if (!done) {
         console.log('load default blocks');
         BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
@@ -153,7 +159,6 @@ Scope.init = function() {
         console.log('Saved to Localstorage by change.');
     });
 
-    Game.init(BlocklyGames.LEVEL);
 
     BlocklyGames.bindClick('runButton', Scope.runButtonClick);
     BlocklyGames.bindClick('stepButton', Scope.stepButtonClick);
@@ -164,32 +169,95 @@ Scope.init = function() {
     BlocklyGames.bindClick('guideNextButton', UI.showNextGuide);
     BlocklyGames.bindClick('restoreBlockHeader', Scope.restoreBlock);
     BlocklyGames.bindClick('showCodeHeader', Scope.showCode);
+    BlocklyGames.bindClick('guideButton', Scope.startIntro);
 
     // Lazy-load the JavaScript interpreter.
     setTimeout(BlocklyInterface.importInterpreter, 1);
     // Lazy-load the syntax-highlighting.
     setTimeout(BlocklyInterface.importPrettify, 1);
 
-    // init IntroJS
-    // BlocklyGames.bindClick('guideButton', introJs().start());
-
-    // // enable Kibo
-    // var k = new Kibo();
-
-    // k.down(['right', 'left', 'up', 'down'], function(e) {
-    //     UI.moveRobot(e.key[5].toLowerCase());
-    // });
-
-
-
-    if (localStorage.speed == "1") {
-        Scope.changeToSpeedMode();
-        $('#speedMode').prop("checked", true);
-    } else {
-        Scope.changeToSlowMode();
+    if (BlocklyGames.LEVEL == 5) {
+        var developing = document.getElementById('developing');
+        var style = {
+            width: '60%',
+            left: '20%',
+            top: '5em'
+        };
+        BlocklyDialogs.showDialog(developing, null, true, true, style,
+            BlocklyDialogs.stopDialogKeyDown, true);
+        return;
     }
 
+    // init tutorial
+    var tutorialFinishedOne = localStorage.tutorialFinishedOne;
+    if (!tutorialFinishedOne && localStorage.newPlayer == "0") {
+        Scope.startIntro();
+    }
+    if (!done && tutorialFinishedOne && localStorage.newPlayer == "0") {
+        UI.showOrHideInterface(false);
+    }
+
+    var tutorialFinishedThree = localStorage.tutorialFinishedThree;
+
 };
+
+/**
+ * start intro JS tutorial
+ */
+Scope.startIntro = function() {
+    UI.showOrHideInterface(true);
+    $('#guideNextButton').hide();
+    $('#guidePreviousButton').hide();
+    $('#guide-inner-box').find('p').html(BlocklyGames.getMsg('Debugging_hello'))
+    UI.kiboFunction = false;
+    var intro = introJs();
+    intro.setOptions({
+        steps: [{
+                intro: "歡迎來到 <b>Debugamo 幫幫迪摩</b>！<br><br>迪摩需要你的幫忙，<b>找出並修復有問題的積木</b>，清理倒塌建築並拯救小動物。讓我們來看看等一下會用到的介面吧！",
+            },{
+                element: '#mission-guide-box',
+                intro: "<b>【關卡指示】</b><br><br>為了幫助你理解關卡任務，迪摩會在每一關的最開始<b>解釋目前的情況</b>，以及要援救的對象。",
+                position: 'auto',
+            },{
+                element: '#debugamo-code-editor-container',
+                intro: "<b>【程式積木區】</b><br><br>你會在這裡編輯積木，與迪摩一起完成每關列出的任務。<br><br>左邊的<b>程式積木</b>是你可以使用的工具，隨著關卡進行你會有越來越多的積木可以使用。<br><br>右邊的<b>程式晶片</b>是積木運作的地方，按下「運行」之後，連在<b>黃色的積木</b>底下的積木就會讓迪摩開始運作。<br><br>右上角的<b>重新開始</b>按鈕，可以幫你復原回最初始的積木。右下角的<b>垃圾桶</b>，只要將積木丟進去即可以刪除。",
+                position: 'auto',
+            },
+            {
+                element: '#debugamo-world-container',
+                intro: '<b>【世界】</b><br><br>迪摩會在這裡到處移動、與物件以及朋友們互動。<br><br>下方的<b>運行</b>按鈕會執行剛剛介紹的程式積木區，隨後出現的<b>重置</b>按鈕則會停止程式運行，並將物件重置回原本的位置。迪摩會確實按照每一個積木運作，所以儘可能找到錯誤的積木並修復！',
+                position: 'auto',
+            },
+            {
+                element: '#mission-goal-box',
+                intro: "<b>【關卡任務】</b><br><br>這裡會條列出<b>每一關的任務</b>是什麼。如果運行後沒有完成任務，迪摩會提示你問題出在哪裡。",
+                position: 'auto',
+            },
+            {
+                element: '#mission-guide-box',
+                intro: '<b>【開始探索】</b><br><br>大致上就是這樣，剩下的讓你自由探索。現在就讓我們開始第一關吧！',
+                position: 'auto',
+            }
+        ],
+        exitOnOverlayClick: false,
+        exitOnEsc: false,
+        disableInteraction: true,
+        showBullets: false,
+        showProgress: true,
+        tooltipClass: 'debugamo-introJs-tooltip',
+        scrollToElement: false,
+        nextLabel: '往後 &rarr;',
+        prevLabel: '&larr; 往前',
+        doneLabel: '開始吧！'
+    });
+    intro.oncomplete(function() {
+        if (!localStorage.tutorialFinishedOne)
+            UI.showOrHideInterface(false);
+        UI.kiboFunction = true;
+        localStorage.setItem('tutorialFinishedOne', '1');
+    })
+    intro.start();
+}
 
 /**
  * restore to original blocks
@@ -220,7 +288,6 @@ Scope.mergeCodeWithListInit = function(code, thingsName) {
         }
     }
 
-    console.log(listTag);
     if (listTag.length == 0)
         return code;
     // var kittens = ['kitten1','kitten2'];\n
@@ -236,12 +303,120 @@ Scope.mergeCodeWithListInit = function(code, thingsName) {
         tmp = tmp.join('", "');
         tmp = '"' + tmp + '"';
         prependCode += tmp + '];\n';
-        console.log(prependCode);
         code = prependCode + code;
     }
 
     return code;
 }
+
+
+/**
+ * Click the run button.  Start the program.
+ * @param {!Event} e Mouse or touch event.
+ */
+Scope.runButtonClick = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e)) {
+        return;
+    }
+    BlocklyDialogs.hideDialog(false);
+
+    // Only allow a single top block on level 1.
+    // if (BlocklyGames.LEVEL == 1 &&
+    //     BlocklyGames.workspace.getTopBlocks().length > 1 &&
+    //     Maze.result != Maze.ResultType.SUCCESS &&
+    //     !BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME,
+    //                                        BlocklyGames.LEVEL)) {
+    //   Maze.levelHelp();
+    //   return;
+    // }
+    var runButton = document.getElementById('runButton');
+    var stepButton = document.getElementById('stepButton');
+    var resetButton = document.getElementById('resetButton');
+    // Ensure that Reset button is at least as wide as Run button.
+    if (!resetButton.style.minWidth) {
+        resetButton.style.minWidth = runButton.offsetWidth + 'px';
+    }
+    runButton.style.display = 'none';
+    stepButton.style.display = 'none';
+    resetButton.style.display = 'inline';
+
+    Game.reset();
+    BlocklyInterface.highlight('When_Run');
+    Game.play('start', 0.3);
+
+    // start animation after start sound played
+    setTimeout(function() { Scope.execute(); }, 600)
+};
+
+/**
+ * Click the step button.  Run the program for one step.
+ * @param {!Event} e Mouse or touch event.
+ */
+Scope.stepButtonClick = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e) || Game.stepInProgress) {
+        return;
+    }
+
+    BlocklyDialogs.hideDialog(false);
+
+    var runButton = document.getElementById('runButton');
+    var stepButton = document.getElementById('stepButton');
+    var resetButton = document.getElementById('resetButton');
+    var gameButtons = document.getElementById('game-buttons');
+    // Ensure that Reset button is at least as wide as Run button.
+    if (!resetButton.style.minWidth) {
+        resetButton.style.minWidth = runButton.offsetWidth + 'px';
+    }
+    runButton.style.display = 'none';
+    // stepButton.style.display = 'none';
+    // gameButtons.style.textAlign = 'right';
+    resetButton.style.display = 'inline-block';
+
+    Game.stopProgram = false;
+    Game.stepAnchor = false;
+
+    // first step of all steps, reset UI and play audio
+    if (!Game.currentInterpreter) {
+        Game.reset();
+        BlocklyInterface.highlight('When_Run');
+        Game.play('start', 0.3);
+        // start animation after start sound played
+        setTimeout(function() { Scope.executeStep(); }, 600)
+    } else {
+        Scope.executeStep();
+    }
+
+
+};
+
+/**
+ * Click the reset button.  Reset the maze.
+ * @param {!Event} e Mouse or touch event.
+ */
+Scope.resetButtonClick = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e)) {
+        return;
+    }
+
+    // disable animation for a short of period
+    UI.stopAnimation = true;
+
+    document.getElementById('runButton').style.display = 'inline-block';
+    document.getElementById('stepButton').style.display = 'inline-block';
+    document.getElementById('resetButton').style.display = 'none';
+    document.getElementById('game-buttons').style.textAlign = 'left';
+
+    Game.reset();
+
+    // enable animation after short of period
+    setTimeout(function() {
+        Game.reset();
+        UI.stopAnimation = false;
+    }, 500)
+};
 
 /**
  * Inject the Maze API into a JavaScript interpreter.
@@ -270,21 +445,17 @@ Scope.execute = function() {
     }
 
     var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
-
-    // console.log(Object.keys(Game.things));
     code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
 
-    // console.log(code);
-
-    var interpreter = new Interpreter(code, Scope.initInterpreter);
-
+    console.log(code);
 
     // try {
-    //   eval(code);
+    // eval(code);
     // } catch (e) {
-    //   alert(e);
+    // alert(e);
     // }
 
+    var interpreter = new Interpreter(code, Scope.initInterpreter);
 
     Scope.interpretCode(interpreter, 0);
 };
@@ -294,6 +465,7 @@ Scope.execute = function() {
  */
 Scope.executeStep = function(pass_in_interpreter) {
 
+    // disable step button function until this round finished
     Game.stepInProgress = true;
 
     if (!('Interpreter' in window)) {
@@ -305,9 +477,8 @@ Scope.executeStep = function(pass_in_interpreter) {
     if (!!pass_in_interpreter) {
         var interpreter = pass_in_interpreter;
     } else if (!Game.currentInterpreter) {
-        var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
 
-        console.log(Object.keys(Game.things));
+        var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
         code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
 
         // delete last line (must be "stepAnchor();\n")
@@ -345,17 +516,19 @@ Scope.executeStep = function(pass_in_interpreter) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function() { UI.showFailText('DrinkShop_msg_tooManySteps'); }, 10);
-        } else if (typeof e === 'string') {
-            setTimeout(function() { UI.showFailText(e); }, 10);
-            console.log(e);
-        } else {
+            setTimeout(function() { UI.showFailText('Debugging_msg_errTooManySteps'); }, 10);
+        } else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+            setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
+        else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+            setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
+        else {
             // Syntax error, can't happen.
             setTimeout(function() { UI.showFailText(e); }, 10);
-            console.log(e);
+            console.error(e);
         }
     }
 
+    // enable step button function
     Game.stepInProgress = false;
 }
 
@@ -390,14 +563,15 @@ Scope.interpretCode = function(interpreter, stepCount) {
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
-            setTimeout(function() { UI.showFailText('DrinkShop_msg_tooManySteps'); }, 10);
-        } else if (typeof e === 'string') {
-            setTimeout(function() { UI.showFailText(e); }, 10);
-            console.log(e);
-        } else {
+            setTimeout(function() { UI.showFailText('Debugging_msg_errTooManySteps'); }, 10);
+        } else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+            setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
+        else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+            setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
+        else {
             // Syntax error, can't happen.
             setTimeout(function() { UI.showFailText(e); }, 10);
-            console.log(e);
+            console.error(e);
         }
     }
 }
@@ -409,6 +583,7 @@ Scope.interpretCode = function(interpreter, stepCount) {
 Scope.checkCurrentLevelComplete = function() {
     if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
         Game.things.robot.state = 'happy';
+        Game.play('success', 0.2);
         BlocklyInterface.saveToLocalStorage();
         BlocklyDialogs.congratulations();
         var done = JSON.parse(localStorage.done);
@@ -428,96 +603,6 @@ Scope.checkCurrentLevelComplete = function() {
     UI.drawGrid($('#playground')[0], false);
     UI.drawThings();
     UI.drawTags();
-};
-
-/**
- * Click the run button.  Start the program.
- * @param {!Event} e Mouse or touch event.
- */
-Scope.runButtonClick = function(e) {
-    // Prevent double-clicks or double-taps.
-    if (BlocklyInterface.eventSpam(e)) {
-        return;
-    }
-    BlocklyDialogs.hideDialog(false);
-
-    // Only allow a single top block on level 1.
-    // if (BlocklyGames.LEVEL == 1 &&
-    //     BlocklyGames.workspace.getTopBlocks().length > 1 &&
-    //     Maze.result != Maze.ResultType.SUCCESS &&
-    //     !BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME,
-    //                                        BlocklyGames.LEVEL)) {
-    //   Maze.levelHelp();
-    //   return;
-    // }
-    var runButton = document.getElementById('runButton');
-    var stepButton = document.getElementById('stepButton');
-    var resetButton = document.getElementById('resetButton');
-    // Ensure that Reset button is at least as wide as Run button.
-    if (!resetButton.style.minWidth) {
-        resetButton.style.minWidth = runButton.offsetWidth + 'px';
-    }
-    runButton.style.display = 'none';
-    stepButton.style.display = 'none';
-    resetButton.style.display = 'inline';
-    // BlocklyGames.workspace.traceOn(true);
-
-    Game.reset();
-    Scope.execute();
-};
-
-/**
- * Click the step button.  Run the program for one step.
- * @param {!Event} e Mouse or touch event.
- */
-Scope.stepButtonClick = function(e) {
-    // Prevent double-clicks or double-taps.
-    if (BlocklyInterface.eventSpam(e) || Game.stepInProgress) {
-        return;
-    }
-
-    BlocklyDialogs.hideDialog(false);
-
-    var runButton = document.getElementById('runButton');
-    var stepButton = document.getElementById('stepButton');
-    var resetButton = document.getElementById('resetButton');
-    var gameButtons = document.getElementById('game-buttons');
-    // Ensure that Reset button is at least as wide as Run button.
-    if (!resetButton.style.minWidth) {
-        resetButton.style.minWidth = runButton.offsetWidth + 'px';
-    }
-    runButton.style.display = 'none';
-    // stepButton.style.display = 'none';
-    // gameButtons.style.textAlign = 'right';
-    resetButton.style.display = 'inline-block';
-
-    Game.stopProgram = false;
-    Game.stepAnchor = false;
-
-    Scope.executeStep();
-};
-
-/**
- * Click the reset button.  Reset the maze.
- * @param {!Event} e Mouse or touch event.
- */
-Scope.resetButtonClick = function(e) {
-    // Prevent double-clicks or double-taps.
-    if (BlocklyInterface.eventSpam(e)) {
-        return;
-    }
-    // disable animation for a short of period
-    UI.stopAnimation = true;
-
-    document.getElementById('runButton').style.display = 'inline-block';
-    document.getElementById('stepButton').style.display = 'inline-block';
-    document.getElementById('resetButton').style.display = 'none';
-    document.getElementById('game-buttons').style.textAlign = 'left';
-    // BlocklyGames.workspace.traceOn(false);
-    Game.reset();
-    // Maze.levelHelp();
-    // enable animation after short of period
-    setTimeout(function() { UI.stopAnimation = false; }, 500)
 };
 
 /**
@@ -552,6 +637,9 @@ Scope.startGame = function() {
     if (BlocklyDialogs.isDialogVisible_) {
         BlocklyDialogs.hideDialog(false);
     }
+    localStorage.setItem('newPlayer', '0');
+    Scope.startIntro();
+    UI.kiboFunction = false;
 };
 
 /**
@@ -576,39 +664,6 @@ Scope.debugModeChange = function() {
         localStorage.setItem('debug', '1');
     else
         localStorage.removeItem('debug');
-};
-
-/**
- * Toggle change speed mode
- */
-Scope.speedModeChange = function() {
-    if (!$('#speedMode').prop("checked")) {
-        Scope.changeToSpeedMode();
-        console.log('changed to speed mode');
-    } else {
-        Scope.changeToSlowMode();
-        console.log('changed to slow mode');
-    }
-};
-
-/**
- * Change to speed mode
- */
-Scope.changeToSpeedMode = function() {
-    localStorage.setItem('speed', '1');
-    Scope.STEP_SPEED = 7;
-    UI.drawFrame = 5;
-    UI.drawSpeed = 10;
-};
-
-/**
- * Change to slow mode
- */
-Scope.changeToSlowMode = function() {
-    localStorage.removeItem('speed');
-    Scope.STEP_SPEED = 18;
-    UI.drawFrame = 10;
-    UI.drawSpeed = 20;
 };
 
 /**

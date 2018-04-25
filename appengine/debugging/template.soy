@@ -9,8 +9,10 @@
   {call .header /}
   <div id="debugamo-container">
     <div id="debugamo-left-container">
-      {call .canvasArea /}
-      {call .gameButtons /}
+      <div id="debugamo-world-container">
+        {call .canvasArea /}
+        {call .gameButtons /}
+      </div>
       {call .missionGoalArea /}
     </div>
     <div id="debugamo-right-container">
@@ -108,9 +110,9 @@
     <div id="begin-box">
       <p>
       {msg meaning="Debugging.NewPlayerGuide1" desc="New Players Guide"}Welcome to the world of DebugaMo! Your mission is to help robot DeMo to save animals or people in the building{/msg}<br><br>
-      {msg meaning="Debugging.NewPlayerGuide2" desc="New Players Guide"}A earthquake happened recently, fortunately with the help of national disaster warning message, most people get out of the dangereous building. While in a collapsed building, there is still some animals and people inside of it. Your job, from the safety of mission control, is to {/msg}
+      {msg meaning="Debugging.NewPlayerGuide2" desc="New Players Guide"}A earthquake happened recently, fortunately with the help of national disaster warning message, most people get out of the dangereous building on time. While in a almost-collapsed building, there still are some animals and people waiting for rescue. Your job, from the safety of mission control, is to {/msg}
       <span style="font-weight: 600;">{msg meaning="Debugging.NewPlayerGuide3" desc="New Players Guide"}communicate with DeMo{/msg}</span>
-      {msg meaning="Debugging.NewPlayerGuide4" desc="New Players Guide"} to clean up the stones, and ultimately rescue any living being out from the building.{/msg}<br><br>
+      {msg meaning="Debugging.NewPlayerGuide4" desc="New Players Guide"} to clean up the stones, and ultimately rescue all the living beings inside the building.{/msg}<br><br>
       {msg meaning="Debugging.NewPlayerGuide5" desc="New Players Guide"}Unfortunately, there was an accident while transporting DeMo to the disaster site and his logic chip is malfunctioning. It is up to you to figure out how to help DeMo by{/msg}
       <span style="font-weight: 600;">{msg meaning="Debugging.NewPlayerGuide6" desc="New Players Guide"} fixing its logic chip,{/msg}</span>
       {msg meaning="Debugging.NewPlayerGuide7" desc="New Players Guide"} and complete the mission!{/msg}<br><br><br>
@@ -123,6 +125,12 @@
     </div>
     {call BlocklyGames.soy.startGame /}
   </div>
+  <div id="developing" class="dialogHiddenContent">
+    <div id="begin-box">
+      <img class="showCodeRobot" src="debugging/public/img/robot.happy.png"></img>
+      更多有趣的關卡與功能開發中，想成為第一批協助迪摩完成援救任務的人、或參與遊戲開發過程？<br><br>請聯繫：<br><br>mail: <a href="mailto:r04921080@ntu.edu.tw">r04921080@ntu.edu.tw</a><br>Facebook: <a href="https://www.facebook.com/YoEugene.Hsu" target="_blank">Eugene Yu-Chun Hsu</a><br><br><b>[NTUEE EdTech Lab]</b>
+    </div>
+  </div>
 {/template}
 
 /**
@@ -131,53 +139,20 @@
 {template .messages}
   {call BlocklyGames.soy.messages /}
   <div style="display: none">
-    <span id="DrinkShop_getNewCup">{msg meaning="DrinkShop_getNewCup" desc="block text - robot gets a cup"}get a new cup{/msg}</span>
-    <span id="DrinkShop_fillCupWith">{msg meaning="DrinkShop_fillCupWith" desc="block text - robot fills the cup with drink"}fill the cup with{/msg}</span>
-    <span id="DrinkShop_fillCupWithVolume">{msg meaning="DrinkShop_fillCupWithVolume" desc="block text - robot fills the cup with a volume of drink"}fill the cup with{/msg}</span>
-    <span id="DrinkShop_ml">{msg meaning="DrinkShop_ml" desc="block text - ml"}ml{/msg}</span>
-    <span id="DrinkShop_coverCup">{msg meaning="DrinkShop_coverCup" desc="block text - robot covers the cup"}cover the cup{/msg}</span>
-    <span id="DrinkShop_serve">{msg meaning="DrinkShop_serve" desc="block text - robot serves what it is holding"}serve the cup{/msg}</span>
-
-    <span id="DrinkShop_blackTea">{msg meaning="DrinkShop_blackTea" desc="block text - black tea"}black tea{/msg}</span>
-    <span id="DrinkShop_greenTea">{msg meaning="DrinkShop_greenTea" desc="block text - green tea"}green tea{/msg}</span>
-    <span id="DrinkShop_milkTea">{msg meaning="DrinkShop_milkTea" desc="block text - milk tea"}milk tea{/msg}</span>
-    <span id="DrinkShop_milkGreenTea">{msg meaning="DrinkShop_milkGreenTea" desc="block text - milk green tea"}milk green tea{/msg}</span>
-    <span id="DrinkShop_milk">{msg meaning="DrinkShop_milk" desc="block text - milk"}milk{/msg}</span>
-    <span id="DrinkShop_ice">{msg meaning="DrinkShop_ice" desc="block text - ice"}ice{/msg}</span>
-    <span id="DrinkShop_boba">{msg meaning="DrinkShop_boba" desc="block text - boba"}boba{/msg}</span>
-
-    <span id="DrinkShop_msg_noServedDrink">{msg meaning="DrinkShop_msg_noServedDrink" desc="game message"}The customer didn't get their tea.{/msg} &#x1F641;</span>
-    <span id="DrinkShop_msg_servedMultiple">{msg meaning="DrinkShop_msg_servedMultiple" desc="game message"}The customer received more than 1 cup of drink.{/msg} &#x1F641;</span>
-    <span id="DrinkShop_msg_cupEmpty">{msg meaning="DrinkShop_msg_cupEmpty" desc="game message"}The cup is empty.{/msg}</span>
-    <span id="DrinkShop_msg_cupNotFull">{msg meaning="DrinkShop_msg_cupNotFull" desc="game message"}The cup is not full.{/msg}</span>
-    <span id="DrinkShop_msg_notBlackTea">{msg meaning="DrinkShop_msg_notBlackTea" desc="game message"}It's not black tea.{/msg}</span>
-    <span id="DrinkShop_msg_notGreenTea">{msg meaning="DrinkShop_msg_notGreenTea" desc="game message"}It's not green tea.{/msg}</span>
-
-    <span id="DrinkShop_msg_noBlackTea">{msg meaning="DrinkShop_msg_noBlackTea" desc="game message"}There's no black tea in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_noGreenTea">{msg meaning="DrinkShop_msg_noGreenTea" desc="game message"}There's no green tea in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_noMilk">{msg meaning="DrinkShop_msg_noMilk" desc="game message"}There's no milk in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_noBoba">{msg meaning="DrinkShop_msg_noBoba" desc="game message"}There's no boba in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_notOnlyBlackTeaAndMilk">{msg meaning="DrinkShop_msg_notOnlyBlackTeaAndMilk" desc="game message"}There's not only black tea and milk in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_tooManyMaterials">{msg meaning="DrinkShop_msg_tooManyMaterials" desc="game message"}There are too many kinds of materials in the cup.{/msg}</span>
-    <span id="DrinkShop_msg_notCorrectProportion">{msg meaning="DrinkShop_msg_notCorrectProportion" desc="game message"}The proportion of materials is not correct.{/msg}</span>
-
-    <span id="DrinkShop_msg_cupNotCovered">{msg meaning="DrinkShop_msg_cupNotCovered" desc="game message"}The cup is not covered.{/msg}</span>
-
-    <span id="DrinkShop_msg_levelFailed1">{msg meaning="DrinkShop_msg_levelFailed1" desc="game message"}Level Failed...{/msg}</span>
-    <span id="DrinkShop_msg_levelFailed2">{msg meaning="DrinkShop_msg_levelFailed2" desc="game message"}Oops...{/msg}</span>
-    <span id="DrinkShop_msg_levelFailed3">{msg meaning="DrinkShop_msg_levelFailed3" desc="game message"}Something's wrong...{/msg}</span>
-    <span id="DrinkShop_msg_errorIn">{msg meaning="DrinkShop_msg_errorIn" desc="game message"}An error occured in '%1'.{/msg}</span>
-    <span id="DrinkShop_msg_reason">{msg meaning="DrinkShop_msg_reason" desc="game message"}Reason{/msg}</span>
-    <span id="DrinkShop_msg_noCup">{msg meaning="DrinkShop_msg_noCup" desc="game message"}There is no cup in my hand.{/msg}</span>
-    <span id="DrinkShop_msg_cupCovered">{msg meaning="DrinkShop_msg_cupCovered" desc="game message"}The cup has been covered.{/msg}</span>
-    <span id="DrinkShop_msg_drinkOverflow">{msg meaning="DrinkShop_msg_drinkOverflow" desc="game message"}The cup is full. The drink will overflow.{/msg}</span>
-
-    // TODO: ENGLISH TRANSLATION NEED TO BE REFINE
+    // DEBUGAMO TODO: ENGLISH TRANSLATION NEEDED TO BE REFINE
+    <span id="Debugging_hello">{msg meaning="Debugging_hello" desc="game message"}Hello master~ I'm robot DeMo. :D{/msg}</span>
+    <span id="Debugging_when_run">{msg meaning="Debugging_when_run" desc="game message"}when run{/msg}</span>
+    <span id="Debugging_msg_levelFailed1">{msg meaning="Debugging_msg_levelFailed1" desc="game message"}Level Failed...{/msg}</span>
+    <span id="Debugging_msg_levelFailed2">{msg meaning="Debugging_msg_levelFailed2" desc="game message"}Oops...{/msg}</span>
+    <span id="Debugging_msg_levelFailed3">{msg meaning="Debugging_msg_levelFailed3" desc="game message"}Something's wrong...{/msg}</span>
     <span id="Debugging_msg_noGoal">{msg meaning="Debugging_msg_noGoal" desc="game message"}You didn't reach the position of goal.{/msg}</span>
     <span id="Debugging_msg_noGoalKitten">{msg meaning="Debugging_msg_noGoalKitten" desc="game message"}You didn't put kitten on the right place.{/msg}</span>
     <span id="Debugging_msg_noGoalRock">{msg meaning="Debugging_msg_noGoalRock" desc="game message"}You didn't put rock on the right place.{/msg}</span>
     <span id="Debugging_msg_noGoalPiglet">{msg meaning="Debugging_msg_noGoalPiglet" desc="game message"}You didn't put piglet on the right place.{/msg}</span>
+    <span id="Debugging_msg_errTooManySteps">{msg meaning="Debugging_msg_errTooManySteps" desc="game message"}You create a loop that never end...check the termination condition of your loop.{/msg}</span>
+    <span id="Debugging_msg_errListNotExist">{msg meaning="Debugging_msg_errListNotExist" desc="game message"}The list you try to get does not exist yet! Check your spelling of the list.(missing 's'?){/msg}</span>
     <span id="Debugging_msg_errGrabNoSuchThing">{msg meaning="Debugging_msg_errGrabNoSuchThing" desc="game message"}There is no such a thing to Grab in this level.{/msg}</span>
+    <span id="Debugging_msg_errGrabUndefined">{msg meaning="Debugging_msg_errGrabUndefined" desc="game message"}Did you specify what you wanna grab?{/msg}</span>
     <span id="Debugging_msg_errGrabWrongPosition">{msg meaning="Debugging_msg_errGrabWrongPosition" desc="game message"}DeMo can only grab a thing at DeMo's position :({/msg}</span>
     <span id="Debugging_msg_errGrabDontKnowWhichToGrab">{msg meaning="Debugging_msg_errGrabDontKnowWhichToGrab" desc="game message"}DeMo don't know which thing to Grab.{/msg}</span>
     <span id="Debugging_msg_errDropNoSuchThing">{msg meaning="Debugging_msg_errDropNoSuchThing" desc="game message"}There is no such a thing to Drop in this level.{/msg}</span>
@@ -188,7 +163,6 @@
     <span id="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce">{msg meaning="Debugging_msg_errGotoCannotGotoMultipleThingsAtOnce" desc="game message"}DeMo cannot goto multiple things at one time.{/msg}</span>
     <span id="Debugging_msg_errGotoEmptyList">{msg meaning="Debugging_msg_errGotoEmptyList" desc="game message"}DeMo don't know where to go... the list is empty.{/msg}</span>
     <span id="Debugging_msg_errGotoCannotGotoAList">{msg meaning="Debugging_msg_errGotoCannotGotoAList" desc="game message"}DeMo don't know where to go.{/msg}</span>
-
   </div>
 {/template}
 
@@ -213,7 +187,7 @@
       </div>
     </div>
     <div class="rightSide">
-      <input type="checkbox" id="debugMode" onclick="Debugging.debugModeChange()">Debug
+      <span id="debugModeBox"><input type="checkbox" id="debugMode" onclick="Debugging.debugModeChange()">Debug<span>
       <select id="languageMenu"></select>
       &nbsp;
       <button id="linkButton" title="{msg meaning="Games.linkTooltip" desc="IBID"}Save and link to blocks.{/msg}">
@@ -222,10 +196,10 @@
       <button id="clearLocalStorageButton">
         {{msg meaning="Debugging.clear" desc="clear"}}Clear{{/msg}}
       </button>
-      <button id="helpButton" data-intro='Hello step one!' data-step='1'>
+      <button id="helpButton">
         {{msg meaning="Debugging.hint" desc="hint"}}Hint{{/msg}}
       </button>
-      <button id="guideButton" onclick="introJs().start();">
+      <button id="guideButton">
         {{msg meaning="Debugging.guide" desc="guide"}}Guide{{/msg}}
       </button>
     </div>
@@ -248,25 +222,22 @@
 {template .gameButtons}
   <div id="game-buttons">
     <button id="runButton" class="primary" title="{msg meaning="Debugging_runTooltip" desc="tooltip - Pressing this button runs the computer program the user has written to move the robot."}Makes the robot do what the blocks say.{/msg}">
-      <span>&#9658; {msg meaning="Games.runProgram" desc="IBID"}Run Program{/msg}</span>
+      <span>&#9658; {msg meaning="Games.runProgram" desc="IBID"}Run{/msg}</span>
     </button>
     <button id="resetButton" class="warning" title="{msg meaning="Debugging_resetTooltip" desc="tooltip - Pressing this button to restart the game."}Undo what the robot has done.{/msg}">
       <span>&#8634; {msg meaning="Games.resetProgram" desc="IBID"}Reset{/msg}</span>
     </button>
-    <label class="switch">
-      <input type="checkbox" id="speedMode">
-      <span class="slider round" onclick="Debugging.speedModeChange()"></span>
-    </label>
+    <div class="switch-container">
+      <img src="debugging/public/img/turtle.png"></img>
+      <img src="debugging/public/img/rabbit.png"></img>
+      <label class="switch">
+        <input type="checkbox" id="speedMode">
+        <span class="slider round" onclick="Game.speedModeChange()"></span>
+      </label>
+    </div>
     <button id="stepButton" class="primary" title="{msg meaning="Debugging_stepTooltip" desc="tooltip - Pressing this button steps the computer program the user has written to move the robot."}Makes the robot do what one blocks say.{/msg}">
       <span>{msg meaning="Games.stepProgram" desc="Step in program for one block"}Step{/msg}</span>
     </button>
-  </div>
-  <div class="uk-hidden">
-    <button class="warning uk-margin-left" onclick="Debugging.UI.drawGrid()"><span>drawGrid</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('r')"><span>Right</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('l')"><span>Left</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('u')"><span>Up</span></button>
-    <button class="warning uk-margin-left" onclick="Debugging.UI.moveRobot('d')"><span>Down</span></button>
   </div>
 {/template}
 
@@ -307,7 +278,7 @@
       </div>
       <div id="mission-guide-button">
         <button id="guidePreviousButton" title="{msg meaning="Debugging_previousGuide" desc="Pressing this button to show previous paragraph of mission guide text."}Show previous guide text{/msg}">
-          <i uk-icon="icon: chevron-up"></i><span>{msg meaning="Debugging.previousGuide" desc="Show previous paragraph of guide text"}previous{/msg}</span>
+          <i uk-icon="icon: chevron-up"></i><span>{msg meaning="Debugging.previousGuide" desc="Show previous paragraph of guide text"}prev{/msg}</span>
         </button>
         <button id="guideNextButton" title="{msg meaning="Debugging_nextGuide" desc="Pressing this button to show next paragraph of mission guide text."}Show next guide text{/msg}">
           <i uk-icon="icon: chevron-down"></i><span>{msg meaning="Debugging.nextGuide" desc="Show next paragraph of guide text"}next{/msg}</span>
@@ -346,6 +317,7 @@
 {template .toolbox}
   <xml id="all-blocks" style="display: none;">
     <category id="Debugamo" name="Debugamo" colour="90">
+      // <block type="When_Run" id="When_Run"></block>
       <block type="Move_Robot" id="Move_Robot"></block>
       <block type="Robot_Goto" id="Robot_Goto">
         <value name="GOTO_NAME">
@@ -368,10 +340,15 @@
           </block>
         </value>
       </block>
+      <block type="lists_getIndex" id="lists_getIndex">
+        <value name="VALUE">
+          <block type="variables_get">
+            <field name="VAR">list</field>
+          </block>
+        </value>
+      </block>
     </category>
-  </xml>
-  <xml id="toolbox" style="display: none;">
-    <category id="catLogic" colour="210" name="Logic">
+    <category id="Logic" colour="210" name="Logic">
       <block type="controls_if"></block>
       <block type="logic_compare"></block>
       <block type="logic_operation"></block>
@@ -380,7 +357,7 @@
       <block type="logic_null"></block>
       <block type="logic_ternary"></block>
     </category>
-    <category id="catLoops" colour="120" name="Loops">
+    <category id="Loops" colour="120" name="Loops">
       <block type="controls_repeat_ext">
         <value name="TIMES">
           <shadow type="math_number">
@@ -409,7 +386,7 @@
       <block type="controls_forEach"></block>
       <block type="controls_flow_statements"></block>
     </category>
-    <category id="catMath" colour="230" name="Math">
+    <category id="Math" colour="230" name="Math">
       <block type="math_number"></block>
       <block type="math_arithmetic">
         <value name="A">
@@ -503,7 +480,7 @@
       </block>
       <block type="math_random_float"></block>
     </category>
-    <category id="catText" colour="160" name="Text">
+    <category id="Text" colour="160" name="Text">
       <block type="text"></block>
       <block type="text_join"></block>
       <block type="text_append">
@@ -580,7 +557,7 @@
         </value>
       </block>
     </category>
-    <category id="catLists" colour="260" name="Lists">
+    <category id="Lists" colour="260" name="Lists">
       <block type="lists_create_with">
         <mutation items="0"></mutation>
       </block>
@@ -601,7 +578,7 @@
           </block>
         </value>
       </block>
-      <block type="lists_getIndex">
+      <block type="lists_getIndex" id="lists_getIndex">
         <value name="VALUE">
           <block type="variables_get">
             <field name="VAR">list</field>
@@ -631,7 +608,7 @@
       </block>
       <block type="lists_sort"></block>
     </category>
-    <category id="catColour" colour="20" name="Color">
+    <category id="Colour" colour="20" name="Color">
       <block type="colour_picker"></block>
       <block type="colour_random"></block>
       <block type="colour_rgb">
@@ -670,7 +647,10 @@
       </block>
     </category>
     <sep></sep>
-    <category id="catVariables" colour="330" custom="VARIABLE" name="Variables"></category>
-    <category id="catFunctions" colour="290" custom="PROCEDURE" name="Functions"></category>
+    <category id="Variables" colour="330" custom="VARIABLE" name="Variables"></category>
+    <category id="Functions" colour="290" custom="PROCEDURE" name="Functions"></category>
+  </xml>
+  <xml id="toolbox" style="display: none;">
+    
   </xml>
 {/template}

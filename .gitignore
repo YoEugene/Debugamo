@@ -4,9 +4,8 @@
 appengine/generated/
 appengine/*/generated/
 appengine/*/*/generated/
-appengine/third-party/
-json/keys.json
-third-party/
+appengine/third-party-backup/*
+third-party-backup/*
 
 *.komodoproject
 

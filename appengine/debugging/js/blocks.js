@@ -42,16 +42,31 @@ goog.require('Blockly.Constants.Variables');
 goog.require('Blockly.JavaScript.variables');
 
 
+// set hat for beginning block, see: https://developers.google.com/blockly/guides/create-custom-blocks/block-paradigms
+Blockly.BlockSvg.START_HAT = true;
+
 var Scope_Blocks = Debugging.Blocks;
 
-/**
- * Common HSV hue
- */
-Scope_Blocks.MOVEMENT_HUE = 290;
-Scope_Blocks.LOOPS_HUE = 120;
-Scope_Blocks.LOGIC_HUE = 210;
-
 // Extensions to Blockly's language and JavaScript generator.
+Blockly.Blocks['When_Run'] = {
+    init: function() {
+        this.jsonInit({
+            "type": "robot_grab",
+            "message0": BlocklyGames.getMsg('Debugging_when_run'),
+            "nextStatement": null,
+            "colour": "#FDA400",
+            "tooltip": "",
+            "helpUrl": ""
+        })
+    }
+}
+
+Blockly.JavaScript['When_Run'] = function(block) {
+    // TODO: Assemble JavaScript into code variable.
+    // var code = '...;\n';
+    return "";
+};
+
 Blockly.Blocks['Move_Robot'] = {
     init: function() {
         this.jsonInit({
@@ -77,7 +92,7 @@ Blockly.Blocks['Move_Robot'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 120,
+            "colour": "#00B0BD",
             "tooltip": "",
             "helpUrl": ""
         });
@@ -110,7 +125,7 @@ Blockly.Blocks['Robot_Goto'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 120,
+            "colour": "#00B0BD",
             "tooltip": "",
             "helpUrl": ""
         })
@@ -118,7 +133,9 @@ Blockly.Blocks['Robot_Goto'] = {
 }
 Blockly.JavaScript['Robot_Goto'] = function(block) {
     var thing_name, code;
-    if (block.getInputTargetBlock('GOTO_NAME').type == 'lists_create_with') {
+    if (block.getInputTargetBlock('GOTO_NAME') == null) {
+        code = 'robotGoto();\n';
+    } else if (block.getInputTargetBlock('GOTO_NAME').type == 'lists_create_with') {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GOTO_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
         code = 'robotGoto(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('GOTO_NAME').type == 'lists_getIndex') {
@@ -150,7 +167,7 @@ Blockly.Blocks['Robot_Grab'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": "#509918",
             "tooltip": "",
             "helpUrl": ""
         })
@@ -160,7 +177,9 @@ Blockly.JavaScript['Robot_Grab'] = function(block) {
     // console.log(block);
     // console.log(block.type);
     var thing_name, code;
-    if (block.getInputTargetBlock('GRAB_NAME').type == "lists_create_with") {
+    if (block.getInputTargetBlock('GRAB_NAME') == null) {
+        code = 'robotGrab();\n';
+    } else if (block.getInputTargetBlock('GRAB_NAME').type == "lists_create_with") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('GRAB_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
         code = 'robotGrab(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('GRAB_NAME').type == "lists_getIndex") {
@@ -192,18 +211,21 @@ Blockly.Blocks['Robot_Drop'] = {
             ],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 230,
+            "colour": "#509918",
             "tooltip": "",
             "helpUrl": ""
         })
     }
 };
+
 Blockly.JavaScript['Robot_Drop'] = function(block) {
     var code = "",
         thing_name;
 
     // allow list of text OR list of variable as input
-    if (block.getInputTargetBlock('DROP_NAME').type == "lists_create_with") {
+    if (block.getInputTargetBlock('DROP_NAME') == null) {
+        code = 'robotDrop();\n';
+    } else if (block.getInputTargetBlock('DROP_NAME').type == "lists_create_with") {
         thing_name = Blockly.JavaScript.blockToCode(block.getInputTargetBlock('DROP_NAME'))[0].replace(new RegExp('"', 'g'), '').replace(new RegExp('\'', 'g'), '').substr(1).slice(0, -1).split(', ').join('", "');
         code += 'robotDrop(["' + thing_name + '"]);\n';
     } else if (block.getInputTargetBlock('DROP_NAME').type == "lists_getIndex") {

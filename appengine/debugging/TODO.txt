@@ -1,9 +1,72 @@
-- Header 的 [Blockly Games: 除錯大師] 改成 [Debugamo: 幫幫迪摩]
+(完成)- Header 的 [Blockly Games: 除錯大師] 改成 [Debugamo: 幫幫迪摩]
 
-- debugging / template.soy 的 .messages 可拿掉?
+(完成)- debugging / template.soy 的 .messages 可拿掉?
+	- 不行，這些 messages 會在 Game.levelFailedMessage 被提取出相對應語言的版本 (通常是作為失敗/錯誤訊息顯示)
 
-- Grab / Drop / Goto 改成中文字
+(完成)- Grab / Drop / Goto 改成中文字 
+	- 留著英文以符合 JavaScript 語言特性
 
-- 過關 javaScript 更人性化
-	- 中文化
-	- 簡潔化
+(完成)- 過關 javaScript 更人性化
+	- 中文化 (完成) 留著英文以符合 JavaScript 語言特性
+	- 簡潔化 (完成) 
+
+- Debuggin saveToStorage 功能上如何使用？刪除 or 改成 save to db?
+
+- Toolbox config 完善化: https://developers.google.com/blockly/guides/get-started/web#configuration
+
+- fail sound 改成 code.org 蜜蜂失敗的聲音
+
+- blocks.js 每個 block 的 tooltip/helpurl
+
+- field_variables.js comment 掉的
+// options.push([Blockly.Msg.RENAME_VARIABLE, Blockly.RENAME_VARIABLE_ID]);
+  // if (Blockly.Msg.DELETE_VARIABLE) {
+  //   options.push([Blockly.Msg.DELETE_VARIABLE.replace('%1', name),
+  //     Blockly.DELETE_VARIABLE_ID]);
+  // }
+
+  寫進 Document
+
+- lib-interface.js
+	search: ///////////////////////////////////////////////////////////////////////////////// MUST CHANGE BACK TO COMPILED.JS
+
+
+
+
+
+
+
+Tutorial:
+
+(#mission-guide-box) (不要有往後)
+- 歡迎來到 Debugamo 幫幫迪摩！
+
+迪摩需要你的幫忙，找出並修復迪摩有問題的積木，清理倒塌建築並拯救小動物。讓我們來看看你等一下會用來幫助迪摩的介面吧！
+
+(#debugamo-code-editor-container)
+- [程式積木區]
+
+你會在這裡編輯積木，與迪摩一起完成每一關列出的任務。
+
+左邊的程式積木是你可以使用的工具，隨著關卡進行你會有越來越多的工具可以使用。
+
+右邊的程式晶片是積木運作的地方，只要將左邊的積木拉到右邊，連在黃色的積木底下，按下「運行」後迪摩就會開始運作。右上角的「重新開始」按鈕，可以幫你復原回最一開始的積木。右下角的「垃圾桶」圖示，只要將積木丟進去即可以刪除。
+
+每一關開始，會有一些迪摩原始的積木，可以幫助你開始，但是積木不完全正確，需要你的才智協助迪摩才能過關。
+
+(#debugamo-world-container)
+- [世界]
+
+迪摩會在這裡到處移動、與物件以及朋友們互動。
+
+下方的「運行」按鈕會執行剛剛介紹的程式積木區，按下「重置」則會停止程式並回到一開始的狀態。迪摩會確實按照每一個積木運作，所以儘可能的找到錯誤的積木並修復！
+
+(#mission-goal-container)
+- [關卡任務]
+
+這裡會條列出每一關的任務是什麼。如果運行後沒有完成任務，迪摩會提示你問題出在哪裡。
+
+(#mission-guide-box)
+- [關卡指示]
+
+為了幫助你理解關卡任務，迪摩會在每一關的最開始解釋目前的情況。現在就讓我們開始第一關吧！

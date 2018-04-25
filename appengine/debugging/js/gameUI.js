@@ -28,6 +28,7 @@ UI.init = function() {
         Game.addThingToVariables(level.thingsName[i]);
 
     UI.missionGuideInd = 0;
+    $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
     UI.images = {};
     UI.getImage('unknown');
     UI.getImage('robot');
@@ -38,7 +39,6 @@ UI.init = function() {
     if (localStorage.hasOwnProperty('avatar'))
         $('#player-avatar').attr('src', 'debugging/public/img/' + localStorage.avatar);
     $('#guidePreviousButton').hide();
-    $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
 
     UI.initGoalList();
 
@@ -46,6 +46,20 @@ UI.init = function() {
 
     UI.stopAnimation = false;
     UI.animationSetTimeoutIds = [];
+
+    UI.kiboFunction = true;
+
+    // init Kibo
+    var k = new Kibo();
+    k.down(['down'], function(e){
+        if (UI.kiboFunction && isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
+            UI.showNextGuide(e);
+        }
+    });
+    k.down(['up'], function(e){
+        if (UI.kiboFunction && UI.missionGuideInd > 0)
+            UI.showPreviousGuide(e);
+    });
 };
 
 UI.reset = function() {
@@ -81,8 +95,8 @@ UI.initGoalList = function() {
 UI.showNewPlayerText = function() {
     var begin = document.getElementById('begin');
     var style = {
-        width: '45%',
-        left: '25%',
+        width: '60%',
+        left: '20%',
         top: '5em'
     };
     BlocklyDialogs.showDialog(begin, null, true, true, style,
@@ -113,24 +127,54 @@ UI.showNextGuide = function(e) {
     $('#guide-inner-box').find('p').html(level.missionGuideDescription[UI.missionGuideInd]);
     if (!isDef(level.missionGuideDescription[UI.missionGuideInd + 1])) {
         $('#guideNextButton').hide();
+        UI.showOrHideInterface(true);
+    }
+    $('#guidePreviousButton').show();
+}
+
+UI.showOrHideInterface = function(show) {
+    if (show) {
+        $('#mission-guide-box').css('z-index', 1);
+        $('#dialogShadow').css('visibility', 'hidden');
+        $('#dialogShadow').css('opacity', '0.3');
+        $('#dialogShadow').css('z-index', '1');
+
         $('#debugamo-code-editor-container').css('z-index', 1);
         $('#debugamo-code-editor-container').css('opacity', 1);
         $('#mission-goal-container').css('z-index', 1)
         $('#mission-goal-container').css('opacity', 1)
         $('#game-buttons').css('z-index', 1)
         $('#game-buttons').css('opacity', 1)
+    } else {
+        $('#guideNextButton').show();
+        UI.missionGuideInd = 0;
+        $('#guide-inner-box').find('p').html(level.missionGuideDescription[0]);
+
+        $('#mission-guide-box').css('z-index', 100);
+        $('#dialogShadow').css('visibility', 'visible');
+        $('#dialogShadow').css('opacity', '0.8');
+        $('#dialogShadow').css('z-index', '10');
+        
+        $('#debugamo-code-editor-container').css('z-index', -1);
+        $('#debugamo-code-editor-container').css('opacity', 0);
+        $('#mission-goal-container').css('z-index', -1)
+        $('#mission-goal-container').css('opacity', 0)
+        $('#game-buttons').css('z-index', -1)
+        $('#game-buttons').css('opacity', 0)
     }
-    $('#guidePreviousButton').show();
 }
 
 UI.showFailText = function(msg) {
+    Game.things.robot.state = 'sad';
+    UI.drawThings('robot');
     $('#runButton').hide();
     $('#stepButton').hide();
     $('#resetButton').show();
+    Game.play('fail', 0.25);
     Game.stop();
     var fail = document.createElement('div');
     fail.className = "failText";
-    fail.innerHTML = "<img style='width: 60px' src='debugging/public/img/robot.sad.png' />：" + Game.levelFailedMessage(msg);
+    fail.innerHTML = "<img style='width: 60px' src='debugging/public/img/robot.sad.png' />：" + Game.levelFailedMessage(msg) + '<div class="farSide" style="padding: 1ex 3ex 0"><button class="secondary" style="background-color: #ffa400; border: 1px solid #ffa400" onclick="BlocklyDialogs.hideDialog(true)">' + BlocklyGames.getMsg('Games_dialogOk') + '</button></div>';
 
     var style = {
         width: '50%',
@@ -154,7 +198,6 @@ UI.showWorkspace = function() {
 
 UI.setAvatar = function(avatar) {
     localStorage.setItem('avatar', avatar);
-    localStorage.setItem('newPlayer', '0');
     $('#player-avatar').attr('src', 'debugging/public/img/' + avatar);
     var i;
     for (i = 0; i < $('#avatar-choose-box').find('img').length; i++) {
@@ -375,7 +418,7 @@ UI.getImage = function(name, state) {
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             // Mark this name as not existing, so UI will show unknown image
-            console.log('[UI] Fail loading image: ' + imgName);
+            console.error('[UI] Fail loading image: ' + imgName);
             this.images[imgName] = false;
         }
     });
@@ -409,16 +452,12 @@ UI.animate = function(cvs, percentFinished, direction, animateFrameNum, frameTim
 
     if (direction != undefined) {
         if (direction == 'r' && robot.position[0] == (size_of_map - 1)) {
-            console.log('reach end');
             return;
         } else if (direction == 'l' && robot.position[0] == 0) {
-            console.log('reach end');
             return;
         } else if (direction == 'u' && robot.position[1] == 0) {
-            console.log('reach end');
             return;
         } else if (direction == 'd' && robot.position[1] == (size_of_map - 1)) {
-            console.log('reach end');
             return;
         }
 

@@ -63,7 +63,7 @@ BlocklyDialogs.dialogDispose_ = null;
  *     closes.  Normally used for unhooking events.
  */
 BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
-                                  disposeFunc, strongModal) {
+                                  disposeFunc, newPlayerModal) {
   if (BlocklyDialogs.isDialogVisible_) {
     BlocklyDialogs.hideDialog(false);
   }
@@ -79,7 +79,7 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
   for (var name in style) {
     dialog.style[name] = style[name];
   }
-  if (modal && !strongModal) {
+  if (modal && !newPlayerModal) {
     shadow.style.visibility = 'visible';
     shadow.style.opacity = 0.6;
     shadow.style.zIndex = 75;
@@ -91,7 +91,7 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
                            BlocklyDialogs.dialogMouseDown_);
     shadow.addEventListener('click', BlocklyDialogs.hideDialog, true)
   }
-  else if (strongModal) {
+  else if (newPlayerModal) {
     shadow.style.visibility = 'visible';
     shadow.style.opacity = 1;
     shadow.style.zIndex = 75;
@@ -101,7 +101,6 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
     BlocklyDialogs.dialogMouseDownWrapper_ =
         Blockly.bindEvent_(header, 'mousedown', null,
                            BlocklyDialogs.dialogMouseDown_);
-    // shadow.addEventListener('click', BlocklyDialogs.hideDialog, true)
   }
   dialog.appendChild(content);
   content.className = content.className.replace('dialogHiddenContent', '');
@@ -488,7 +487,7 @@ BlocklyDialogs.showCode = function() {
     var text = BlocklyGames.getMsg('Games_showCode');
     var img = document.createElement('img');
     img.className = 'showCodeRobot';
-    img.src = '/debugging/public/img/robot.happy.png';
+    img.src = 'debugging/public/img/robot.happy.png';
     linesText.appendChild(img);
     linesText.appendChild(document.createTextNode(text));
   }

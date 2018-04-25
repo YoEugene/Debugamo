@@ -194,6 +194,8 @@ All code is free and open source.
     定義在 `third-part/blockly/generators/javascript`。
 
 ## Toolbox (Blocks)
+* Reference: https://developers.google.com/blockly/guides/configure/web/toolbox
+* Toolbox Config: https://developers.google.com/blockly/guides/get-started/web#configuration
 * 基本結構
     ```
     {template .toolbox}
@@ -263,6 +265,16 @@ All code is free and open source.
 * `Uncaught TypeError: Blockly.defineBlocksWithJsonArray is not a function at text.js:43`
     * add `goog.require('Blockly');` in appengine/third-party/blockly/blocks/text.js :line 30
     * make the app again
+
+# Block color/colour
+* 採用的是 HSV color model，原因可看這裡: https://developers.google.com/blockly/guides/create-custom-blocks/define-blocks#block_colour
+* 在 appengine/third-party/blockly/core/constants.js 裡頭改以下兩個值，就可以一次改全部 Block 顏色：
+* Blockly.HSV_SATURATION = 0.45;
+* Blockly.HSV_VALUE = 0.65;
+* 順帶一提，上面的連結中，有推薦參考這個網址挑選適合的 HSV value: https://www.rapidtables.com/web/color/color-picker.html
+* 順帶一提2，雖然 Blockly 用的 HSV model 好像只讓你調整 HUE，實際上可直接提供字串 '#RRGGBB' 給 HUE 欄位，會自動轉回 hex 使用。
+* reference: https://github.com/google/blockly/issues/23#issuecomment-267116496
+
 
 
 # Docs

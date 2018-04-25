@@ -29,14 +29,29 @@ button:disabled {
     color: #fff
 }
 
+#debugModeBox {
+    display: none;
+}
+
 #languageMenu {
     /*display: none;*/
     font-size: 12px;
 }
 
-#sampleOneTopBlock {
-    height: 80px;
-    width: 250px;
+#linkButton {
+    display: none;
+}
+
+#clearLocalStorageButton {
+    display: none;
+}
+
+#helpButton {
+    display: none;
+}
+
+#guideButton {
+
 }
 
 img[src$="help_up.png"] {
@@ -50,6 +65,33 @@ img[src$="help_down.png"] {
     height: 64px;
     width: 23px;
 }
+
+/* introJs CSS settings */
+.debugamo-introJs-tooltip .introjs-tooltiptext {
+    padding: 13px 20px;
+    line-height: 20px;
+}
+
+.debugamo-introJs-tooltip .introjs-button {
+    text-shadow: none !important;
+}
+
+.debugamo-introJs-tooltip .introjs-skipbutton {
+    display: none;
+}
+
+.debugamo-introJs-tooltip .introjs-skipbutton.introjs-donebutton {
+    display: inline-block;
+    background-color: #ffa400;
+    box-shadow: 0 2px 0px 0px #ffa400;
+    margin-right: 40px;
+    position: 0.5em 1.2em;
+}
+
+.introjs-helperNumberLayer {
+    left: 0 !important;
+}
+
 
 #begin-box {
     padding: 10px 20px 0 20px;
@@ -132,7 +174,7 @@ html[dir="RTL"] button.primary {
 
 .header .leftSide {
     display: inline-block;
-    width: calc(100vw - 300px);
+    width: calc(100vw - 330px);
     padding: 4px 0;
     text-align: center;
 }
@@ -238,6 +280,10 @@ pre#containerCode {
     display: inline-block;
 }
 
+#debugamo-world-container {
+    padding-bottom: 10px;
+}
+
 #canvas-container {
     width: calc(35vw - 50px);
     height: calc(35vw - 50px);
@@ -289,10 +335,10 @@ pre#containerCode {
 
 #mission-goal-container {
     position: relative;
-    padding: 10px 25px;
+    padding: 0 25px 10px 25px;
     opacity: 0;
     z-index: -1;
-    height: calc(100vh - 35vw - 58px);
+    height: calc(100vh - 35vw - 68px);
 
     transition-property: opacity, z-index;
     transition-duration: 0.2s;
@@ -595,15 +641,14 @@ pre#containerCode {
 
 #dialogShowCodeLinesText {
     font-size: 16px;
-    line-height: 24px;
-    color: #5b6770;
+    line-height: 28px;
+    color: #344b5d;
     padding: 10px;
     margin: 1em;
 }
 
 #debugamo-code-editor-container {
     position: relative;
-    height: calc(100vh - 200px);
     opacity: 0;
     z-index: -1;
 
@@ -651,18 +696,6 @@ button {
     user-select: none;
 }
 
-#linkButton {
-    display: none;
-}
-
-#clearLocalStorageButton {
-    display: none;
-}
-
-#helpButton {
-    display: none;
-}
-
 .hint-img {
     display: block;
     margin: 15px auto;
@@ -700,12 +733,32 @@ svg text .fa {
     font-size: 3.5em;
 }
 
+.switch-container {
+    display: inline-block;
+    /*display: none;*/
+}
+
+.switch-container img {
+    width: 30px;
+    position: absolute;
+    top: 22px;
+}
+
+/* turtle image */
+.switch-container img:nth-child(1) {
+    left: calc(0.5 * 35vw - 47px);
+}
+
+/* rabbie image */
+.switch-container img:nth-child(2) {
+    left: calc(0.5 * 35vw + 28px);
+}
+
 .switch {
     position: absolute;
-    /*display: inline-block;*/
-    width: 44px;
-    height: 24px;
-    left: calc(0.5 * 35vw - 19px);
+    width: 36px;
+    height: 20px;
+    left: calc(0.5 * 35vw - 10px);
     top: 27px;
 }
 
@@ -728,10 +781,10 @@ svg text .fa {
 .slider:before {
     position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
-    left: 2px;
-    bottom: 2px;
+    height: 18px;
+    width: 18px;
+    left: 1px;
+    bottom: 1px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -746,9 +799,9 @@ input:focus+.slider {
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(20px);
-    -ms-transform: translateX(20px);
-    transform: translateX(20px);
+    -webkit-transform: translateX(16px);
+    -ms-transform: translateX(16px);
+    transform: translateX(16px);
 }
 
 img.showCodeRobot {
@@ -761,7 +814,7 @@ img.showCodeRobot {
 /* Rounded sliders */
 
 .slider.round {
-    border-radius: 34px;
+    border-radius: 20px;
 }
 
 .slider.round:before {
