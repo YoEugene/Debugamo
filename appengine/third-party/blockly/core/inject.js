@@ -350,8 +350,8 @@ Blockly.inject.loadSounds_ = function(pathToMedia, workspace) {
        pathToMedia + 'click.wav',
        pathToMedia + 'click.ogg'], 'click');
   audioMgr.load(
-      [pathToMedia + 'disconnect.wav',
-       pathToMedia + 'disconnect.mp3',
+      [pathToMedia + 'disconnect.mp3',
+       pathToMedia + 'disconnect.wav',
        pathToMedia + 'disconnect.ogg'], 'disconnect');
   audioMgr.load(
       [pathToMedia + 'delete.mp3',

@@ -14,24 +14,74 @@
 
 - Toolbox config 完善化: https://developers.google.com/blockly/guides/get-started/web#configuration
 
-- fail sound 改成 code.org 蜜蜂失敗的聲音
+(完成)- fail sound 改成 code.org 蜜蜂失敗的聲音
+
+- DebugamO version 現在寫在 boot.js 裡頭，思考怎麼把它拿出來
 
 - blocks.js 每個 block 的 tooltip/helpurl
 
-- field_variables.js comment 掉的
-// options.push([Blockly.Msg.RENAME_VARIABLE, Blockly.RENAME_VARIABLE_ID]);
-  // if (Blockly.Msg.DELETE_VARIABLE) {
-  //   options.push([Blockly.Msg.DELETE_VARIABLE.replace('%1', name),
-  //     Blockly.DELETE_VARIABLE_ID]);
-  // }
+- 了解 appengine deploy 的 expiration/cache 機制
 
-  寫進 Document
+- 把變數下拉清單底下的「重新命名」「刪除變數」
 
-- lib-interface.js
-	search: ///////////////////////////////////////////////////////////////////////////////// MUST CHANGE BACK TO COMPILED.JS
+- blockly/core/block.js 的 contextMenu 預設為 true，改為 false，右鍵點積木就不會有 context menu
+  /** @type {boolean} */
+  this.contextMenu = false;
+
+- UI.animate 裡為了第八關寫的 hard code，怎麼處理
+
+- third-party/blockly/core/names.js 第125行：name = encodeURI(name.replace(/ /g, '_')).replace(/[^\w]/g, '_');
+  被註解掉了，這樣中文字的變數才能正常顯示，但是否會出其他問題需要更多測試
+
+- highlight 在 block_svg.js
+
+- third-party/blockly/blocks/procedures.js line 38: 
+	if ((this.workspace.options.comments ||
+         (this.workspace.options.parentWorkspace &&
+          this.workspace.options.parentWorkspace.options.comments)) &&
+        Blockly.Msg.PROCEDURES_DEFNORETURN_COMMENT) {
+      this.setCommentText(Blockly.Msg.PROCEDURES_DEFNORETURN_COMMENT);
+    }
+    整段被註解掉，以取消 mutator 跟 comments 的 icon(避免學生混淆)。有更好的處理方式？
+
+
+- 遊戲背景音效
+
+- 7年1班 7號(傳統教學) 後測沒有參與(沒有後測資料)
 
 
 
+Google api key = AIzaSyAscL2sqJy_q6qnQ9oD8055ooxv8Om7g-I
+
+(O)- If-else 關2  Loop 關1關2
+
+- Evaluation 關123456
+
+- Log system
+
+(O)- 開場填寫資料 (	oo學校 o年級 o班  座號oo 姓名ooo)
+
+- google form(前後測)
+
+- debugging url parameter 分辨學校 or 實驗組/對照組
+
+(X)- 每一章節第一關 跳出modal顯示章節重點 + code.org 影片？
+
+- 成就解鎖系統：speed mode / 觀看程式碼 / 
+
+- 簡報
+
+//////////
+
+run, step, reset
+
+checkLevelSuccess, checkLevelFail
+
+startIntro,
+
+showFailText,
+
+UI.showNextGuide, UI.showPreviousGuide
 
 
 

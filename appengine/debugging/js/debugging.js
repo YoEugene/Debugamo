@@ -14,7 +14,7 @@ goog.require('Blockly.Workspace');
 goog.require('Debugging.Blocks');
 goog.require('Debugging.Game');
 goog.require('Debugging.UI');
-goog.require('Debugging.Levels');
+goog.require('Levels');
 goog.require('Debugging.soy');
 
 BlocklyGames.NAME = 'debugging';
@@ -26,34 +26,15 @@ Scope.MAX_STEPS = 10000;
 /**
  * Route-to and Start next level
  */
-BlocklyInterface.nextLevel = function() {
-    if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
-        window.location = window.location.protocol + '//' +
-            window.location.host + window.location.pathname +
-            '?lang=' + BlocklyGames.LANG + '&level=' + (BlocklyGames.LEVEL + 1);
-    } else {
-        BlocklyInterface.indexPage();
-    }
-};
-
-/**
- * Initiate workspace header width
- */
-Scope.initHeaderWidth = function() {
-    var toolboxHeader = document.getElementById('toolbox-header');
-    var workspaceHeader = document.getElementById('workspace-header');
-    var widthCategory = $('.blocklyToolboxDiv').width();
-    var widthBlock = document.getElementsByClassName('blocklyFlyoutBackground')[0].getBoundingClientRect().width;
-    var widthWorkspace = document.getElementsByClassName('blocklyWorkspace')[0].getBoundingClientRect().width;
-    if (widthCategory == undefined) {
-        toolboxHeader.style.width = widthBlock + 'px';
-        workspaceHeader.style.width = (widthWorkspace - widthBlock - 15) + 'px';
-    } else {
-        toolboxHeader.style.width = widthCategory + 'px';
-        workspaceHeader.style.width = (widthWorkspace - widthCategory - 15) + 'px';
-    }
-    console.log('Re-init Header Width.');
-}
+// BlocklyInterface.nextLevel = function() {
+//     if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
+//         window.location = window.location.protocol + '//' +
+//             window.location.host + window.location.pathname +
+//             '?lang=' + BlocklyGames.LANG + '&level=' + (BlocklyGames.LEVEL + 1);
+//     } else {
+//         BlocklyInterface.indexPage();
+//     }
+// };
 
 /**
  * Initialize Blockly and the game.  Called on page load.
@@ -75,10 +56,11 @@ Scope.init = function() {
     /* Init Blockly */
     var toolbox = document.getElementById('toolbox');
     var scale = Levels[BlocklyGames.LEVEL].scale || 1;
-    var readOnly = Levels[BlocklyGames.LEVEL].readOnly || false;
-    
+    var readOnly = false;
+    // var readOnly = Levels[BlocklyGames.LEVEL].isEvaluation || false;
+
     // init blocks or categories
-    var defaultCategories = ["Logic","Loops","Math","Text","Lists","Colour","Variables","Functions"];
+    var defaultCategories = ["Logic", "Loops", "Math", "Text", "Lists", "Colour", "Variables", "Functions"];
     var categoryIds = Levels[BlocklyGames.LEVEL].categoryIds;
     if (categoryIds.length > 0)
         categoryIds = defaultCategories.concat(categoryIds);
@@ -96,8 +78,16 @@ Scope.init = function() {
             toolbox.appendChild(category);
         });
     }
-    // if category then enable scrollbar, else if block is more than 3, enable scrollbar
+    // if category then enable scrollbar, else if block is more than 3, enable scrollbar (if evaluation level disable it)
+    // var scrollbars = readOnly ? false : categoryIds.length > 0 || blockIds.length > 3;
     var scrollbars = categoryIds.length > 0 || blockIds.length > 3;
+    if (BlocklyGames.LEVEL == 10) {
+        var maxBlocks = 7;
+    } else if (BlocklyGames.LEVEL == 16) {
+        var maxBlocks = 7;
+    } else {
+        var maxBlocks = Infinity;
+    }
 
     BlocklyGames.workspace = Blockly.inject('blockly', {
         'media': 'third-party/blockly/media/',
@@ -106,6 +96,7 @@ Scope.init = function() {
         'readOnly': readOnly,
         'toolbox': toolbox,
         'trashcan': true,
+        'maxBlocks': maxBlocks,
         'zoom': {
             controls: false,
             wheel: false,
@@ -128,23 +119,31 @@ Scope.init = function() {
     // Show new player text
     if (localStorage.newPlayer == "1") {
         UI.showNewPlayerText();
+        // Game.play('gidget_tutorial', 0.15);
     }
-    // if not new player but undone
+    // if not new player and already finished this level
     else if (done) {
-        UI.showWorkspace();
+        UI.showOrHideInterface(true)
     }
+
+    // set current level in localStorage
+    localStorage.setItem('currentLevel', BlocklyGames.LEVEL);
+    
+    // init log
+    localStorage.setItem('log', '[]');
+    localStorage.setItem('blockVersion', '[]');
 
     // if there is no saved xml(which means level just started, or empty xml, load the defaultBlocks from levels.js)
     var savedXml = BlocklyGames.loadFromLocalStorage('debugging', BlocklyGames.LEVEL);
-    if (!done) {
-        console.log('load default blocks');
+    if (!done || Levels[BlocklyGames.LEVEL].isEvaluation) {
+        console.log('[Game] Load default blocks.');
         BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
     }
 
     // load defualt blocks or load stored blocks from Local Storage / Session Storage / DB
-    var defaultXml = localStorage.savedBlocks;
-    BlocklyInterface.loadBlocks(defaultXml, false);
-    console.log('load blocks');
+    var savedXml = localStorage.savedBlocks;
+    BlocklyInterface.loadBlocks(savedXml, false);
+    // console.log('[Game] Load saved blocks.');
 
     Scope.initHeaderWidth();
 
@@ -156,7 +155,14 @@ Scope.init = function() {
     // Maze.reset(true);
     BlocklyGames.workspace.addChangeListener(function() {
         BlocklyInterface.saveToLocalStorage()
-        console.log('Saved to Localstorage by change.');
+        if (!isDef(localStorage.lastBlockVersion)) {
+            localStorage.lastBlockVersion = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(BlocklyGames.workspace));
+        } else if (localStorage.lastBlockVersion != Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(BlocklyGames.workspace))) {
+            Scope.addLog('editBlock')
+            Scope.addVer(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(BlocklyGames.workspace)));
+            localStorage.lastBlockVersion = Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(BlocklyGames.workspace));
+        }
+        console.log('[Game] Save blocks to localstorage');
     });
 
 
@@ -164,33 +170,40 @@ Scope.init = function() {
     BlocklyGames.bindClick('stepButton', Scope.stepButtonClick);
     BlocklyGames.bindClick('resetButton', Scope.resetButtonClick);
     BlocklyGames.bindClick('clearLocalStorageButton', Scope.clearLocalStorageButton);
+    BlocklyGames.bindClick('restartGameButton', Scope.restartGameButtonClick);
     BlocklyGames.bindClick('helpButton', Scope.showHelp);
     BlocklyGames.bindClick('guidePreviousButton', UI.showPreviousGuide);
     BlocklyGames.bindClick('guideNextButton', UI.showNextGuide);
     BlocklyGames.bindClick('restoreBlockHeader', Scope.restoreBlock);
     BlocklyGames.bindClick('showCodeHeader', Scope.showCode);
     BlocklyGames.bindClick('guideButton', Scope.startIntro);
+    BlocklyGames.bindClick('loadSolutionButton', Scope.loadSolution);
+    BlocklyGames.bindClick('bigQueryTest', Scope.bigQueryLogSend);
+    BlocklyGames.bindClick('musicOnOff', Scope.musicOnOff);
 
     // Lazy-load the JavaScript interpreter.
     setTimeout(BlocklyInterface.importInterpreter, 1);
     // Lazy-load the syntax-highlighting.
     setTimeout(BlocklyInterface.importPrettify, 1);
 
-    if (BlocklyGames.LEVEL == 5) {
-        var developing = document.getElementById('developing');
-        var style = {
-            width: '60%',
-            left: '20%',
-            top: '5em'
-        };
-        BlocklyDialogs.showDialog(developing, null, true, true, style,
-            BlocklyDialogs.stopDialogKeyDown, true);
-        return;
-    }
+    // trial playing 
+    // if (BlocklyGames.LEVEL == 6 && window.location.origin != "http://localhost:8080") {
+    //     var developing = document.getElementById('developing');
+    //     var style = {
+    //         width: '60%',
+    //         left: '20%',
+    //         top: '5em'
+    //     };
+    //     BlocklyDialogs.showDialog(developing, null, true, true, style,
+    //         BlocklyDialogs.stopDialogKeyDown, true);
+    //     return;
+    // }
 
     // init tutorial
     var tutorialFinishedOne = localStorage.tutorialFinishedOne;
     if (!tutorialFinishedOne && localStorage.newPlayer == "0") {
+        // console.log(tutorialFinishedOne);
+        // console.log(localStorage.newPlayer);
         Scope.startIntro();
     }
     if (!done && tutorialFinishedOne && localStorage.newPlayer == "0") {
@@ -199,12 +212,201 @@ Scope.init = function() {
 
     var tutorialFinishedThree = localStorage.tutorialFinishedThree;
 
+    // enable developer mode
+    if (window.location.origin == "http://localhost:8080") {
+        console.log('[Game] Enable developer mode.');
+        // localStorage.setItem('done', '[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]');
+        // localStorage.setItem('maxDoneLevel', '18');
+        $('#debugModeBox').show();
+        $('#loadSolutionButton').show();
+        $('#clearLocalStorageButton').show();
+    }
+
+    Scope.getAuthToken();
+
+    if (localStorage.newPlayer == "1") {
+        $('#begin').on('keyup', UI.checkAllNewPlayerInfoIsFilled);
+        $('#begin').on('click', UI.checkAllNewPlayerInfoIsFilled);
+    }
+
+    if (Levels[BlocklyGames.LEVEL].isEvaluation) {
+        // re-init numOfChanceToAnswer to 3
+        $('#restoreBlockHeader').hide();
+        BlocklyGames.workspace.options.readOnly = true;
+        localStorage.numOfChanceToAnswer = "3";
+    }
+
+    $('#dialogStorage').append('<audio loop id="backgroundMusic"><source src="debugging/public/sound/gidget_tutorial.mp3" type="audio/mpeg"></audio>');
+    if (localStorage.musicPlay == "1") {
+        var audio = document.getElementById("backgroundMusic");
+        audio.volume = 0.15;
+        setTimeout(function() { 
+            audio.play();
+        }, 3000);
+    }
+
+    setTimeout(function(){
+        $('#loadSolutionButton').show();
+    },300000)
 };
+
+/**
+ * add log into localStorage
+ */
+Scope.addLog = function(action) {
+    var d = new Date();
+    var time = d.getTime();
+    // console.log(time);
+    // console.log(action);
+    var log = JSON.parse(localStorage.log);
+    log.push({
+        time: time,
+        action: action
+    })
+    var logStr = JSON.stringify(log);
+    localStorage.log = logStr;
+    // console.log(localStorage.log);
+    console.log('action added into localStorage log!');
+};
+
+/**
+ * add block version into localStorage
+ */
+Scope.addVer = function(version_xml_string) {
+    var d = new Date();
+    var time = d.getTime();
+    // console.log(time);
+    console.log(version_xml_string);
+    var blockVersion = JSON.parse(localStorage.blockVersion);
+    if (blockVersion.length != 0 && time - blockVersion[blockVersion.length-1].time < 500) {
+        console.log('too quick!');
+        return;
+    }
+    blockVersion.push({
+        time: time,
+        xml: version_xml_string
+    })
+    var blockVersionStr = JSON.stringify(blockVersion);
+    localStorage.blockVersion = blockVersionStr;
+    // console.log(localStorage.blockVersion);
+    console.log('versions added into localStorage log!');
+};
+
+/**
+ * Switch music
+ */
+Scope.musicOnOff = function() {
+    if (localStorage.musicPlay == '1') {
+        localStorage.musicPlay = '0';
+        var audio = document.getElementById("backgroundMusic");
+        audio.volume = 0.001;
+        audio.pause();
+    } else {
+        localStorage.musicPlay = '1';
+        var audio = document.getElementById("backgroundMusic");
+        audio.volume = 0.15;
+        audio.play();
+    }
+}
+
+/**
+ * Get Google OAuth token
+ */
+Scope.getAuthToken = function() {
+    var d = new Date();
+    if (!isDef(localStorage.token) || d.getTime() / 1000 > Number(localStorage.lastAuthTime) / 1000 + 3000) {
+
+        // save last auth time in milliseconds
+        localStorage.lastAuthTime = d.getTime();
+
+        var pHeader = { "alg": "RS256", "typ": "JWT" };
+        var sHeader = JSON.stringify(pHeader);
+
+        var d = new Date();
+        var currentSecond = Math.floor(d.getTime() / 1000);
+
+        var pClaim = {
+            'iss': 'debugamo@appspot.gserviceaccount.com',
+            'scope': 'https://www.googleapis.com/auth/bigquery https://www.googleapis.com/auth/bigquery.insertdata https://www.googleapis.com/auth/cloud-platform',
+            'aud': 'https://www.googleapis.com/oauth2/v4/token',
+            'exp': currentSecond + 3600,
+            'iat': currentSecond
+        };
+        var sClaim = JSON.stringify(pClaim);
+
+        var key = "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCs1sH5aFSqfKiw\nErIry00IfM+dZ8mx09QGealtylq35SgWhpuE/4vlkAIQ05IKOhn0LD/otvhsz6ti\n+Rgpxq6jJEP1+61BevOgUZHOKYeCUEY2jBD4uQQezDeCM7i5EhGxcY0aX/dFCpTQ\nHP5UKJfQakKIM4NLbGtOYEotYaoK8hDaJWy6ClvpoBjZqL61tGgKiCRLf0z04Qr5\ncSqnZ3MwjMySwx0ktsQ5F1cIBCz1Cg3amd8kMzQg+Ay8SqXOdfX7RimtyxEZ/YuZ\n42NdSjP6tHPzszSKDnsNaPvfFf/5DqpZQFTVaEobFBH9K+Hco78bT8oNX1TlmNQC\nTajIE47/AgMBAAECggEAOoJa2NzWKH6Ztj0l/ohMdA6YU79COoYsdOKzldyWGEGl\nb/ayZ/QAPj6hTGPqwLaJeayPF+70qxUj/hW39dBx5v1MWlWQAaYnGgLy+lj5rAYT\ntrx0tFYhjHFyawuqQVBaF/kKHL8W3FLoLIlcGU5CkkWebzANBrfVnYsgITu6Dgj0\nWzv0/kqpsoMInFqXFKD2gRcAGb5sO6P2WmcmNpKGSvIuWXBVee3bfxjX6amMZNlh\nmTwDmLZtdxdK88dHacgYmdy9BkTyoUi+AX62ZouYhFjSVhz3ANgDMAv+qRP8TzMH\nLzmBEiFnfEsFJ+xx4IAx0K7zRzY2MyUWX9r9zf3x2QKBgQDbcTTE8f1wpvcZ5h9w\niC4jCnKwSUN/vFha7StSYQ1Srp4pkxXMrBEI+MldXmexUZ9Ne3W1RVCNQOCIiZKW\nw86XEo6w4EekQy7JfPXWZrHnXxX1YqVWhTuecUOkITfgoBfLlvB17kCVczlMBX2z\nMr+cwYihN6aRshV2tYtOQqsjFwKBgQDJogI4k5qFUn6uRANlLygh3P5SJnjGO7L7\n9ZHW/FOBTyMzFHZoGyR4vw0zWKXYpPi6j3W2TGn2ctTKjohdllzqj6SIJNXp0Omk\nFHA80NDowVYgATRlFfnwPjRHFY0l+X3xKqzHpnG9L8GCVPeCdIietWmT/w4GlFn5\nPU3dZzgEWQKBgBec2tzGXUsd7EDxLjjhrnU+zpCBka3RCoDePGck4lYfTA2VMidP\n7JVWj/RoEChYbBfeTRAwYTaR4JdQlmF6uGQxLwGBYLQgNoyf0aQ8cLBA3xAEiV4C\nACRQc8LZgDW/hE/38e/+rxxlxaiUfq4lq9CmUplmb5oF26Fmb5MAQYIJAoGAPXMP\nZDivvfP/QZLeygaOH4vfQiARbLCjAqC7mp55wI3it12EHIQxIE9xcXWRza2xVAIG\nqNEu9fnXGghITOVXWfD+/rLjMogFvIiyEAa/tD+/xK85TZld+7apbgSGaM1ZcZdE\n4u+5+CNGwTat2+cx/9Rf4ce4eY7awNfLFC+x5bkCgYBYClYp3HeJ/FmduhYLfWOA\nbd8zLudZnBhFALbHW9TyHYF/qgM3tLIqisSzRgpyOIF81vac97zvAn2aydf1yNqo\nw97Cy05b6Yj4I+HUhD2m0UHH7IMB+8A4ktu3BZv/uE9on5JDxC0aMAvFUEPORzAF\nw/nc3RbJCU2ion1Q3kmE+w==\n-----END PRIVATE KEY-----\n";
+        var sJWS = KJUR.jws.JWS.sign(null, sHeader, sClaim, key);
+
+        var payload = {
+            grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+            assertion: sJWS
+        }
+
+        $.post("https://www.googleapis.com/oauth2/v4/token", payload, function(response) {
+            localStorage.token = response.access_token;
+        });
+    }
+}
+
+/**
+ * Send localStorage log back to server
+ */
+Scope.bigQueryLogSend = function() {
+    var user = localStorage.user;
+    if (JSON.parse(user).name == 'admin') {
+        console.log('admin pass bigQuery logging');
+        return;
+    }
+    var logText = localStorage.log;
+    var blockVersion = localStorage.blockVersion
+    var d = String(new Date());
+    var xhr = new XMLHttpRequest();
+    var payload = { 'rows': [{ 'json': { 'time': d, 'user': user, 'level': localStorage.currentLevel, 'action': logText, 'blockVersion': blockVersion, 'numOfAction': JSON.parse(logText).length, 'numOfBlockVersion': JSON.parse(blockVersion).length} }] };
+
+    xhr.open("POST", "https://www.googleapis.com/bigquery/v2/projects/debugamo/datasets/userlog/tables/levelLog/insertAll", true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.token);
+    xhr.send(JSON.stringify(payload));
+}
+
+/**
+ * Initiate workspace header width
+ */
+Scope.initHeaderWidth = function() {
+    var toolboxHeader = document.getElementById('toolbox-header');
+    var workspaceHeader = document.getElementById('workspace-header');
+    var blocklyFlyout = document.getElementsByClassName('blocklyFlyout')[0];
+    var widthWorkspace = document.getElementsByClassName('blocklySvg')[0].getBoundingClientRect().width;
+    if (Levels[BlocklyGames.LEVEL].isEvaluation && !Game.evaluationEnd) {
+        // workspaceHeader.style.display = 'none';
+        blocklyFlyout.style.display = 'none';
+        toolboxHeader.style.display = 'none';
+
+        workspaceHeader.style.display = 'inline-block';
+        workspaceHeader.style.width = (widthWorkspace - 2) + 'px';
+
+    } else {
+        blocklyFlyout.style.display = 'inline-block';
+        toolboxHeader.style.display = 'inline-block';
+        workspaceHeader.style.display = 'inline-block';
+        var widthCategory = $('.blocklyToolboxDiv').width();
+        var widthBlock = document.getElementsByClassName('blocklyFlyoutBackground')[0].getBoundingClientRect().width;
+        if (widthCategory == undefined) {
+            toolboxHeader.style.width = widthBlock + 'px';
+            workspaceHeader.style.width = (widthWorkspace - widthBlock - 2) + 'px';
+        } else {
+            toolboxHeader.style.width = widthCategory + 'px';
+            workspaceHeader.style.width = (widthWorkspace - widthCategory - 2) + 'px';
+        }
+    }
+    console.log('[UI] Reinitialize blockly workspace width.');
+}
 
 /**
  * start intro JS tutorial
  */
 Scope.startIntro = function() {
+    Scope.addLog('startIntro');
     UI.showOrHideInterface(true);
     $('#guideNextButton').hide();
     $('#guidePreviousButton').hide();
@@ -214,13 +416,13 @@ Scope.startIntro = function() {
     intro.setOptions({
         steps: [{
                 intro: "<b>歡迎來到 Debugamo 介面導覽</b><br><br>迪摩需要你的幫忙，<b>找出並修復有問題的積木</b>，清理倒塌建築並拯救小動物。讓我們來看看等一下會用到的介面吧！",
-            },{
+            }, {
                 element: '#mission-guide-box',
                 intro: "<b>【關卡指示】</b><br><br>為了幫助你理解關卡任務，迪摩會在每一關的最開始<b>解釋目前的情況</b>，以及要援救的對象。",
                 position: 'auto',
-            },{
+            }, {
                 element: '#debugamo-code-editor-container',
-                intro: "<b>【程式積木區】</b><br><br>你會在這裡編輯積木，與迪摩一起完成每關列出的任務。<br><br>左邊的<b>程式積木</b>是你可以使用的工具，隨著關卡進行你會有越來越多的積木可以使用。<br><br>右邊的<b>程式晶片</b>是積木運作的地方，按下「運行」之後，連在<b>黃色的積木</b>底下的積木就會讓迪摩開始運作。<br><br>右上角的<b>重新開始</b>按鈕，可以幫你復原回最初始的積木。右下角的<b>垃圾桶</b>，只要將積木丟進去即可以刪除。",
+                intro: "<b>【程式積木區】</b><br><br>你會在這裡編輯積木，與迪摩一起完成每關列出的任務。<br><br><b>程式積木</b>是你可以使用的工具，隨著關卡進行你會有越來越多的積木可以使用。<br><br><b>程式晶片</b>是積木運作的地方，按下「運行」之後，連在<b>黃色的積木</b>底下的積木就會讓迪摩開始運作。<br><br>右上角的<b>重新開始</b>按鈕，可以幫你復原回最初始的積木。右下角的<b>垃圾桶</b>，只要拖移積木丟進垃圾桶即可刪除。",
                 position: 'auto',
             },
             {
@@ -234,9 +436,7 @@ Scope.startIntro = function() {
                 position: 'auto',
             },
             {
-                element: '#mission-guide-box',
                 intro: '<b>【開始探索】</b><br><br>大致上就是這樣，剩下的讓你自由探索。現在就讓我們開始第一關吧！',
-                position: 'auto',
             }
         ],
         exitOnOverlayClick: false,
@@ -263,11 +463,19 @@ Scope.startIntro = function() {
 }
 
 /**
+ * load solutions
+ */
+Scope.loadSolution = function() {
+    Scope.addLog('loadSolution')
+    BlocklyInterface.saveToLocalStorage(level.solutionBlocks);
+    BlocklyInterface.loadBlocks(level.solutionBlocks, false);
+}
+
+/**
  * restore to original blocks
  */
 Scope.restoreBlock = function() {
-    BlocklyInterface.saveToLocalStorage(Levels[BlocklyGames.LEVEL].defaultBlocks);
-    BlocklyInterface.loadBlocks(Levels[BlocklyGames.LEVEL].defaultBlocks, false);
+    BlocklyDialogs.restoreCode();
 }
 
 /**
@@ -312,6 +520,13 @@ Scope.mergeCodeWithListInit = function(code, thingsName) {
     return code;
 }
 
+/**
+ * Restart Game
+ * Show Dialoag to ask user if he/she wanna back to level 1 or login page
+ */
+Scope.restartGameButtonClick = function() {
+    BlocklyDialogs.restartGame();
+}
 
 /**
  * Click the run button.  Start the program.
@@ -322,17 +537,9 @@ Scope.runButtonClick = function(e) {
     if (BlocklyInterface.eventSpam(e)) {
         return;
     }
-    BlocklyDialogs.hideDialog(false);
 
-    // Only allow a single top block on level 1.
-    // if (BlocklyGames.LEVEL == 1 &&
-    //     BlocklyGames.workspace.getTopBlocks().length > 1 &&
-    //     Maze.result != Maze.ResultType.SUCCESS &&
-    //     !BlocklyGames.loadFromLocalStorage(BlocklyGames.NAME,
-    //                                        BlocklyGames.LEVEL)) {
-    //   Maze.levelHelp();
-    //   return;
-    // }
+    Scope.addLog('run');
+
     var runButton = document.getElementById('runButton');
     var stepButton = document.getElementById('stepButton');
     var resetButton = document.getElementById('resetButton');
@@ -344,6 +551,7 @@ Scope.runButtonClick = function(e) {
     stepButton.style.display = 'none';
     resetButton.style.display = 'inline';
 
+    BlocklyDialogs.hideDialog(false);
     Game.reset();
     BlocklyInterface.highlight('When_Run');
     Game.play('start', 0.3);
@@ -361,6 +569,8 @@ Scope.stepButtonClick = function(e) {
     if (BlocklyInterface.eventSpam(e) || Game.stepInProgress) {
         return;
     }
+
+    Scope.addLog('step');
 
     BlocklyDialogs.hideDialog(false);
 
@@ -390,8 +600,6 @@ Scope.stepButtonClick = function(e) {
     } else {
         Scope.executeStep();
     }
-
-
 };
 
 /**
@@ -403,6 +611,8 @@ Scope.resetButtonClick = function(e) {
     if (BlocklyInterface.eventSpam(e)) {
         return;
     }
+
+    Scope.addLog('reset');
 
     // disable animation for a short of period
     UI.stopAnimation = true;
@@ -450,8 +660,10 @@ Scope.execute = function() {
     var code = Blockly.JavaScript.workspaceToCode(BlocklyGames.workspace);
     code = Scope.mergeCodeWithListInit(code, Object.keys(Game.things));
 
-    console.log(code);
+    ///////////////////// TODO: this is hard code for level 13, fix this into somewhere better ////////////////
+    code = Scope.specialProcess(code);
 
+    // console.log(code);
     // try {
     // eval(code);
     // } catch (e) {
@@ -462,6 +674,36 @@ Scope.execute = function() {
 
     Scope.interpretCode(interpreter, 0);
 };
+
+function replaceAll(str, find, replace) {
+    return str.replace(new RegExp(find, 'g'), replace);
+}
+
+/**
+ * Special process of code for some levels
+ */
+Scope.specialProcess = function(code) {
+    if (BlocklyGames.LEVEL == 13) {
+        code = code + "\n\nfunction checkInfection(animal) {\n\tflag = false;\n\tif (animal == 'bird' || animal == 'piglet') {\n\t\tflag = true;\n\t\trobotSay(String(animal) + String(' 受到感染了！'))\n\t} else {\n\t\trobotSay(String(animal) + String(' 沒有受到感染'))\n\t}\n\treturn flag;\n}";
+    }
+
+    if (BlocklyGames.LEVEL == 14) {
+        code = code + "\n\nfunction checkInfectionBefore(animal) {\n\tflag = false;\n\tif (animal == 'puppy') {\n\t\tflag = true;\n\t\trobotSay(String(animal) + String(' 曾經受過感染！'))\n\t} else {\n\t\trobotSay(String(animal) + String(' 不曾受過感染'))\n\t}\n\treturn flag;\n}";
+    }
+
+    if (BlocklyGames.LEVEL == 17) {
+        code = replaceAll(code, 'removeRock', 'counter = counter + 1;\n  removeRock');
+        code = replaceAll(code, "'rock'", "'rockTarget'");
+        code = "var counter = 0;\n" + code + "\n\nfunction stillHaveRocks() {\n\tchangeRock();\n\tif (counter < 13) {\n\t\trobotSay('迪摩偵測到地圖中還有石頭')\n\t\treturn true;\n\t} else {\n\t\trobotSay('迪摩偵測到場中已經沒有石頭！清除完畢！')\n\t\treturn false;\n\t}\n}";
+    }
+
+    if (BlocklyGames.LEVEL == 18) {
+        code = replaceAll(code, 'removeGlass', 'counter = counter + 1;\n  removeGlass');
+        code = replaceAll(code, "'glass'", "'glassTarget'");
+        code = "var counter = 0;\n" + code + "\n\nfunction stillHaveGlass() {\n\tchangeGlass();\n\tif (counter < 21) {\n\t\trobotSay('迪摩偵測到地圖中還有玻璃')\n\t\treturn true;\n\t} else {\n\t\trobotSay('迪摩偵測到場中已經沒有玻璃！掃除完畢！')\n\t\treturn false;\n\t}\n}";
+    }
+    return code;
+}
 
 /**
  * Execute a step of workspace code
@@ -489,7 +731,11 @@ Scope.executeStep = function(pass_in_interpreter) {
             code = code.substring(0, code.lastIndexOf("\n"));
             code = code.substring(0, code.lastIndexOf("\n"));
         }
-        console.log(code);
+
+        ///////////////////// TODO: this is hard code for level 13, fix this into somewhere better ////////////////
+        code = Scope.specialProcess(code);
+
+        // console.log(code);
 
         var interpreter = new Interpreter(code, Scope.initInterpreter);
     } else {
@@ -516,13 +762,14 @@ Scope.executeStep = function(pass_in_interpreter) {
             Game.currentInterpreter = interpreter;
         }
     } catch (e) {
+        console.error(e);
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
             setTimeout(function() { UI.showFailText('Debugging_msg_errTooManySteps'); }, 10);
-        } else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+        } else if ("" + e === "TypeError: Cannot read property '0' of undefined" || "" + e === "TypeError: Cannot read property 'slice' of undefined")
             setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
-        else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+        else if ("" + e === "TypeError: Cannot read property '0' of undefined" || "" + e === "TypeError: Cannot read property 'slice' of undefined")
             setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
         else {
             // Syntax error, can't happen.
@@ -532,7 +779,7 @@ Scope.executeStep = function(pass_in_interpreter) {
     }
 
     // enable step button function after a short while
-    setTimeout(function(){
+    setTimeout(function() {
         Game.stepInProgress = false;
     }, 500);
 }
@@ -548,7 +795,6 @@ Scope.interpretCode = function(interpreter, stepCount) {
         }
         // next step
         if (!Game.stopProgram && interpreter.step()) {
-            Game.stopProgram = false;
             setTimeout(function() {
                 Scope.interpretCode(interpreter, stepCount + 1);
             }, Scope.STEP_SPEED);
@@ -566,13 +812,14 @@ Scope.interpretCode = function(interpreter, stepCount) {
             // else will throw error message
         }
     } catch (e) {
+        console.error(e);
         // Debugamo: setTimeout generate a short period of delay, so dom can update normally
         // levels.js : $($('#goal-list').find('li')[0]).addClass('fail'); -> Set goal <li> to red color
         if (e === Infinity) {
             setTimeout(function() { UI.showFailText('Debugging_msg_errTooManySteps'); }, 10);
-        } else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+        } else if ("" + e === "TypeError: Cannot read property '0' of undefined" || "" + e === "TypeError: Cannot read property 'slice' of undefined")
             setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
-        else if ("" + e === "TypeError: Cannot read property '0' of undefined")
+        else if ("" + e === "TypeError: Cannot read property '0' of undefined" || "" + e === "TypeError: Cannot read property 'slice' of undefined")
             setTimeout(function() { UI.showFailText('Debugging_msg_errListNotExist'); }, 10);
         else {
             // Syntax error, can't happen.
@@ -587,7 +834,47 @@ Scope.interpretCode = function(interpreter, stepCount) {
  * If yes, show congratz msg; else show fail msg
  */
 Scope.checkCurrentLevelComplete = function() {
-    if (Levels[BlocklyGames.LEVEL].checkLevelComplete()) {
+    // if (Levels[BlocklyGames.LEVEL].isEvaluation) {
+    //     var result = Levels[BlocklyGames.LEVEL].checkLevelComplete();
+    //     if (result == true) {
+    //         Game.things.robot.state = 'happy';
+    //         Game.play('success', 0.2);
+    //         BlocklyDialogs.showEvaluationAnswer(true);
+    //         var done = JSON.parse(localStorage.done);
+    //         if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+    //             done.push(BlocklyGames.LEVEL);
+    //             localStorage.done = JSON.stringify(done);
+    //             $('.level_in_progress').addClass('level_done');
+    //             if ($('.level_disable')[0] != undefined) {
+    //                 $($('.level_disable')[0]).addClass('level_in_progress');
+    //                 $($('.level_disable')[0]).removeClass('level_disable');
+    //             }
+    //         }
+    //         BlocklyInterface.highlight(null);
+    //     } else {
+    //         Game.things.robot.state = 'sad';
+    //         Game.play('fail', 0.25);
+    //         BlocklyDialogs.showEvaluationAnswer(false, result);
+    //         var done = JSON.parse(localStorage.done);
+    //         if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+    //             done.push(BlocklyGames.LEVEL);
+    //             localStorage.done = JSON.stringify(done);
+    //             $('.level_in_progress').addClass('level_done');
+    //             if ($('.level_disable')[0] != undefined) {
+    //                 $($('.level_disable')[0]).addClass('level_in_progress');
+    //                 $($('.level_disable')[0]).removeClass('level_disable');
+    //             }
+    //         }
+    //         BlocklyInterface.highlight(null);
+    //     }
+    //     UI.drawGrid($('#playground')[0], false);
+    //     UI.drawThings();
+    //     UI.drawTags();
+    // } else {
+    var result = Levels[BlocklyGames.LEVEL].checkLevelComplete();
+    if (result == true) {
+        Scope.addLog('checkLevelSuccess');
+
         Game.things.robot.state = 'happy';
         Game.play('success', 0.2);
         BlocklyInterface.saveToLocalStorage();
@@ -603,12 +890,34 @@ Scope.checkCurrentLevelComplete = function() {
             }
         }
         BlocklyInterface.highlight(null);
+    } else if (typeof(result) == 'number') {
+        setTimeout(function() {
+            Scope.addLog('checkLevelSuccess');
+            Game.things.robot.state = 'happy';
+            Game.play('success', 0.2);
+            BlocklyInterface.saveToLocalStorage();
+            BlocklyDialogs.congratulations();
+            var done = JSON.parse(localStorage.done);
+            if (done.indexOf(BlocklyGames.LEVEL) == -1) {
+                done.push(BlocklyGames.LEVEL);
+                localStorage.done = JSON.stringify(done);
+                $('.level_in_progress').addClass('level_done');
+                if ($('.level_disable')[0] != undefined) {
+                    $($('.level_disable')[0]).addClass('level_in_progress');
+                    $($('.level_disable')[0]).removeClass('level_disable');
+                }
+            }
+            BlocklyInterface.highlight(null);
+        }, result * (UI.drawFrame * UI.drawSpeed + 150) + 150)
     } else {
+        Scope.addLog('checkLevelFail');
         Game.things.robot.state = 'sad';
     }
     UI.drawGrid($('#playground')[0], false);
     UI.drawThings();
     UI.drawTags();
+    // }
+    Game.stopProgram = true;
 };
 
 /**
@@ -644,9 +953,27 @@ Scope.startGame = function() {
         BlocklyDialogs.hideDialog(false);
     }
     localStorage.setItem('newPlayer', '0');
+
+    var user = {
+        school: $('#playerSchool').val(),
+        grade: $('#playerGrade').val(),
+        classNum: $('#playerClass').val(),
+        num: $('#playerNumber').val(),
+        name: $('#playerName').val()
+    }
+
+    // if ($('#playerSchool').val() == 'FG') {
+        // localStorage.done = "[1,2,3,4,5,6,7,8,9]";
+        // localStorage.maxDoneLevel = "9";
+    // }
+
+    localStorage.setItem('user', JSON.stringify(user));
+
     Scope.startIntro();
     Game.kiboFunction = false;
 };
+
+
 
 /**
  * Save the blocks for a one-time reload.
@@ -659,7 +986,7 @@ Scope.saveToStorage = function() {
         localStorage.savedBlocks = text;
     }
 
-    console.log('Current blocks saved!')
+    console.log('Current blocks saved.')
 };
 
 /**
@@ -671,6 +998,54 @@ Scope.debugModeChange = function() {
     else
         localStorage.removeItem('debug');
 };
+
+/**
+ * Check answer in evaluation level
+ */
+Scope.checkAnswer = function(e) {
+    // Prevent double-clicks or double-taps.
+    if (BlocklyInterface.eventSpam(e)) {
+        return;
+    }
+
+    // player haven't select any option
+    // if (!Levels[BlocklyGames.LEVEL].isMapOptions && !isDef($('input[name="optionRadio"]:checked').val())) {
+    //     var fail = document.createElement('div');
+    //     fail.className = "failText";
+    //     fail.innerHTML = '你還沒選擇任何答案喔！請在左下角選項中選擇一個答案再按送出。<div class="farSide" style="padding: 1ex 3ex 0"><button class="secondary" style="background-color: #ffa400; border: 1px solid #ffa400" onclick="BlocklyDialogs.hideDialog(true)">' + BlocklyGames.getMsg('Games_dialogOk') + '</button></div>';
+
+    //     var style = {
+    //         width: '50%',
+    //         left: '25%',
+    //         top: '5em'
+    //     };
+    //     BlocklyDialogs.showDialog(fail, null, false, true, style,
+    //         BlocklyDialogs.stopDialogKeyDown);
+    //     return;
+    //     // player selects an option, run the given program and check if it is the correct one
+    // } else if (Levels[BlocklyGames.LEVEL].isMapOptions && Game.selectedGrid == undefined) {
+    //     var fail = document.createElement('div');
+    //     fail.className = "failText";
+    //     fail.innerHTML = '你還沒選擇任何答案喔！請在地圖上點選一個位置再按送出。<div class="farSide" style="padding: 1ex 3ex 0"><button class="secondary" style="background-color: #ffa400; border: 1px solid #ffa400" onclick="BlocklyDialogs.hideDialog(true)">' + BlocklyGames.getMsg('Games_dialogOk') + '</button></div>';
+
+    //     var style = {
+    //         width: '50%',
+    //         left: '25%',
+    //         top: '5em'
+    //     };
+    //     BlocklyDialogs.showDialog(fail, null, false, true, style,
+    //         BlocklyDialogs.stopDialogKeyDown);
+    //     return;
+    // } else {
+    // BlocklyDialogs.hideDialog(false);
+    // Game.reset();
+    // BlocklyInterface.highlight('When_Run');
+    // Game.play('start', 0.3);
+
+    // // start animation after start sound played
+    // setTimeout(function() { Scope.execute(); }, 600)
+    // }
+}
 
 /**
  * Initialize Blockly and the game.

@@ -494,6 +494,134 @@ Blockly.Blocks['lists_getIndex'] = {
   }
 };
 
+Blockly.Blocks['lists_getIndexSimple'] = {
+    /**
+   * Block for getting element at index. (remove "GET_ROMOVE, REMOVE, FROM_START, FROM_END, RANDOM")
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.WHERE_OPTIONS =
+        [[Blockly.Msg.LISTS_GET_INDEX_FIRST, 'FIRST'],
+         [Blockly.Msg.LISTS_GET_INDEX_LAST, 'LAST']];
+    this.setHelpUrl(Blockly.Msg.LISTS_GET_INDEX_HELPURL);
+    this.setColour(Blockly.Blocks.lists.HUE);
+    this.appendValueInput('VALUE')
+        .setCheck('Array')
+        .appendField(Blockly.Msg.LISTS_GET_INDEX_INPUT_IN_LIST);
+    this.appendDummyInput()
+        .appendField(Blockly.Msg.LISTS_GET_INDEX_GET);
+    this.appendDummyInput('AT');
+    if (Blockly.Msg.LISTS_GET_INDEX_TAIL) {
+      this.appendDummyInput('TAIL')
+          .appendField(Blockly.Msg.LISTS_GET_INDEX_TAIL);
+    }
+    this.setInputsInline(true);
+    this.setOutput(true);
+    this.updateAt_(false);
+    // Assign 'this' to a variable for use in the tooltip closure below.
+    var thisBlock = this;
+    this.setTooltip(function() {
+      var where = thisBlock.getFieldValue('WHERE');
+      var tooltip = '';
+      switch (where) {
+        case 'FIRST':
+          tooltip = Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_FIRST;
+          break;
+        case 'LAST':
+          tooltip = Blockly.Msg.LISTS_GET_INDEX_TOOLTIP_GET_LAST;
+          break;
+      }
+      return tooltip;
+    });
+  },
+  /**
+   * Create XML to represent whether the block is a statement or a value.
+   * Also represent whether there is an 'AT' input.
+   * @return {Element} XML storage element.
+   * @this Blockly.Block
+   */
+  mutationToDom: function() {
+    var container = document.createElement('mutation');
+    var isStatement = !this.outputConnection;
+    container.setAttribute('statement', isStatement);
+    var isAt = this.getInput('AT').type == Blockly.INPUT_VALUE;
+    container.setAttribute('at', isAt);
+    return container;
+  },
+  /**
+   * Parse XML to restore the 'AT' input.
+   * @param {!Element} xmlElement XML storage element.
+   * @this Blockly.Block
+   */
+  domToMutation: function(xmlElement) {
+    // Note: Until January 2013 this block did not have mutations,
+    // so 'statement' defaults to false and 'at' defaults to true.
+    var isStatement = (xmlElement.getAttribute('statement') == 'true');
+    this.updateStatement_(isStatement);
+    var isAt = (xmlElement.getAttribute('at') != 'false');
+    this.updateAt_(isAt);
+  },
+  /**
+   * Switch between a value block and a statement block.
+   * @param {boolean} newStatement True if the block should be a statement.
+   *     False if the block should be a value.
+   * @private
+   * @this Blockly.Block
+   */
+  updateStatement_: function(newStatement) {
+    var oldStatement = !this.outputConnection;
+    if (newStatement != oldStatement) {
+      this.unplug(true, true);
+      if (newStatement) {
+        this.setOutput(false);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+      } else {
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+        this.setOutput(true);
+      }
+    }
+  },
+  /**
+   * Create or delete an input for the numeric index.
+   * @param {boolean} isAt True if the input should exist.
+   * @private
+   * @this Blockly.Block
+   */
+  updateAt_: function(isAt) {
+    // Destroy old 'AT' and 'ORDINAL' inputs.
+    this.removeInput('AT');
+    this.removeInput('ORDINAL', true);
+    // Create either a value 'AT' input or a dummy input.
+    if (isAt) {
+      this.appendValueInput('AT').setCheck('Number');
+      if (Blockly.Msg.ORDINAL_NUMBER_SUFFIX) {
+        this.appendDummyInput('ORDINAL')
+            .appendField(Blockly.Msg.ORDINAL_NUMBER_SUFFIX);
+      }
+    } else {
+      this.appendDummyInput('AT');
+    }
+    var menu = new Blockly.FieldDropdown(this.WHERE_OPTIONS, function(value) {
+      var newAt = (value == 'FROM_START') || (value == 'FROM_END');
+      // The 'isAt' variable is available due to this function being a closure.
+      if (newAt != isAt) {
+        var block = this.sourceBlock_;
+        block.updateAt_(newAt);
+        // This menu has been destroyed and replaced.  Update the replacement.
+        block.setFieldValue(value, 'WHERE');
+        return null;
+      }
+      return undefined;
+    });
+    this.getInput('AT').appendField(menu, 'WHERE');
+    if (Blockly.Msg.LISTS_GET_INDEX_TAIL) {
+      this.moveInputBefore('TAIL', null);
+    }
+  }
+}
+
 Blockly.Blocks['lists_setIndex'] = {
   /**
    * Block for setting the element at index.
@@ -844,4 +972,27 @@ Blockly.Blocks['lists_split'] = {
   domToMutation: function(xmlElement) {
     this.updateType_(xmlElement.getAttribute('mode'));
   }
+};
+
+Blockly.Blocks['lists_split_simple'] = {
+  /**
+   * Block for splitting text into a list, or joining a list into text.
+   * @this Blockly.Block
+   */
+  init: function() {
+    // Assign 'this' to a variable for use in the closures below.
+    this.setHelpUrl(Blockly.Msg.LISTS_SPLIT_HELPURL);
+    this.setColour(Blockly.Blocks.lists.HUE);
+    this.appendValueInput("LIST_TEXT")
+        .setCheck("String")
+        .appendField('建立清單')
+        .appendField(new Blockly.FieldVariable("變數"), "VAR")
+        .appendField("為 [");
+    this.appendDummyInput()
+        .appendField("]");
+    this.setInputsInline(true);
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, null);
+    this.setTooltip(Blockly.Msg.LISTS_SPLIT_SIMPLE_TOOLTIP_SPLIT);
+  },
 };

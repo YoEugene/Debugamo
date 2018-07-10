@@ -104,7 +104,7 @@
     {if $i == $level}
       <div class="level_number level_in_progress" id="level{$i}"><span>{$i}</span></div>
     {elseif $i == $maxLevel}
-      <div class="level_number" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}"><span>{$i}</span></div>
+      <a class="level_number" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}"><span>{$i}</span></a>
     {else}
       <a class="level_dot" id="level{$i}" href="?lang={$lang}&level={$i}{$suffix}"></a>
     {/if}
@@ -125,7 +125,7 @@
  */
 {template .doneDialog private="true"}
   <div id="dialogDone" class="dialogHiddenContent">
-    <div style="font-size: large; margin: 1em;">{{msg meaning="Games.congratulations" desc="alert - This is displayed when the user solves the level.\n{lb}{lb}Identical|Congratulation{rb}{rb}"}}Congratulations!{{/msg}}</div>
+    <div id="congratHeader" style="font-size: large; margin: 1em;">{{msg meaning="Games.congratulations" desc="alert - This is displayed when the user solves the level.\n{lb}{lb}Identical|Congratulation{rb}{rb}"}}Congratulations!{{/msg}}</div>
     <div id="dialogLinesText" style="font-size: large; margin: 1em;"></div>
     <pre id="containerCode"></pre>
     <div id="dialogDoneText" style="font-size: large; margin: 1em;"></div>
@@ -133,7 +133,7 @@
       <button id="doneCancel">
         {{msg meaning="Games.dialogCancel" desc="IBID"}}Cancel{{/msg}}
       </button>
-      <button id="doneOk" class="secondary">
+      <button id="doneOk" class="secondary" style="margin-left: 10px;">
         {{msg meaning="Games.dialogOk" desc="IBID"}}OK{{/msg}}
       </button>
     </div>
@@ -147,8 +147,58 @@
   <div id="dialogShowCode" class="dialogHiddenContent">
     <div id="dialogShowCodeLinesText"></div>
     <pre id="containerShowCode"></pre>
-    <div id="dialogShowCodeText" style="font-size: large; margin: 1em;"></div>
     {call BlocklyGames.soy.ok /}
+  </div>
+{/template}
+
+/**
+ * Show restore code dialog.
+ */
+{template .dialogRestoreCode private="true"}
+  <div id="dialogRestoreCode" class="dialogHiddenContent">
+    <div id="dialogRestoreCodeLinesText"><i uk-icon="icon: warning; ratio: 3;" style="margin-right: 13px;"></i>{{msg meaning="Games.restoreCode" desc="Restore User's Blocks to Original Blocks"}}Are you sure you want to restore the original blocks? You won't be able to undo this action.{{/msg}}</div>
+    <div id="dialogDoneButtons" class="farSide" style="padding: 1ex 3ex 0">
+      <button id="restoreCancel">
+        {{msg meaning="Games.dialogCancel" desc="IBID"}}Cancel{{/msg}}
+      </button>
+      <button id="restoreOk" class="secondary" style="margin-left: 10px;">
+        {{msg meaning="Games.dialogOk" desc="IBID"}}OK{{/msg}}
+      </button>
+    </div>
+  </div>
+{/template}
+
+/**
+ * Show restore code dialog.
+ */
+{template .dialogRestartGame private="true"}
+  <div id="dialogRestartGame" class="dialogHiddenContent">
+    <div id="dialogRestartGameLinesText"><i uk-icon="icon: warning; ratio: 3;" style="margin-right: 13px;"></i>{{msg meaning="Games.restartGame" desc="Restart entire game so user can go back to level one"}}Are you sure you want to restart entire game? You will lose all the progress and go back to level 1.{{/msg}}</div>
+    <div id="dialogDoneButtons" class="farSide" style="padding: 1ex 3ex 0">
+      <button id="restartLogin">
+        {{msg meaning="Games.dialogRestartLogin" desc="go back to login page"}}Go to Login page{{/msg}}
+      </button>
+      <button id="restartLevelOne" class="secondary" style="margin-left: 10px;">
+        {{msg meaning="Games.dialogRestartLevelOne" desc="go back to level one"}}Go to Level 1{{/msg}}
+      </button>
+    </div>
+  </div>
+{/template}
+
+/**
+ * Show submit answer dialog.
+ */
+{template .dialogSubmitAnswer private="true"}
+  <div id="dialogSubmitAnswer" class="dialogHiddenContent">
+    <div id="dialogSubmitAnswerLinesText"><i uk-icon="icon: push; ratio: 3;" style="margin-right: 13px;"></i>{{msg meaning="Games.submitAnswer1" desc="Ask if player want to submit this block as answer"}}Are you sure this block is the broken block? You still have {{/msg}}<span id="numOfChanceToAnswer"></span>{{msg meaning="Games.submitAnswer2" desc="Ask if player want to submit this block as answer"}} chances to answer{{/msg}}</div>
+    <div id="dialogDoneButtons" class="farSide" style="padding: 1ex 3ex 0">
+      <button id="submitCancel">
+        {{msg meaning="Games.dialogCancel" desc="IBID"}}Cancel{{/msg}}
+      </button>
+      <button id="submitOk" class="secondary" style="margin-left: 10px;">
+        {{msg meaning="Games.dialogOk" desc="IBID"}}OK{{/msg}}
+      </button>
+    </div>
   </div>
 {/template}
 
@@ -185,7 +235,7 @@
  * OK button for dialogs.
  */
 {template .ok private="true"}
-  <div class="farSide" style="padding: 1ex 3ex 0">
+  <div class="farSide" style="padding: 1em 3ex 0">
     <button class="secondary" style="background-color: #ffa400; border: 1px solid #ffa400" onclick="BlocklyDialogs.hideDialog(true)">
       {{msg meaning="Games.dialogOk" desc="IBID"}}OK{{/msg}}
     </button>
@@ -196,9 +246,9 @@
  * Start button for new player
  */
 {template .startGame private="true"}
-  <div class="farSide" style="padding: 1ex 3ex 0">
-    <button class="primary" onclick="Debugging.startGame();" disabled>
-      {{msg meaning="Games.dialogStartGame" desc="start game"}}開始任務!{{/msg}}
+  <div class="farSide" style="padding: 0 3ex">
+    <button class="primary" id="startGameBtn" onclick="Debugging.startGame();" disabled>
+      {{msg meaning="Games.dialogStartGame" desc="start game"}}再開始任務{{/msg}}
     </button>
   </div>
 {/template}

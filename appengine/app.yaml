@@ -4,7 +4,7 @@ runtime: python27
 api_version: 1
 threadsafe: no
 # App Engine default is 10m.
-default_expiration: "12h"
+default_expiration: "5m"
 
 handlers:
 # Storage API.

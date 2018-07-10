@@ -177,13 +177,13 @@ Blockly.Variables.flyoutCategoryBlocks = function(workspace) {
 };
 
 /**
-* Return a new variable name that is not yet being used. This will try to
-* generate single letter variable names in the range 'i' to 'z' to start with.
-* If no unique name is located it will try 'i' to 'z', 'a' to 'h',
-* then 'i2' to 'z2' etc.  Skip 'l'.
+ * Return a new variable name that is not yet being used. This will try to
+ * generate single letter variable names in the range 'i' to 'z' to start with.
+ * If no unique name is located it will try 'i' to 'z', 'a' to 'h',
+ * then 'i2' to 'z2' etc.  Skip 'l'.
  * @param {!Blockly.Workspace} workspace The workspace to be unique in.
-* @return {string} New variable name.
-*/
+ * @return {string} New variable name.
+ */
 Blockly.Variables.generateUniqueName = function(workspace) {
   var variableList = workspace.getAllVariables();
   var newName = '';
@@ -238,7 +238,7 @@ Blockly.Variables.generateUniqueName = function(workspace) {
 Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
   // This function needs to be named so it can be called recursively.
   var promptAndCheckWithAlert = function(defaultName) {
-    Blockly.Variables.promptName(Blockly.Msg.NEW_VARIABLE_TITLE, defaultName,
+    return Blockly.Variables.promptName(Blockly.Msg.NEW_VARIABLE_TITLE, defaultName,
       function(text) {
         if (text) {
           if (workspace.getVariable(text)) {
@@ -256,10 +256,11 @@ Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
                 });
           }
           else {
-            workspace.createVariable(text, opt_type);
+            var variable = workspace.createVariable(text, opt_type);
             if (opt_callback) {
               opt_callback(text);
             }
+            return variable;
           }
         } else {
           // User canceled prompt without a value.
@@ -269,7 +270,7 @@ Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
         }
       });
   };
-  promptAndCheckWithAlert('');
+  return promptAndCheckWithAlert('');
 };
 
 /**
@@ -329,6 +330,7 @@ Blockly.Variables.renameVariable = function(workspace, variable,
  *     variable name, or null if the user picked something illegal.
  */
 Blockly.Variables.promptName = function(promptText, defaultText, callback) {
+  var variable;
   Blockly.prompt(promptText, defaultText, function(newVar) {
     // Merge runs of whitespace.  Strip leading and trailing whitespace.
     // Beyond this, all names are legal.
@@ -340,8 +342,9 @@ Blockly.Variables.promptName = function(promptText, defaultText, callback) {
         newVar = null;
       }
     }
-    callback(newVar);
+    variable = callback(newVar);
   });
+  return variable;
 };
 
 /**

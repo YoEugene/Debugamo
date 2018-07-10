@@ -26,6 +26,11 @@
 
 goog.provide('Blockly.constants');
 
+/**
+ * Version of DebugamO Game
+ * detected in appengine/common/boot.js
+ */
+Blockly.DebugamO_version = 0.1;
 
 /**
  * Number of pixels the mouse must move before a drag starts.
@@ -249,6 +254,14 @@ Blockly.VARIABLE_CATEGORY_NAME = 'VARIABLE';
  * @const {string}
  */
 Blockly.PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
+
+/**
+ * String for use in the dropdown created in field_variable.
+ * This string indicates that this option in the dropdown is 'New
+ * variable...' and if selected, should trigger the prompt to create a new variable.
+ * @const {string}
+ */
+Blockly.NEW_VARIABLE_ID = 'NEW_VARIABLE_ID';
 
 /**
  * String for use in the dropdown created in field_variable.

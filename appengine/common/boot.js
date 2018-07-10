@@ -24,6 +24,10 @@
 'use strict';
 
 (function() {
+
+  // DebugamO game version
+  var version = 1.3;
+
   // Application path.
   var appName = location.pathname.match(/\/([-\w]+)(\.html)?$/);
   appName = appName ? appName[1].replace('-', '/') : 'index';
@@ -61,11 +65,20 @@
   }
   window['BlocklyGamesLang'] = lang;
 
+  // Detect if is current version, if no, clear localStorage data
+  var localVersion = localStorage.getItem('version');
+  if (version != localVersion) {
+    localStorage.clear();
+    localStorage.setItem('version', version);
+  }
+
+
+  // Detect if Debug mode is on; if yes, load uncompressed javascript
   var debug = false;
   try {
     debug = !!localStorage.getItem('debug');
     if (debug) {
-      console.info('Loading uncompressed JavaScript.');
+      console.info('[Game] Loading uncompressed JavaScript.');
     }
   } catch (e) {
     // Don't even think of throwing an error.
@@ -83,6 +96,10 @@
 
   if (!window.localStorage.hasOwnProperty('newPlayer')) {
     window.localStorage.setItem('newPlayer', 1);
+  }
+
+  if (!window.localStorage.hasOwnProperty('musicPlay')) {
+    window.localStorage.setItem('musicPlay', 1);
   }
 
   // Load the chosen language pack.

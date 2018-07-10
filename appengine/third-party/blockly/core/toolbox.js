@@ -421,6 +421,15 @@ Blockly.Toolbox.prototype.clearSelection = function() {
 };
 
 /**
+ * Adds a style on the toolbox. Usually used to change the cursor.
+ * @param {string} style The name of the class to add.
+ * @package
+ */
+Blockly.Toolbox.prototype.addStyle = function(style) {
+  Blockly.utils.addClass(/** @type {!Element} */ (this.HtmlDiv), style);
+};
+
+/**
  * Adds styles on the toolbox indicating blocks will be deleted.
  * @package
  */

@@ -143,9 +143,10 @@ Blockly.BlockDragger.initIconData_ = function(block) {
  * Start dragging a block.  This includes moving it to the drag surface.
  * @param {!goog.math.Coordinate} currentDragDeltaXY How far the pointer has
  *     moved from the position at mouse down, in pixel units.
+ * @param {boolean} healStack whether or not to heal the stack after disconnecting
  * @package
  */
-Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
+Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY, healStack) {
   if (!Blockly.Events.getGroup()) {
     Blockly.Events.setGroup(true);
   }
@@ -153,8 +154,10 @@ Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
   this.workspace_.setResizesEnabled(false);
   Blockly.BlockSvg.disconnectUiStop_();
 
-  if (this.draggingBlock_.getParent()) {
-    this.draggingBlock_.unplug();
+  if (this.draggingBlock_.getParent() ||
+      (healStack && this.draggingBlock_.nextConnection &&
+      this.draggingBlock_.nextConnection.targetBlock())) {
+    this.draggingBlock_.unplug(healStack);
     var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
     var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
 
@@ -167,8 +170,11 @@ Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
   // surface.
   this.draggingBlock_.moveToDragSurface_();
 
-  if (this.workspace_.toolbox_) {
-    this.workspace_.toolbox_.addDeleteStyle();
+  var toolbox = this.workspace_.toolbox_;
+  if (toolbox) {
+    var style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
+        'blocklyToolboxGrab';
+    toolbox.addStyle(style);
   }
 };
 

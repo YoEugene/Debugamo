@@ -71,7 +71,7 @@ Blockly.Block = function(workspace, prototypeName, opt_id) {
   /** @type {string|!Function} */
   this.tooltip = '';
   /** @type {boolean} */
-  this.contextMenu = true;
+  this.contextMenu = false;
 
   /**
    * @type {Blockly.Block}

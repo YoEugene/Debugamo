@@ -109,6 +109,15 @@ BlocklyInterface.loadBlocks = function(defaultXml, inherit) {
 };
 
 /**
+ * Load original blocks saved on App Engine Storage or in session/local storage.
+ */
+BlocklyInterface.loadOriginalBlocks = function() {
+  BlocklyInterface.saveToLocalStorage(level.defaultBlocks);
+  BlocklyInterface.loadBlocks(level.defaultBlocks, false);
+  BlocklyDialogs.hideDialog(true);
+}
+
+/**
  * Set the given code (XML or JS) to the editor (Blockly or ACE).
  * @param {string} code XML or JS code.
  */
@@ -194,6 +203,16 @@ BlocklyInterface.nextLevel = function() {
     window.location = window.location.protocol + '//' +
         window.location.host + window.location.pathname +
         '?lang=' + BlocklyGames.LANG + '&level=' + (BlocklyGames.LEVEL + 1);
+  } else if (BlocklyGames.LEVEL == BlocklyGames.MAX_LEVEL) {
+  // } else if (BlocklyGames.LEVEL == BlocklyGames.MAX_LEVEL) {
+    var developing = document.getElementById('developing');
+    var style = {
+        width: '60%',
+        left: '20%',
+        top: '5em'
+    };
+    BlocklyDialogs.showDialog(developing, null, true, true, style,
+        BlocklyDialogs.stopDialogKeyDown, true);
   } else {
     BlocklyInterface.indexPage();
   }
@@ -259,7 +278,7 @@ BlocklyInterface.eventSpam = function(e) {
     return true;
   }
   // Users double-click or double-tap accidentally.
-  var doubleClickTime = 400;
+  var doubleClickTime = 600;
   if (BlocklyInterface.eventSpam.previousType_ == e.type &&
       BlocklyInterface.eventSpam.previousDate_ + doubleClickTime > Date.now()) {
     e.preventDefault();

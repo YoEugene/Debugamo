@@ -101,6 +101,7 @@ BlocklyDialogs.showDialog = function(content, origin, animate, modal, style,
     BlocklyDialogs.dialogMouseDownWrapper_ =
         Blockly.bindEvent_(header, 'mousedown', null,
                            BlocklyDialogs.dialogMouseDown_);
+    shadow.removeEventListener('click', BlocklyDialogs.hideDialog, true)
   }
   dialog.appendChild(content);
   content.className = content.className.replace('dialogHiddenContent', '');
@@ -363,10 +364,17 @@ BlocklyDialogs.abortOffer = function() {
  * @suppress {checkVars}
  */
 BlocklyDialogs.congratulations = function() {
+
+  // send log back to server
+  Debugging.bigQueryLogSend();
+
+  $('#congratHeader').show();
+  $('#containerCode').show();
+
   var content = document.getElementById('dialogDone');
   var style = {
-    width: '40%',
-    left: '30%',
+    width: '50%',
+    left: '25%',
     top: '3em'
   };
 
@@ -432,14 +440,82 @@ BlocklyDialogs.congratulations = function() {
         document.body.removeEventListener('keydown',
             BlocklyDialogs.congratulationsKeyDown, true);
         });
-  document.body.addEventListener('keydown',
-      BlocklyDialogs.congratulationsKeyDown, true);
+  $('#dialogDoneButtons').hide();
+
+  if (BlocklyGames.LEVEL == 18) {
+    $('#dialogDoneButtons').show();
+    document.body.addEventListener('keydown',
+        BlocklyDialogs.congratulationsKeyDown, true);
+  } else {
+    setTimeout(function(){
+      $('#dialogDoneButtons').show();
+      document.body.addEventListener('keydown',
+        BlocklyDialogs.congratulationsKeyDown, true);
+    },5000);
+  }
+
+  
 
   document.getElementById('dialogDoneText').textContent = text;
 };
 
 /**
- * If the user clicks "Show Original Code" on the top-right of workspace
+ * Congratulates the user for completing the level and offers to
+ * direct them to the next level, if available.
+ * @suppress {checkVars}
+ */
+BlocklyDialogs.showEvaluationAnswer = function(correct, failMessage) {
+  $('#containerCode').hide();
+
+  var content = document.getElementById('dialogDone');
+  var style = {
+    width: '40%',
+    left: '30%',
+    top: '3em'
+  };
+
+  var linesText = document.getElementById('dialogLinesText');
+  linesText.textContent = '';
+
+  if (correct) {
+    $('#congratHeader').show();
+    var text = '你選擇了正確的答案。';
+    text = text.replace(/\n/g, '<br>');
+  } else {
+    $('#congratHeader').hide();
+    var text = '這不是正確的答案。\n\n' + failMessage;
+    text = text.replace(/\n/g, '<br>');
+  }
+
+  linesText.innerHTML = text;
+
+  if (BlocklyGames.LEVEL < BlocklyGames.MAX_LEVEL) {
+    var text = BlocklyGames.getMsg('Games_nextLevel')
+        .replace('%1', BlocklyGames.LEVEL + 1);
+  } else {
+    var text = BlocklyGames.getMsg('Games_finalLevel');
+  }
+
+  var cancel = document.getElementById('doneCancel');
+  cancel.addEventListener('click', BlocklyDialogs.hideDialog, true);
+  cancel.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+  var ok = document.getElementById('doneOk');
+  ok.addEventListener('click', BlocklyInterface.nextLevel, true);
+  ok.addEventListener('touchend', BlocklyInterface.nextLevel, true);
+
+  BlocklyDialogs.showDialog(content, null, false, true, style,
+      function() {
+        document.body.removeEventListener('keydown',
+            BlocklyDialogs.congratulationsKeyDown, true);
+        });
+  document.body.addEventListener('keydown',
+      BlocklyDialogs.congratulationsKeyDown, true);
+
+  document.getElementById('dialogDoneText').textContent = text;
+}
+
+/**
+ * If the user clicks "Show Code" on the top-right of workspace
  * @suppress {checkVars}
  */ 
 BlocklyDialogs.showCode = function() {
@@ -495,6 +571,124 @@ BlocklyDialogs.showCode = function() {
   BlocklyDialogs.showDialog(content, null, false, true, style,BlocklyDialogs.stopDialogKeyDown);
 };
 
+/**
+ * If the user clicks "Restore Original Code" on the top-right of workspace
+ * @suppress {checkVars}
+ */ 
+BlocklyDialogs.restoreCode = function() {
+  var content = document.getElementById('dialogRestoreCode');
+  var style = {
+    width: '60%',
+    left: '20%',
+    top: '3em'
+  };
+
+  var cancel = document.getElementById('restoreCancel');
+  cancel.addEventListener('click', BlocklyDialogs.hideDialog, true);
+  cancel.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+  var ok = document.getElementById('restoreOk');
+  ok.addEventListener('click', BlocklyInterface.loadOriginalBlocks, true);
+  ok.addEventListener('touchend', BlocklyInterface.loadOriginalBlocks, true);
+
+  BlocklyDialogs.showDialog(content, null, false, true, style, BlocklyDialogs.stopDialogKeyDown);
+}
+
+/**
+ * Show restart game dialog
+ * @suppress {checkVars}
+ */ 
+BlocklyDialogs.restartGame = function() {
+  var content = document.getElementById('dialogRestartGame');
+  var style = {
+    width: '60%',
+    left: '20%',
+    top: '3em'
+  };
+
+  var login = document.getElementById('restartLogin');
+  login.addEventListener('click', BlocklyDialogs.hideDialog, true);
+  login.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+  login.addEventListener('click', function(){ BlocklyDialogs.restart(true) });
+  login.addEventListener('touchend', function(){ BlocklyDialogs.restart(true) });
+  var levelOne = document.getElementById('restartLevelOne');
+  levelOne.addEventListener('click', BlocklyDialogs.hideDialog, true);
+  levelOne.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+  levelOne.addEventListener('click', function(){ BlocklyDialogs.restart(false) });
+  levelOne.addEventListener('touchend', function(){ BlocklyDialogs.restart(false) });
+
+  BlocklyDialogs.showDialog(content, null, false, true, style, BlocklyDialogs.stopDialogKeyDown);
+}
+
+/*
+ ** Restart game
+ * @suppress {checkVars}
+ */
+BlocklyDialogs.restart = function(isLoginPage) {
+  if (isLoginPage) {
+    var version = localStorage.version;
+    Debugging.clearLocalStorageButton();
+    localStorage.removeItem('debug');
+    if (BlocklyGames.LEVEL == 1) {
+      window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '?lang=' + BlocklyGames.LANG + '&level=2';
+    } else {
+      window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '?lang=' + BlocklyGames.LANG + '&level=1';
+    }
+  } else {
+    var tmp = $.extend({}, localStorage);
+    Debugging.clearLocalStorageButton();
+    localStorage.removeItem('debug');
+    localStorage.avatar = tmp.avatar;
+    localStorage.version = tmp.version;
+    localStorage.lastAuthTime = tmp.lastAuthTime;
+    localStorage.musicPlay = tmp.musicPlay;
+    localStorage.speed = tmp.speed;
+    localStorage.token = tmp.token;
+    localStorage.newPlayer = tmp.newPlayer;
+    localStorage.user = tmp.user;
+    localStorage.version = tmp.version;
+    if (BlocklyGames.LEVEL == 1) {
+      window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '?lang=' + BlocklyGames.LANG + '&level=2';
+    } else {
+      window.location = window.location.protocol + '//' + window.location.host + window.location.pathname + '?lang=' + BlocklyGames.LANG + '&level=1';
+    }
+  }
+}
+
+/**
+ * If the user clicks "Restore Original Code" on the top-right of workspace
+ * @suppress {checkVars}
+ */ 
+BlocklyDialogs.submitAnswer = function(blockId) {
+  console.log('submitted blockId: ' + blockId);
+  if (localStorage.numOfChanceToAnswer == "0") {
+    return;
+  } else {
+    $('#numOfChanceToAnswer').text(localStorage.numOfChanceToAnswer);
+
+    var content = document.getElementById('dialogSubmitAnswer');
+    var style = {
+      width: '60%',
+      left: '20%',
+      top: '3em'
+    };
+
+    var cancel = document.getElementById('submitCancel');
+    cancel.addEventListener('click', BlocklyDialogs.hideDialog, true);
+    cancel.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+    var ok = document.getElementById('submitOk');
+    ok.addEventListener('click', BlocklyDialogs.hideDialog, true);
+    ok.addEventListener('touchend', BlocklyDialogs.hideDialog, true);
+
+    // add listener only if it it not existed
+    if (!Game.submitAnswerListener) {
+      Game.submitAnswerListener = true;
+      ok.addEventListener('click', Game.checkAnswer, true);
+    }
+
+    BlocklyDialogs.showDialog(content, null, false, true, style, BlocklyDialogs.stopDialogKeyDown);
+  }
+
+}
 
 /**
  * If the user preses enter, escape, or space, hide the dialog.

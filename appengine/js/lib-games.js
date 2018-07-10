@@ -108,6 +108,11 @@ BlocklyGames.LANGUAGE_NAME = {
 };
 
 /**
+ * List of reserved Debugamo name.
+ */
+ BlocklyGames.reserved_thing_names = ["robot", "rock", "glass"];
+
+/**
  * List of RTL languages.
  */
 BlocklyGames.LANGUAGE_RTL = ['ace', 'ar', 'fa', 'he', 'mzn', 'ps'];
@@ -179,7 +184,7 @@ BlocklyGames.NAME;
 /**
  * Maximum number of levels.  Common to all apps.
  */
-BlocklyGames.MAX_LEVEL = 19;
+BlocklyGames.MAX_LEVEL = 18;
 
 /**
  * User's level (e.g. 5).
@@ -309,7 +314,6 @@ BlocklyGames.loadFromLocalStorage = function(name, level) {
   return xml;
 };
 
-
 /**
  * Gets the message with the given key from the document.
  * @param {string} key The key of the document element.
@@ -352,7 +356,6 @@ BlocklyGames.bindClick = function(el, func) {
   el.addEventListener('click', func, true);
   el.addEventListener('touchend', func, true);
 };
-
 
 /**
  * Load the Google Analytics.

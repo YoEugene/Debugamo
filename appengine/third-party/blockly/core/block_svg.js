@@ -155,14 +155,16 @@ Blockly.BlockSvg.prototype.initSvg = function() {
  * Select this block.  Highlight it visually.
  */
 Blockly.BlockSvg.prototype.select = function() {
+
   if (this.isShadow() && this.getParent()) {
     // Shadow blocks should not be selected.
     this.getParent().select();
     return;
   }
-  if (Blockly.selected == this) {
-    return;
-  }
+
+  // if (Blockly.selected == this) {
+    // return;
+  // }
   var oldId = null;
   if (Blockly.selected) {
     oldId = Blockly.selected.id;
@@ -175,10 +177,17 @@ Blockly.BlockSvg.prototype.select = function() {
     }
   }
   var event = new Blockly.Events.Ui(null, 'selected', oldId, this.id);
+  console.log(this.id);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
   Blockly.selected = this;
   this.addSelect();
+
+  // if is Evaluation level, check answer while click on block
+  if (Levels[BlocklyGames.LEVEL].isEvaluation) {
+    if (!Game.evaluationEnd)
+      BlocklyDialogs.submitAnswer(Blockly.selected.id);
+  }
 };
 
 /**

@@ -173,6 +173,42 @@ Blockly.JavaScript['lists_getIndex'] = function(block) {
   throw 'Unhandled combination (lists_getIndex).';
 };
 
+Blockly.JavaScript['lists_getIndexSimple'] = function(block) {
+  // Get element at index.
+  // Note: Until January 2013 this block did not have MODE or WHERE inputs.
+  var mode = block.getFieldValue('MODE') || 'GET';
+  var where = block.getFieldValue('WHERE') || 'FROM_START';
+  var listOrder = (where == 'RANDOM') ? Blockly.JavaScript.ORDER_COMMA :
+      Blockly.JavaScript.ORDER_MEMBER;
+  var list = Blockly.JavaScript.valueToCode(block, 'VALUE', listOrder) || '[]';
+
+  switch (where) {
+    case ('FIRST'):
+      if (mode == 'GET') {
+        var code = list + '[0]';
+        return [code, Blockly.JavaScript.ORDER_MEMBER];
+      } else if (mode == 'GET_REMOVE') {
+        var code = list + '.shift()';
+        return [code, Blockly.JavaScript.ORDER_MEMBER];
+      } else if (mode == 'REMOVE') {
+        return list + '.shift();\n';
+      }
+      break;
+    case ('LAST'):
+      if (mode == 'GET') {
+        var code = list + '.slice(-1)[0]';
+        return [code, Blockly.JavaScript.ORDER_MEMBER];
+      } else if (mode == 'GET_REMOVE') {
+        var code = list + '.pop()';
+        return [code, Blockly.JavaScript.ORDER_MEMBER];
+      } else if (mode == 'REMOVE') {
+        return list + '.pop();\n';
+      }
+      break;
+  }
+  throw 'Unhandled combination (lists_getIndexSimple).';
+};
+
 Blockly.JavaScript['lists_setIndex'] = function(block) {
   // Set element at index.
   // Note: Until February 2013 this block did not have MODE or WHERE inputs.
@@ -391,6 +427,21 @@ Blockly.JavaScript['lists_split'] = function(block) {
   }
   var code = input + '.' + functionName + '(' + delimiter + ')';
   return [code, Blockly.JavaScript.ORDER_FUNCTION_CALL];
+};
+
+Blockly.JavaScript['lists_split_simple'] = function(block) {
+  // Block for splitting text into a list, or joining a list into text.
+  var input = Blockly.JavaScript.valueToCode(block, 'LIST_TEXT', Blockly.JavaScript.ORDER_ATOMIC);
+  var varName = Blockly.JavaScript.variableDB_.getName(
+      block.getFieldValue('VAR'), Blockly.Variables.NAME_TYPE);
+  var delimiter = ",";
+  if (!input) {
+    input = '\'\'';
+  }
+  var functionName = 'split';
+  var code = input.slice(1, -1);;
+  // var code = input + '.' + functionName + '(' + delimiter + ')';
+  return varName + " = [" + code + "];\n";
 };
 
 Blockly.JavaScript['lists_reverse'] = function(block) {

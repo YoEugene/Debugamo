@@ -170,6 +170,7 @@ goog.require('Blockly.Msg');
 /** @export */ Blockly.Msg.LISTS_SPLIT_TEXT_FROM_LIST = "make text from list";
 /** @export */ Blockly.Msg.LISTS_SPLIT_TOOLTIP_JOIN = "Join a list of texts into one text, separated by a delimiter.";
 /** @export */ Blockly.Msg.LISTS_SPLIT_TOOLTIP_SPLIT = "Split text into a list of texts, breaking at each delimiter.";
+/** @export */ Blockly.Msg.LISTS_SPLIT_SIMPLE_TOOLTIP_SPLIT = "Assign a list value into variable (use ',' as delimeter).";
 /** @export */ Blockly.Msg.LISTS_SPLIT_WITH_DELIMITER = "with delimiter";
 /** @export */ Blockly.Msg.LOGIC_BOOLEAN_FALSE = "false";
 /** @export */ Blockly.Msg.LOGIC_BOOLEAN_HELPURL = "https://github.com/google/blockly/wiki/Logic#values";

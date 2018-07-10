@@ -200,11 +200,13 @@ Blockly.FieldVariable.dropdownCreate = function() {
     // Set the uuid as the internal representation of the variable.
     options[i] = [variableModelList[i].name, variableModelList[i].getId()];
   }
-  options.push([Blockly.Msg.RENAME_VARIABLE, Blockly.RENAME_VARIABLE_ID]);
-  if (Blockly.Msg.DELETE_VARIABLE) {
-    options.push([Blockly.Msg.DELETE_VARIABLE.replace('%1', name),
-      Blockly.DELETE_VARIABLE_ID]);
-  }
+  options.push([Blockly.Msg.NEW_VARIABLE, Blockly.NEW_VARIABLE_ID]);
+  // // enable below lines to have "Rename" and "Delete" in your variable options
+  // options.push([Blockly.Msg.RENAME_VARIABLE, Blockly.RENAME_VARIABLE_ID]);
+  // if (Blockly.Msg.DELETE_VARIABLE) {
+  //   options.push([Blockly.Msg.DELETE_VARIABLE.replace('%1', name),
+  //     Blockly.DELETE_VARIABLE_ID]);
+  // }
   return options;
 };
 
@@ -237,7 +239,14 @@ Blockly.FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
       // Delete variable.
       workspace.deleteVariable(this.getText());
       return;
-    }
+    } else if (id == Blockly.NEW_VARIABLE_ID) {
+      // Create new variable.
+      var newVar = Blockly.Variables.createVariable(BlocklyGames.workspace);
+      if (isDef(newVar))
+        itemText = newVar.name;
+      else
+        return;
+    } 
 
     // Call any validation function, and allow it to override.
     itemText = this.callValidator(itemText);

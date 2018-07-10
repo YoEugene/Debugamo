@@ -21,8 +21,16 @@ button:disabled {
     border: 1px solid #bbb;
 }
 
+#newPlayerForm {
+    margin-bottom: 7px;
+}
+
 #title {
     color: #fff;
+}
+
+#bigQueryTest {
+    display: none;
 }
 
 #title a {
@@ -39,6 +47,10 @@ button:disabled {
 }
 
 #linkButton {
+    display: none;
+}
+
+#loadSolutionButton {
     display: none;
 }
 
@@ -85,7 +97,13 @@ img[src$="help_down.png"] {
     background-color: #ffa400;
     box-shadow: 0 2px 0px 0px #ffa400;
     margin-right: 40px;
-    position: 0.5em 1.2em;
+    padding: 0.5em 1.2em;
+}
+
+.debugamo-introJs-tooltip .introjs-skipbutton.introjs-donebutton:hover {
+    background-color: #ffca6c;
+    box-shadow: 0 2px 0 0 #ffca6c;
+    border: 1px solid #ccc;
 }
 
 .introjs-helperNumberLayer {
@@ -108,14 +126,14 @@ img[src$="help_down.png"] {
 
 #begin .farSide button {
     padding: 10px 20px;
-    margin: 5px 0 22px;
+    margin: 5px 0;
     letter-spacing: 2px;
 }
 
 #begin img {
     cursor: pointer;
     width: 70px;
-    margin: 20px 10px;
+    margin: 10px 10px;
     border: 1px solid #eee;
     border-radius: 10px;
     padding: 5px 10px 0 10px;
@@ -174,7 +192,7 @@ html[dir="RTL"] button.primary {
 
 .header .leftSide {
     display: inline-block;
-    width: calc(100vw - 330px);
+    width: calc(100vw - 560px);
     padding: 4px 0;
     text-align: center;
 }
@@ -272,8 +290,8 @@ pre#containerCode {
 }
 
 #debugamo-left-container {
-    padding: 10px 25px 0;
-    width: 35vw;
+    padding: 10px 25px 0 21px;
+    width: 33vw;
     height: calc(100vh - 50px);
     overflow: scroll;
     background-color: #f2f2f2;
@@ -286,21 +304,50 @@ pre#containerCode {
 }
 
 #canvas-container {
-    width: calc(35vw - 50px);
-    height: calc(35vw - 50px);
+    width: calc(33vw - 46px);
+    height: calc(33vw - 46px);
     position: relative;
     /*left: 15px;*/
     z-index: 6;
 }
 
+#grid-table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    margin: -.5em 0 0 -.5em;
+    position: relative;
+    padding: 0;
+}
+
+.position-numbers {
+    color: rgb(100,100,100);
+    font-size: small;
+    vertical-align: middle;
+    width: 100%;
+    font-weight: bold;
+}
+
+.position-numbers span {
+
+}
+
+#column-numbers span {
+    display: inline-block;
+    text-align: center;
+}
+
+
+#row-numbers span {
+    display: block;
+    text-align: center;
+}
+
 #playground {
-    /*width: 100%;*/
-    /*height: 100%;*/
     border: 1px solid #DBDBDB;
 }
 
 #game-buttons {
-    padding: 8px 0;
+    padding: 16px 0 8px 4px;
     position: relative;
     opacity: 0;
     z-index: -1;
@@ -335,14 +382,19 @@ pre#containerCode {
 
 #mission-goal-container {
     position: relative;
-    padding: 0 0 10px 0;
+    padding: 0 0 10px 4px;
     opacity: 0;
     z-index: -1;
-    height: calc(100vh - 35vw - 68px);
+    height: calc(100vh - 33vw - 72px);
 
     transition-property: opacity, z-index;
     transition-duration: 0.2s;
     transition-timing-function: linear;
+}
+
+#mission-goal-container.evaluation-container {
+    height: calc(100vh - 33vw - 24px);
+    margin-top: 18px;
 }
 
 #mission-goal-box {
@@ -351,7 +403,7 @@ pre#containerCode {
     background-color: rgb(221, 221, 221);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    padding-top: 13px;
+    padding-top: 10px;
 }
 
 #player-avatar-box {
@@ -372,18 +424,23 @@ pre#containerCode {
     top: 38px;
 }
 
+.evaluation-container #goal-right-box {
+    height: calc(100vh - 33vw - 54px);
+}
+
 #goal-right-box {
-    width: calc(35vw - 136px);
-    height: calc(100vh - 35vw - 102px);
+    width: calc(33vw - 136px);
+    height: calc(100vh - 33vw - 102px);
     background-color: #fff;
     border-radius: 10px;
     display: inline-block;
     position: absolute;
     right: 13px;
     min-height: 100px;
-    padding: 15px;
+    padding: 12px 15px 0 15px;
     white-space: pre;
     overflow: auto;
+    font-size: 14px;
 }
 
 #goal-right-box p {
@@ -394,10 +451,32 @@ pre#containerCode {
     margin: 0;
 }
 
+#goal-right-box #answer-button {
+    background-color: #ffa400;
+    border: 1px solid #ffa400;
+    color: #fff;
+    padding: 7px 13px 6px 8px;
+    font-size: 16px;
+    position: absolute;
+    right: 15px;
+    bottom: 10px;
+}
+
+#goal-right-box #submit-icon {
+    margin-right: 7px;
+    position: relative;
+    top: -3px;
+}
+
 #goal-list li {
     color: #1e87f0;
     line-height: 1.5;
     padding: 4px 2px;
+}
+
+#goal-list li .uk-radio {
+    position: relative;
+    margin: -3px 6px 0 3px;
 }
 
 #goal-list li .icon {
@@ -459,7 +538,7 @@ pre#containerCode {
 
 #debugamo-right-container {
     /* to calc */
-    width: 65vw;
+    width: 67vw;
     height: calc(100vh - 50px);
     position: absolute;
     right: 0;
@@ -546,7 +625,7 @@ pre#containerCode {
     border-color: white;
     display: inline-block;
     left: 107px;
-    width: calc(65vw - 231px);
+    width: calc(67vw - 231px);
     height: 79px;
     overflow: hidden;
     line-height: 22px;
@@ -558,6 +637,10 @@ pre#containerCode {
     -ms-user-select: text;
     /* IE 10+ */
     user-select: text;
+
+    transition-property: background-color;
+    transition-duration: 0.2s;
+    transition-timing-function: linear;
 }
 /*
 #guide-inner-box::-webkit-scrollbar {
@@ -639,12 +722,40 @@ pre#containerCode {
     background-color: rgb(0, 148, 202);
 }
 
-#dialogShowCodeLinesText {
+#dialogShowCodeLinesText, #dialogRestoreCodeLinesText {
     font-size: 16px;
     line-height: 28px;
     color: #344b5d;
     padding: 10px;
     margin: 1em;
+}
+
+#dialogRestoreCodeLinesText {
+    font-size: 20px;
+}
+
+#dialogShowCodeLinesText, #dialogRestartGameLinesText {
+    font-size: 16px;
+    line-height: 28px;
+    color: #344b5d;
+    padding: 10px;
+    margin: 1em;
+}
+
+#dialogRestartGameLinesText {
+    font-size: 20px;
+}
+
+#dialogShowCodeLinesText, #dialogSubmitAnswerLinesText {
+    font-size: 16px;
+    line-height: 28px;
+    color: #344b5d;
+    padding: 10px;
+    margin: 1em;
+}
+
+#dialogSubmitAnswerLinesText {
+    font-size: 20px;
 }
 
 #debugamo-code-editor-container {
@@ -741,25 +852,25 @@ svg text .fa {
 .switch-container img {
     width: 30px;
     position: absolute;
-    top: 15px;
+    top: 24px;
 }
 
 /* turtle image */
 .switch-container img:nth-child(1) {
-    left: calc(0.5 * 35vw - 78px);
+    left: calc(0.5 * 33vw - 71px);
 }
 
 /* rabbie image */
 .switch-container img:nth-child(2) {
-    left: calc(0.5 * 35vw - 3px);
+    left: calc(0.5 * 33vw + 4px);
 }
 
 .switch {
     position: absolute;
     width: 36px;
     height: 20px;
-    left: calc(0.5 * 35vw - 41px);
-    top: 20px;
+    left: calc(0.5 * 33vw - 34px);
+    top: 29px;
 }
 
 .switch input {

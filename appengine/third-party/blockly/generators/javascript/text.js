@@ -35,6 +35,12 @@ Blockly.JavaScript['text'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_ATOMIC];
 };
 
+Blockly.JavaScript['text_list'] = function(block) {
+  // Text value.
+  var code = Blockly.JavaScript.quote_(block.getFieldValue('TEXT'));
+  return [code, Blockly.JavaScript.ORDER_ATOMIC];
+};
+
 Blockly.JavaScript['text_join'] = function(block) {
   // Create a string made up of any number of elements of any type.
   switch (block.itemCount_) {
