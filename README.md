@@ -2,4 +2,4 @@
 
 This debugging game is a master thesis application developed on Google Blockly and Blockly Games by Eugene Hsu. Contact me(yoeugene.hsu@gmail.com) if you need further information.
 
-##Try this game at https://debugamo.appspot.com/debugging
+## Try this game at https://debugamo.appspot.com/debugging
