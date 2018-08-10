@@ -537,6 +537,10 @@ pre#containerCode {
 }
 
 #debugamo-right-container {
+    /* GGGGGGGG */
+    /*padding-top: 17px;*/
+    /* GGGGGGGG */
+
     /* to calc */
     width: 67vw;
     height: calc(100vh - 50px);
@@ -547,6 +551,10 @@ pre#containerCode {
 }
 
 #mission-guide-container {
+    /* GGGGGGGG */
+    /*display: none;*/
+    /* GGGGGGGG */
+    
     height: 110px;
     padding-top: 10px;
 }
@@ -770,12 +778,20 @@ pre#containerCode {
 
 #debugamo-code-editor {
     position: relative;
+     /*GGGGGGGG */
+    /*height: calc(100vh - 108px);*/
     height: calc(100vh - 200px);
+     /*GGGGGGGG */
+
 }
 
 #blockly {
     position: relative;
+    /* GGGGGGGG */
+    /*height: calc(100vh - 108px);*/
     height: calc(100vh - 200px);
+    /* GGGGGGGG */
+    
 }
 
 .blocklyMainBackground {

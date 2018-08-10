@@ -687,7 +687,7 @@ Scope.specialProcess = function(code) {
         code = code + "\n\nfunction checkInfection(animal) {\n\tflag = false;\n\tif (animal == 'bird' || animal == 'piglet') {\n\t\tflag = true;\n\t\trobotSay(String(animal) + String(' 受到感染了！'))\n\t} else {\n\t\trobotSay(String(animal) + String(' 沒有受到感染'))\n\t}\n\treturn flag;\n}";
     }
 
-    if (BlocklyGames.LEVEL == 14) {
+    if (BlocklyGames.LEVEL == 14 || BlocklyGames.LEVEL == 15) {
         code = code + "\n\nfunction checkInfectionBefore(animal) {\n\tflag = false;\n\tif (animal == 'puppy') {\n\t\tflag = true;\n\t\trobotSay(String(animal) + String(' 曾經受過感染！'))\n\t} else {\n\t\trobotSay(String(animal) + String(' 不曾受過感染'))\n\t}\n\treturn flag;\n}";
     }
 
