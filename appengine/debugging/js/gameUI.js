@@ -272,10 +272,20 @@ UI.setAvatar = function(avatar) {
 };
 
 UI.checkAllNewPlayerInfoIsFilled = function() {
+    // var school = $('#playerSchool').val();
+    // var grade = $('#playerGrade').val();
+    // var classNum = $('#playerClass').val();
+    // var num = $('#playerNumber').val();
+    // var name = $('#playerName').val();
+    $('#playerSchool').val('AN');
     var school = $('#playerSchool').val();
+    $('#playerGrade').val('0');
     var grade = $('#playerGrade').val();
+    $('#playerClass').val('0');
     var classNum = $('#playerClass').val();
+    $('#playerNumber').val('anonymous');
     var num = $('#playerNumber').val();
+    $('#playerName').val('anonymous');
     var name = $('#playerName').val();
 
     if (school != null && grade != null && classNum != null && num != "" && name != "" && localStorage.avatar != undefined) {

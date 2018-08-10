@@ -135,12 +135,14 @@
             <option value="WJ">台北無界中學</option>
             <option value="NJ">台北南機場魔豆學院</option>
             <option value="PL">南投埔里國中</option>
+            <option value="AN">anonymous</option>
           </select>
           <select class="uk-select uk-form-width-xsmall uk-margin-small-right" id="playerGrade">
             <option value="" selected disabled hidden>幾年</option>
             <option value="7">7年</option>
             <option value="8">8年</option>
             <option value="9">9年</option>
+            <option value="0">anonymous</option>
           </select>
           <select class="uk-select uk-form-width-xsmall uk-margin-small-right" id="playerClass">
             <option value="" selected disabled hidden>幾班</option>
@@ -154,6 +156,7 @@
             <option value="8">8班</option>
             <option value="9">9班</option>
             <option value="10">10班</option>
+            <option value="0">anonymous</option>
           </select>
           <div class="uk-display-inline">
             <input class="uk-input uk-margin-small-right" style="width: 60px;" type="text" placeholder="座號" id="playerNumber">
@@ -164,7 +167,7 @@
         </form>
       </div>
     </div>
-    <div class="farSide" style="padding: 0 3ex">
+    <div class="farSide" style="padding: 0 3ex; display: none;">
       <button class="primary"><a  href="https://goo.gl/forms/FgR3iYZw6hh6Co8W2" target="_blank" style="color:white !important;">先填寫問卷</a></button>
     </div>
     {call BlocklyGames.soy.startGame /}
@@ -172,7 +175,7 @@
   <div id="developing" class="dialogHiddenContent">
     <div id="begin-box">
       <img class="showCodeRobot" src="debugging/public/img/robot.happy.png"></img>
-      大成功～感謝您的遊玩與參與～迪摩因為有你的幫助才能完成這次援救任務，將建物中所有小動物與人類都救出。<br><br>別忘了填寫活動後測問卷：<a href="https://goo.gl/forms/PtugMHJ8N4Xaq04K3" target="_blank">DebugamO 後測問卷</a><br><br>感謝您的參與與遊玩。<br><br><b>〔 NTUEE EdTech Lab 〕</b><br><br><button class="secondary" onclick="BlocklyDialogs.hideDialog(true)">回到遊戲</button>
+      大成功～感謝您的遊玩與參與～迪摩因為有你的幫助才能完成這次援救任務，將建物中所有小動物與人類都救出。<br><br><span style="display: none;">別忘了填寫活動後測問卷：<a href="https://goo.gl/forms/PtugMHJ8N4Xaq04K3" target="_blank">DebugamO 後測問卷</a><br></span><br>感謝您的參與與遊玩。<br><br><b>〔 NTUEE EdTech Lab 〕</b><br><br><button class="secondary" onclick="BlocklyDialogs.hideDialog(true)">回到遊戲</button>
     </div>
   </div>
   <div id="current_xml" style="position:absolute;left:-1000px;top:-1000px"></div>

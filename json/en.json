@@ -1,7 +1,7 @@
 {
 	"@metadata": {
 		"author": "Neil Fraser <fraser@google.com>",
-		"lastupdated": "2018-07-11 00:17:13.998802",
+		"lastupdated": "2018-08-10 15:07:03.013311",
 		"locale": "en",
 		"messagedocumentation" : "qqq"
 	},
@@ -51,7 +51,7 @@
 	"Games.submitAnswer1": "Are you sure this block is the broken block? You still have ",
 	"Games.submitAnswer2": " chances to answer",
 	"Games.helpAbort": "This level is extremely difficult. Would you like to skip it and go onto the next game? You can always come back later.",
-	"Games.dialogStartGame": "再開始任務",
+	"Games.dialogStartGame": "選完頭像開始任務",
 	"Index.clear": "Delete all your solutions?",
 	"Index.subTitle": "Games for tomorrow's programmers.",
 	"Index.moreInfo": "More info...",

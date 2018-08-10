@@ -353,7 +353,7 @@ Scope.getAuthToken = function() {
  */
 Scope.bigQueryLogSend = function() {
     var user = localStorage.user;
-    if (JSON.parse(user).name == 'admin') {
+    if (JSON.parse(user).name == 'admin' || JSON.parse(user).name == 'anonymous') {
         console.log('admin pass bigQuery logging');
         return;
     }

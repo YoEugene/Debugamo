@@ -22,6 +22,7 @@ button:disabled {
 }
 
 #newPlayerForm {
+    display: none;
     margin-bottom: 7px;
 }
 
