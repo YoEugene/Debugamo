@@ -973,22 +973,6 @@ Scope.startGame = function() {
     Game.kiboFunction = false;
 };
 
-
-
-/**
- * Save the blocks for a one-time reload.
- */
-Scope.saveToStorage = function() {
-    // MSIE 11 does not support sessionStorage on file:// URLs.
-    if (typeof Blockly != undefined && localStorage) {
-        var xml = Blockly.Xml.workspaceToDom(BlocklyGames.workspace);
-        var text = Blockly.Xml.domToText(xml);
-        localStorage.savedBlocks = text;
-    }
-
-    console.log('Current blocks saved.')
-};
-
 /**
  * Change Debug Mode
  */
